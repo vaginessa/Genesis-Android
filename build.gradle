@@ -18,6 +18,10 @@ allprojects {
         maven { url 'https://jitpack.io' }
         maven { url 'https://maven.fabric.io/public' }
         maven { url 'https://maven.mozilla.org/maven2/' }
+        maven {
+            url "https://jitpack.io"
+            credentials { username "48a9b4c06b5dabbc03328ddcdbb7dfd8fab253ae" }
+        }
     }
 }
 

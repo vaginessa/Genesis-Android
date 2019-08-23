@@ -277,7 +277,7 @@ class geckoClients
         return isRunning;
     }
 
-    void onReloadHiddenView()
+    void onReloadHiddenView(GeckoView geckoView)
     {
         if(home_model.getInstance().getNavigation().get(home_model.getInstance().getNavigation().size()-1).type().equals(enums.navigationType.onion))
         {
@@ -288,6 +288,14 @@ class geckoClients
             wasBackPressed = true;
             session1.stop();
 
+            navigatedURL = "";
+            loadingCompeleted = false;
+            wasBackPressed = false;
+            isContentLoading = false;
+            isRunning = false;
+
+
+            initialize(geckoView);
             session1.loadUri(home_model.getInstance().getNavigation().get(home_model.getInstance().getNavigation().size()-1).getURL());
         }
     }

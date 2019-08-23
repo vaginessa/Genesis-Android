@@ -82,12 +82,12 @@ public class list_ehandler
         {
             if(orbot_manager.getInstance().initOrbot(url_temp))
             {
-                home_model.getInstance().getHomeInstance().onloadURL(url_temp,true,false);
+                home_model.getInstance().getHomeInstance().onloadURL(url_temp,true,false,false);
             }
         }
         else
         {
-            home_model.getInstance().getHomeInstance().onloadURL(url_temp,false,false);
+            home_model.getInstance().getHomeInstance().onloadURL(url_temp,false,false,false);
         }
         list_model.getInstance().getListInstance().closeView();
 

@@ -9,6 +9,8 @@ import com.darkweb.genesissearchengine.helperMethod;
 import com.darkweb.genesissearchengine.pluginManager.fabricManager;
 import com.darkweb.genesissearchengine.pluginManager.orbot_manager;
 
+import static com.darkweb.genesissearchengine.constants.constants.backendGenesis;
+
 public class webviewClient
 {
     boolean isGeckoView = false;
@@ -35,40 +37,46 @@ public class webviewClient
                 }
                 if(!url.contains("boogle"))
                 {
-                    home_model.getInstance().getHomeInstance().stopHiddenView(false,false);
+                    home_model.getInstance().getHomeInstance().stopHiddenView(false,true);
                     fabricManager.getInstance().sendEvent("BASE SIMPLE SEARCHED : " + url);
                     isGeckoView = true;
                     if(orbot_manager.getInstance().initOrbot(url))
                     {
-                        home_model.getInstance().getHomeInstance().onloadURL(url,true,true);
+                        home_model.getInstance().getHomeInstance().onloadURL(url,true,true,false);
                     }
                     return true;
                 }
                 else
                 {
-                    /* if(url.startsWith("https://boogle.store/search?"))
+                    /*
+                    if(url.startsWith("https://boogle.store/search?"))
                     {
-                        url = url.replace("https://boogle.store/search?q=random&p_num=1&s_type=image","https://duckduckgo.com/?q=onion+links+websites&iar=images&iax=images&ia=images");
+                        url = url.replace("https://boogle.store/search?q=random&p_num=1&s_type=image","https://duckduckgo.com/?q=websites&iar=images&iax=images&ia=images");
                         url = url.replace("boogle.store/search?","duckduckgo.com/?");
-                        url = url.replace("q=","q=onion+links+");
                         url = url.replace("&s_type=image","&ia=images&iax=images");
+                        //url = url.replace("q=","q=");
 
                         home_model.getInstance().getHomeInstance().stopHiddenView(false,false);
                         fabricManager.getInstance().sendEvent("BASE SIMPLE SEARCHED : " + url);
                         isGeckoView = true;
                         if(orbot_manager.getInstance().initOrbot(url))
                         {
-                            home_model.getInstance().getHomeInstance().onloadURL(url,true,true);
+                            home_model.getInstance().getHomeInstance().onloadURL(url,true,true,false);
                         }
                         return true;
                     }
                     else
                     {
+                        if(!url.equals(backendGenesis))
+                        home_model.getInstance().getHomeInstance().stopHiddenView(false,true);
+
                         home_model.getInstance().addNavigation(url,enums.navigationType.base);
                         home_model.getInstance().addHistory(url);
                         fabricManager.getInstance().sendEvent("BASE ONION SEARCHED : " + url);
                         home_model.getInstance().getHomeInstance().onRequestTriggered(false,url);
-                    } */
+                    }
+                    */
+                    home_model.getInstance().getHomeInstance().stopHiddenView(false,true);
                     home_model.getInstance().addNavigation(url,enums.navigationType.base);
                     home_model.getInstance().addHistory(url);
                     fabricManager.getInstance().sendEvent("BASE ONION SEARCHED : " + url);

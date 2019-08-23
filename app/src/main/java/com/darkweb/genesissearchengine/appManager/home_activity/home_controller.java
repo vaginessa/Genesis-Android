@@ -29,6 +29,7 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
     /*View Webviews*/
     private WebView webView;
     private GeckoView geckoView = null;
+    private FrameLayout webviewContainer;
 
     /*View Objects*/
     private ProgressBar progressBar;
@@ -64,13 +65,21 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
             initializeLocalEventHandlers();
             initAdManager();
             initExitService();
+            proxy_controller.getInstance().autoStart();
 
             orbot_manager.getInstance().reinitOrbot();
-            viewController.getInstance().initialization(webView,loadingText,progressBar,searchbar,splashScreen,requestFailure,floatingButton, loadingIcon,splashlogo);
+            viewController.getInstance().initialization(webView,webviewContainer,loadingText,progressBar,searchbar,splashScreen,requestFailure,floatingButton, loadingIcon,splashlogo);
             firebase.getInstance().initialize();
             geckoclient.initialize(geckoView);
             home_model.getInstance().initialization();
-            initBoogle();
+            if(!status.gateway)
+            {
+                initBoogle();
+            }
+            else if(!status.search_status.equals("Duck Duck Go"))
+            {
+                viewController.getInstance().disableSplashScreen();
+            }
         }
         else
         {
@@ -98,29 +107,33 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
     @Override
     public void onTrimMemory(int level)
     {
-        if(level==80)
+        Log.i("CURRENT_LEVEL:" , level+"");
+        if(isAppPaused && (level==80 || level==15))
         {
            preference_manager.getInstance().setBool(keys.low_memory,true);
            finish();
         }
     }
 
+    boolean isAppPaused = false;
     @Override
     public void onResume()
     {
         lowMemoryError();
+        isAppPaused = false;
         super.onResume();
     }
 
     @Override
     public void onPause()
     {
+        isAppPaused = true;
         super.onPause();
     }
 
     public void initBoogle()
     {
-        onloadURL(constants.backendGenesis,false,false);
+        onloadURL(constants.backendGenesis,false,false,false);
     }
 
     public Boolean initSearchEngine()
@@ -128,7 +141,7 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
         if(status.search_status.equals(enums.searchEngine.Bing.toString()))
         {
             webView.stopLoading();
-            onloadURL(constants.backendBing,true,false);
+            onloadURL(constants.backendBing,true,false,true);
             if(home_model.getInstance().getNavigation().size()!=1)
             {
                 home_model.getInstance().addNavigation(constants.backendBing,enums.navigationType.onion);
@@ -142,7 +155,7 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
         else if(status.search_status.equals(enums.searchEngine.Google.toString()))
         {
             webView.stopLoading();
-            onloadURL(constants.backendGoogle,true,false);
+            onloadURL(constants.backendGoogle,true,false,true);
             if(home_model.getInstance().getNavigation().size()!=1)
             {
                 home_model.getInstance().addNavigation(constants.backendGoogle,enums.navigationType.onion);
@@ -155,7 +168,7 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
         }
         else
         {
-            onloadURL(constants.backendGenesis,false,false);
+            onloadURL(constants.backendGenesis,false,false,true);
             if(home_model.getInstance().getNavigation().size()!=1)
             {
                 home_model.getInstance().addNavigation(constants.backendGenesis,enums.navigationType.base);
@@ -188,6 +201,7 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
         loadingIcon = findViewById(R.id.imageView_loading_back);
         splashlogo = findViewById(R.id.backsplash);
         loadingText = findViewById(R.id.loadingText);
+        webviewContainer = findViewById(R.id.webviewContainer);
 
         webviewclient = new webviewClient();
         geckoclient = new geckoClients();
@@ -214,6 +228,7 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
 
     /*------------------------------------------------------- Event Handler ----------------------------------------------------*/
 
+
     private void initializeLocalEventHandlers() {
         searchbar.setOnEditorActionListener((v, actionId, event) ->
         {
@@ -232,6 +247,11 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
         eventhandler.onBackPressed();
     }
 
+    public void enableGateway(View view)
+    {
+        eventhandler.switchGateway();
+    }
+
     public void onFloatingButtonPressed(View view)
     {
         eventhandler.onFloatingButtonPressed();
@@ -247,14 +267,19 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
         eventhandler.onMenuButtonPressed(view);
     }
 
+    public void onSwitchSearch(View view)
+    {
+        eventhandler.switchSearchEngine(view);
+    }
+
     /*-------------------------------------------------------Helper Method In UI Redirection----------------------------------------------------*/
 
-    public void onloadURL(String url,boolean isHiddenWeb,boolean isUrlSavable) {
+    public void onloadURL(String url,boolean isHiddenWeb,boolean isUrlSavable,boolean isRepeatAllowed) {
         if(isHiddenWeb)
         {
             geckoclient.loadGeckoURL(url,geckoView,isUrlSavable,webView.getVisibility()==View.VISIBLE);
         }
-        else if(!home_model.getInstance().isUrlRepeatable(url,webView.getUrl()) || webView.getVisibility() == View.GONE)
+        else if(!home_model.getInstance().isUrlRepeatable(url,webView.getUrl()) || isRepeatAllowed || webView.getVisibility() == View.GONE)
         {
             webView.loadUrl(url);
             onRequestTriggered(isHiddenWeb,url);
@@ -338,7 +363,7 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
         geckoclient.initialize(geckoView);
         if(webView.getVisibility() != View.VISIBLE)
         {
-            geckoclient.onReloadHiddenView();
+            geckoclient.onReloadHiddenView(geckoView);
         }
     }
 
@@ -359,7 +384,7 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
 
     public void onReloadHiddenView()
     {
-        geckoclient.onReloadHiddenView();
+        geckoclient.onReloadHiddenView(geckoView);
     }
 
     public boolean isGeckoViewRunning()
@@ -375,6 +400,11 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
     public void downloadFile()
     {
         geckoclient.downloadFile();
+    }
+
+    public void onBannerAdLoaded()
+    {
+        viewController.getInstance().onBannerAdLoaded();
     }
 
     /*-------------------------------------------------------Menu Handler----------------------------------------------------*/

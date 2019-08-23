@@ -4,7 +4,6 @@ apply from: 'variables.gradle'
 apply plugin: 'maven'
 apply plugin: 'io.fabric'
 
-
 ext {
     geckoviewChannel = project.ext.firefox_channel
     geckoviewVersion = project.ext.firefox_version
@@ -30,6 +29,15 @@ android {
         targetSdkVersion project.ext.targetSdkVersion
         versionCode project.ext.versionCode
         versionName project.ext.versionName
+
+        buildConfigField "String", "BASE_HOST", "\"https://backend.northghost.com\""
+        buildConfigField "String", "BASE_CARRIER_ID", "\"afdemo\""
+        buildConfigField "String", "BASE_OAUTH_METHOD", "\"anonymous\""
+
+        buildConfigField "String", "SHARED_PREFS", "\"NORTHGHOST_SHAREDPREFS\""
+        buildConfigField "String", "STORED_HOST_URL_KEY", "\"com.northghost.afvclient.STORED_HOST_KEY\""
+        buildConfigField "String", "STORED_CARRIER_ID_KEY", "\"com.northghost.afvclient.CARRIER_ID_KEY\""
+
     }
 
     flavorDimensions "abi"
@@ -63,6 +71,15 @@ android {
             versionName project.ext.x64_vname
             dimension project.ext.dimen
         }
+
+        signingConfigs {
+            release {
+                keyAlias 'demo'
+                keyPassword 'demodemo'
+                storeFile file("${rootProject.projectDir}/demo.keystore")
+                storePassword 'demodemo'
+            }
+        }
     }
 
 
@@ -70,6 +87,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
         }
         splits {
             abi {
@@ -85,6 +103,7 @@ android {
         }
     }
 }
+
 dependencies {
 
     /*Default Libraries*/
@@ -121,6 +140,11 @@ dependencies {
     /*Crashlytics*/
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar')
+
+    /*Proxy Manager*/
+    implementation 'com.github.AnchorFreePartner.hydra-sdk-android:sdk:2.3.1'
+    implementation 'com.jakewharton:butterknife:10.0.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
 
 }
 

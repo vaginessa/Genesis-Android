@@ -38,8 +38,12 @@
     <!-- List View -->
     <string name="listview_clear">Clear</string>
 
+    <!-- Splash -->
+    <string name="gateway_info">Enable Gateway</string>
+    <string name="gateway_button">Enable Gateway</string>
+
     <string-array name="search_engines">
-        <item>Hidden Web</item>
+        <item>Duck Duck Go</item>
         <item>Google</item>
         <item>Bing</item>
     </string-array>

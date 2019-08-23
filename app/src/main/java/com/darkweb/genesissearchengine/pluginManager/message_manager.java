@@ -49,23 +49,23 @@ public class message_manager
                     .setMessage(strings.welcome_message_desc)
                     .addButton(strings.welcome_message_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED   , (dialog, which) -> {
                         dialog.dismiss();
-                        controller.onloadURL(constants.blackMarket,false,true);
-                        controller.onloadURL(constants.blackMarket,false,true);
+                        controller.onloadURL(constants.blackMarket,false,true,false);
+                        controller.onloadURL(constants.blackMarket,false,true,false);
                     })
                     .addButton(strings.welcome_message_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED   , (dialog, which) -> {
                         dialog.dismiss();
-                        controller.onloadURL(constants.leakedDocument,false,true);
-                        controller.onloadURL(constants.leakedDocument,false,true);
+                        controller.onloadURL(constants.leakedDocument,false,true,false);
+                        controller.onloadURL(constants.leakedDocument,false,true,false);
                     })
                     .addButton(strings.welcome_message_bt3, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED   , (dialog, which) -> {
                         dialog.dismiss();
-                        controller.onloadURL(constants.news,false,true);
-                        controller.onloadURL(constants.news,false,true);
+                        controller.onloadURL(constants.news,false,true,false);
+                        controller.onloadURL(constants.news,false,true,false);
                     })
                     .addButton(strings.welcome_message_bt4, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED   , (dialog, which) -> {
                         dialog.dismiss();
-                        controller.onloadURL(constants.softwares,false,true);
-                        controller.onloadURL(constants.softwares,false,true);
+                        controller.onloadURL(constants.softwares,false,true,false);
+                        controller.onloadURL(constants.softwares,false,true,false);
                     })
                     .addButton(strings.welcome_message_bt5, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED   , (dialog, which) -> {
                         dialog.dismiss();
@@ -299,7 +299,7 @@ public class message_manager
                             {
                                 if(!url.equals(""))
                                 {
-                                    home_model.getInstance().getHomeInstance().onloadURL(url,true,true);
+                                    home_model.getInstance().getHomeInstance().onloadURL(url,true,true,false);
                                 }
                                 else
                                 {

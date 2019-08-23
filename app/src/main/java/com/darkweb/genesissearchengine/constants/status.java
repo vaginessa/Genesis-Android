@@ -17,12 +17,14 @@ public class status
     public static String search_status = strings.emptyStr;
     public static boolean java_status = false;
     public static boolean history_status = true;
+    public static boolean gateway = false;
 
     public static void initStatus()
     {
         status.java_status = preference_manager.getInstance().getBool(keys.java_script,true);
         status.history_status = preference_manager.getInstance().getBool(keys.history_clear,true);
-        status.search_status = preference_manager.getInstance().getString(keys.search_engine,"Hidden Web");
+        status.search_status = preference_manager.getInstance().getString(keys.search_engine,"Duck Duck Go");
+        status.gateway = preference_manager.getInstance().getBool(keys.gateway,false);
     }
 
 }

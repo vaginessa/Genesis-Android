@@ -21,15 +21,18 @@ import com.darkweb.genesissearchengine.constants.*;
 import com.darkweb.genesissearchengine.dataManager.preference_manager;
 import com.darkweb.genesissearchengine.helperMethod;
 import com.darkweb.genesissearchengine.httpManager.serverRequestManager;
+import com.darkweb.genesissearchengine.pluginManager.admanager;
 import com.darkweb.genesissearchengine.pluginManager.message_manager;
 import com.darkweb.genesissearchengine.pluginManager.orbot_manager;
 import com.example.myapplication.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import org.mozilla.geckoview.GeckoView;
 
 public class viewController
 {
     /*ViewControllers*/
     private WebView webView;
+    private FrameLayout webviewContainer;
     private ProgressBar progressBar;
     private AutoCompleteTextView searchbar;
     private ConstraintLayout splashScreen;
@@ -59,7 +62,7 @@ public class viewController
     {
     }
 
-    void initialization(WebView webView1, TextView loadingText, ProgressBar progressBar, AutoCompleteTextView searchbar, ConstraintLayout splashScreen, ConstraintLayout requestFailure, FloatingActionButton floatingButton, ImageView loading, ImageView splashlogo)
+    void initialization(WebView webView1,FrameLayout webviewContainer,TextView loadingText, ProgressBar progressBar, AutoCompleteTextView searchbar, ConstraintLayout splashScreen, ConstraintLayout requestFailure, FloatingActionButton floatingButton, ImageView loading, ImageView splashlogo)
     {
         this.webView = webView1;
         this.progressBar = progressBar;
@@ -70,6 +73,7 @@ public class viewController
         this.loading = loading;
         this.splashlogo = splashlogo;
         this.loadingText = loadingText;
+        this.webviewContainer = webviewContainer;
 
         home_model.getInstance().getHomeInstance().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         checkSSLTextColor();
@@ -78,6 +82,7 @@ public class viewController
         initViews();
         createUpdateUiHandler();
         initializeSuggestionView();
+        updateSearchEngineLogo();
     }
 
     private void initializeSuggestionView()
@@ -154,7 +159,7 @@ public class viewController
         home_model.getInstance().getHomeInstance().releaseSession();
     }
 
-    private void disableSplashScreen()
+    public void disableSplashScreen()
     {
         if(!isSplashLoading)
         {
@@ -224,12 +229,24 @@ public class viewController
                 }
                 else if(msg.what == messages.DISABLE_SPLASH_SCREEN)
                 {
-                    boolean e_status = home_model.getInstance().getHomeInstance().initSearchEngine();
 
-                    if(e_status)
+                    if(!status.search_status.equals("Duck Duck Go"))
+                    {
+                        boolean e_status = home_model.getInstance().getHomeInstance().initSearchEngine();
+
+                        if(e_status)
+                        {
+                            hideSplashScreen();
+                        }
+                    }
+                    else
                     {
                         hideSplashScreen();
                     }
+                }
+                else if(msg.what == messages.BANNER_ADS_LOADED)
+                {
+                    setBannerAdMargin();
                 }
             }
         };
@@ -237,11 +254,11 @@ public class viewController
 
     void hideSplashScreen()
     {
-        if(splashScreen.getVisibility()!=View.GONE)
-        {
-            onWelcomeMessageCheck();
-        }
-
+        //if(splashScreen.getVisibility()!=View.GONE)
+        //{
+        //    onWelcomeMessageCheck();
+        //}
+        admanager.getInstance().initialize();
         status.isApplicationLoaded = true;
         splashScreen.animate().alpha(0.0f).setDuration(200).setListener(null).withEndAction((() -> splashScreen.setVisibility(View.GONE)));
     }
@@ -458,15 +475,16 @@ public class viewController
             home_model.getInstance().getHomeInstance().onMenuOptionSelected(item);
             return true;
         });
+
         MenuItem item = popup.getMenu().findItem(R.id.menu2);
 
-        if(status.search_status.equals("Google"))
+        if(status.gateway == false)
         {
-            item.setTitle("Switch | Secure Hidden Web");
+            item.setTitle("Tor Banned | Enable Gateway");
         }
         else
         {
-            item.setTitle("Switch | Secure Google");
+            item.setTitle("Disable Gateway");
         }
 
         popup.show();
@@ -491,7 +509,7 @@ public class viewController
         return searchbar.getText().toString();
     }
 
-    public void lowMemoryError()
+    void lowMemoryError()
     {
         if(preference_manager.getInstance().getBool(keys.low_memory,false))
         {
@@ -500,4 +518,31 @@ public class viewController
         }
     }
 
+    public void setBannerAdMargin()
+    {
+        final float scale = home_model.getInstance().getHomeInstance().getResources().getDisplayMetrics().density;
+        int padding_102dp = (int) (52 * scale + 0.52f);
+
+        webviewContainer.setPadding(0,padding_102dp,0,0);
+    }
+
+    public void onBannerAdLoaded()
+    {
+        startPostTask(messages.BANNER_ADS_LOADED);
+    }
+
+    public void updateSearchEngineLogo()
+    {
+        home_model.getInstance().getHomeInstance().findViewById(R.id.switchEngine);
+        if(status.search_status.equals("Google"))
+        {
+            ImageButton button = home_model.getInstance().getHomeInstance().findViewById(R.id.switchEngine);
+            button.setImageResource(R.drawable.genesis_logo);
+        }
+        else
+        {
+            ImageButton button = home_model.getInstance().getHomeInstance().findViewById(R.id.switchEngine);
+            button.setImageResource(R.drawable.google_logo);
+        }
+    }
 }

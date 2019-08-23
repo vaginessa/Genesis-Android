@@ -5,6 +5,7 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import com.darkweb.genesissearchengine.appManager.list_manager.list_controller;
 import com.darkweb.genesissearchengine.appManager.setting_manager.setting_controller;
@@ -18,6 +19,7 @@ import com.darkweb.genesissearchengine.helperMethod;
 import com.darkweb.genesissearchengine.pluginManager.fabricManager;
 import com.darkweb.genesissearchengine.pluginManager.message_manager;
 import com.darkweb.genesissearchengine.pluginManager.orbot_manager;
+import com.darkweb.genesissearchengine.pluginManager.proxy_controller;
 import com.example.myapplication.R;
 
 import java.io.IOException;
@@ -52,13 +54,13 @@ public class home_ehandler
                 if(host.getHost().contains(constants.backendUrlHost) || host.getHost().contains(constants.frontEndUrlHost) || host.getHost().contains(constants.frontEndUrlHost_v1))
                 {
                     fabricManager.getInstance().sendEvent("EDITOR BASE URL REQUEST : " + url);
-                    appContoller.onloadURL(url.replace(constants.frontEndUrlHost_v1,constants.backendUrlHost),false,true);
+                    appContoller.onloadURL(url.replace(constants.frontEndUrlHost_v1,constants.backendUrlHost),false,true,false);
                     return true;
                 }
                 else
                 {
                     fabricManager.getInstance().sendEvent("EDITOR ONION URL REQUEST : " + url);
-                    home_model.getInstance().getHomeInstance().onloadURL(url,true,true);
+                    home_model.getInstance().getHomeInstance().onloadURL(url,true,true,false);
                     return true;
                 }
             }
@@ -68,7 +70,7 @@ public class home_ehandler
 
         String editedURL = getSearchEngine(v.getText().toString().replaceAll(" ","+"));
         home_model.getInstance().addHistory(editedURL);
-        appContoller.onloadURL(editedURL,false,true);
+        appContoller.onloadURL(editedURL,false,true,false);
         appContoller.onClearSearchBarCursorView();
         fabricManager.getInstance().sendEvent("EDITOR SEARCHED : " + editedURL);
 
@@ -105,7 +107,7 @@ public class home_ehandler
 
     void onHomeButtonPressed()
     {
-        appContoller.stopHiddenView(true,false);
+        appContoller.stopHiddenView(true,true);
         fabricManager.getInstance().sendEvent("HOME BUTTON PRESSSED : ");
         viewController.getInstance().checkSSLTextColor();
         appContoller.initSearchEngine();
@@ -129,9 +131,11 @@ public class home_ehandler
         if (menuId == R.id.menu1) {
             helperMethod.openActivity(list_controller.class,constants.list_history);
         }
+
         else if (menuId == R.id.menu2) {
-            switchSearchEngine();
+            switchGateway();
         }
+
         else if (menuId == R.id.menu3) {
             helperMethod.openActivity(setting_controller.class,constants.list_history);
         }
@@ -158,15 +162,35 @@ public class home_ehandler
         else if (menuId == R.id.menu0)
         {
             helperMethod.openDownloadFolder();
-        }
+        }/*
         else if (menuId == R.id.menu9)
         {
             helperMethod.openActivity(setting_controller.class,constants.list_history);
         }
+        else if (menuId == R.id.menu11)
+        {
+            home_model.getInstance().getHomeInstance().onloadURL("https://whatismycountry.com/",true,true,false);
+        }*/
 
     }
 
-    private void switchSearchEngine()
+    public void switchGateway()
+    {
+        if(status.gateway == false)
+        {
+            status.gateway = true;
+            proxy_controller.getInstance().startVPNConnection();
+            preference_manager.getInstance().setBool(keys.gateway,true);
+        }
+        else
+        {
+            status.gateway = false;
+            proxy_controller.getInstance().disconnectConnection();
+            preference_manager.getInstance().setBool(keys.gateway,false);
+        }
+    }
+
+    public void switchSearchEngine(View view)
     {
         setting_model.getInstance().search_status = "Google";
         preference_manager.getInstance().setString(keys.search_engine, setting_model.getInstance().search_status);
@@ -174,9 +198,12 @@ public class home_ehandler
 
         if(status.search_status.equals("Google"))
         {
-            preference_manager.getInstance().setString(keys.search_engine,"Hidden Web");
-            status.search_status = "Hidden Web";
+            appContoller.stopHiddenView(true,true);
+            preference_manager.getInstance().setString(keys.search_engine,"Duck Duck Go");
+            status.search_status = "Duck Duck Go";
             home_model.getInstance().getHomeInstance().initSearchEngine();
+            ((ImageButton) view).setImageResource(R.drawable.genesis_logo);
+            ((ImageButton) view).setImageResource(R.drawable.google_logo);
         }
         else
         {
@@ -185,10 +212,12 @@ public class home_ehandler
                 preference_manager.getInstance().setString(keys.search_engine,"Google");
                 status.search_status = "Google";
                 home_model.getInstance().getHomeInstance().initSearchEngine();
+                ((ImageButton) view).setImageResource(R.drawable.genesis_logo);
             }
         }
 
     }
+
 
 
 }

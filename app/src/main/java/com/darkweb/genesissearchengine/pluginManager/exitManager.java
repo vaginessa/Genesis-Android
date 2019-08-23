@@ -22,11 +22,13 @@ public class exitManager extends Service {
     public void onDestroy() {
         super.onDestroy();
         preference_manager.getInstance().setBool(keys.low_memory,false);
+        proxy_controller.getInstance().disconnectConnection();
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         stopSelf();
         preference_manager.getInstance().setBool(keys.low_memory,false);
+        proxy_controller.getInstance().disconnectConnection();
    }
 }

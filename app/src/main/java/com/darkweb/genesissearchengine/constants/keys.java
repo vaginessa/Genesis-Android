@@ -32,5 +32,6 @@ public class keys
     public static String search_engine  = "search_engine";
     public static String java_script  = "java_script";
     public static String history_clear  = "history_clear";
+    public static String gateway  = "gateway";
 
 }
