@@ -15,6 +15,15 @@ public class webviewClient
 {
     boolean isGeckoView = false;
 
+    public void saveCache(String url)
+    {
+        if(url.contains("boogle"))
+        {
+            home_model.getInstance().addNavigation(url,enums.navigationType.base);
+            home_model.getInstance().addHistory(url);
+        }
+    }
+
     public void loadWebViewClient(WebView webview)
     {
         WebViewClient client = new WebViewClient()

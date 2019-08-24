@@ -82,7 +82,7 @@ class setting_view_controller
     void closeView()
     {
 
-        if(status.search_status != setting_model.getInstance().search_status)
+        if(!status.search_status.equals(setting_model.getInstance().search_status))
         {
             status.search_status = setting_model.getInstance().search_status;
             home_model.getInstance().getHomeInstance().initSearchEngine();

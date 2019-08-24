@@ -1,7 +1,6 @@
 package com.darkweb.genesissearchengine.appManager.home_activity;
 
 import android.annotation.SuppressLint;
-import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -16,7 +15,6 @@ import android.webkit.WebView;
 import android.widget.*;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.MenuCompat;
-import com.darkweb.genesissearchengine.appManager.setting_manager.setting_model;
 import com.darkweb.genesissearchengine.constants.*;
 import com.darkweb.genesissearchengine.dataManager.preference_manager;
 import com.darkweb.genesissearchengine.helperMethod;
@@ -24,9 +22,9 @@ import com.darkweb.genesissearchengine.httpManager.serverRequestManager;
 import com.darkweb.genesissearchengine.pluginManager.admanager;
 import com.darkweb.genesissearchengine.pluginManager.message_manager;
 import com.darkweb.genesissearchengine.pluginManager.orbot_manager;
+import com.darkweb.genesissearchengine.pluginManager.proxy_controller;
 import com.example.myapplication.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import org.mozilla.geckoview.GeckoView;
 
 public class viewController
 {
@@ -189,7 +187,14 @@ public class viewController
                             }
                         }
                         preference_manager.getInstance().setBool(keys.hasOrbotInstalled,false);
-                        startPostTask(messages.DISABLE_SPLASH_SCREEN);
+                        if(!status.gateway || proxy_controller.getInstance().isRunning)
+                        {
+                            startPostTask(messages.DISABLE_SPLASH_SCREEN);
+                        }
+                        else
+                        {
+                            isSplashLoading = false;
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -230,7 +235,7 @@ public class viewController
                 else if(msg.what == messages.DISABLE_SPLASH_SCREEN)
                 {
 
-                    if(!status.search_status.equals("Duck Duck Go"))
+                    if(!status.search_status.equals("Hidden Web"))
                     {
                         boolean e_status = home_model.getInstance().getHomeInstance().initSearchEngine();
 
@@ -254,10 +259,10 @@ public class viewController
 
     void hideSplashScreen()
     {
-        //if(splashScreen.getVisibility()!=View.GONE)
-        //{
-        //    onWelcomeMessageCheck();
-        //}
+        if(splashScreen.getVisibility()!=View.GONE)
+        {
+            onWelcomeMessageCheck();
+        }
         admanager.getInstance().initialize();
         status.isApplicationLoaded = true;
         splashScreen.animate().alpha(0.0f).setDuration(200).setListener(null).withEndAction((() -> splashScreen.setVisibility(View.GONE)));
@@ -493,7 +498,9 @@ public class viewController
 
     void onReload()
     {
-        if(home_model.getInstance().getNavigation().get(home_model.getInstance().getNavigation().size()-1).type()==enums.navigationType.base)
+        String url = searchbar.getText().toString();
+
+        if(helperMethod.getHost(url).contains("genesis"))
         {
             onRequestTriggered(false,webView.getUrl());
             webView.reload();

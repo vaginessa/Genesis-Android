@@ -277,9 +277,9 @@ class geckoClients
         return isRunning;
     }
 
-    void onReloadHiddenView(GeckoView geckoView)
+    void onReloadHiddenView(GeckoView geckoView,String url)
     {
-        if(home_model.getInstance().getNavigation().get(home_model.getInstance().getNavigation().size()-1).type().equals(enums.navigationType.onion))
+        if(!helperMethod.getHost(url).contains("genesis"))
         {
             isRunning = false;
             loadingCompeleted = false;
@@ -287,6 +287,8 @@ class geckoClients
 
             wasBackPressed = true;
             session1.stop();
+            session1.close();
+            geckoView.releaseSession();
 
             navigatedURL = "";
             loadingCompeleted = false;
@@ -296,7 +298,7 @@ class geckoClients
 
 
             initialize(geckoView);
-            session1.loadUri(home_model.getInstance().getNavigation().get(home_model.getInstance().getNavigation().size()-1).getURL());
+            session1.loadUri(url);
         }
     }
 

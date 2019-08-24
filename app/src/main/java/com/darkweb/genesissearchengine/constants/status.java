@@ -1,6 +1,5 @@
 package com.darkweb.genesissearchengine.constants;
 
-import android.util.Log;
 import com.darkweb.genesissearchengine.dataManager.preference_manager;
 
 public class status
@@ -23,7 +22,7 @@ public class status
     {
         status.java_status = preference_manager.getInstance().getBool(keys.java_script,true);
         status.history_status = preference_manager.getInstance().getBool(keys.history_clear,true);
-        status.search_status = preference_manager.getInstance().getString(keys.search_engine,"Duck Duck Go");
+        status.search_status = preference_manager.getInstance().getString(keys.search_engine,enums.searchEngine.HiddenWeb.toString());
         status.gateway = preference_manager.getInstance().getBool(keys.gateway,false);
     }
 

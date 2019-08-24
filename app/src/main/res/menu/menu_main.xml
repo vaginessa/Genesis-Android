@@ -19,10 +19,12 @@
                app:showAsAction="always"
                android:icon="@android:drawable/btn_star"/>
     </group>-->
-    <item  android:id="@+id/menu2"
-           android:title="Tor Banned | Enable Gateway"
-           app:showAsAction="always"
-           android:icon="@android:drawable/btn_star"/>
+    <group android:id="@+id/group_0" >
+        <item  android:id="@+id/menu2"
+               android:title="Tor Banned | Enable Gateway"
+               app:showAsAction="always"
+               android:icon="@android:drawable/btn_star"/>
+    </group>-->
     <item  android:id="@+id/menu0"
            android:title="Downloads"
            app:showAsAction="always"

@@ -2,7 +2,6 @@ package com.darkweb.genesissearchengine.appManager.home_activity;
 
 import android.util.Patterns;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ImageButton;
@@ -54,13 +53,13 @@ public class home_ehandler
                 if(host.getHost().contains(constants.backendUrlHost) || host.getHost().contains(constants.frontEndUrlHost) || host.getHost().contains(constants.frontEndUrlHost_v1))
                 {
                     fabricManager.getInstance().sendEvent("EDITOR BASE URL REQUEST : " + url);
-                    appContoller.onloadURL(url.replace(constants.frontEndUrlHost_v1,constants.backendUrlHost),false,true,false);
+                    appContoller.onloadURL(url.replace(constants.frontEndUrlHost_v1,constants.backendUrlHost),false,true,true);
                     return true;
                 }
                 else
                 {
                     fabricManager.getInstance().sendEvent("EDITOR ONION URL REQUEST : " + url);
-                    home_model.getInstance().getHomeInstance().onloadURL(url,true,true,false);
+                    home_model.getInstance().getHomeInstance().onloadURL(url,true,true,true);
                     return true;
                 }
             }
@@ -70,7 +69,7 @@ public class home_ehandler
 
         String editedURL = getSearchEngine(v.getText().toString().replaceAll(" ","+"));
         home_model.getInstance().addHistory(editedURL);
-        appContoller.onloadURL(editedURL,false,true,false);
+        appContoller.onloadURL(editedURL,false,true,true);
         appContoller.onClearSearchBarCursorView();
         fabricManager.getInstance().sendEvent("EDITOR SEARCHED : " + editedURL);
 
@@ -79,7 +78,7 @@ public class home_ehandler
 
     public String getSearchEngine(String query)
     {
-        if(status.search_status.equals(enums.searchEngine.Darkweb.toString()))
+        if(status.search_status.equals(enums.searchEngine.HiddenWeb.toString()))
         {
             return  "https://boogle.store/search?q="+query+"&p_num=1&s_type=all&savesearch=on";
         }
@@ -199,8 +198,8 @@ public class home_ehandler
         if(status.search_status.equals("Google"))
         {
             appContoller.stopHiddenView(true,true);
-            preference_manager.getInstance().setString(keys.search_engine,"Duck Duck Go");
-            status.search_status = "Duck Duck Go";
+            preference_manager.getInstance().setString(keys.search_engine,enums.searchEngine.HiddenWeb.toString());
+            status.search_status = enums.searchEngine.HiddenWeb.toString();
             home_model.getInstance().getHomeInstance().initSearchEngine();
             ((ImageButton) view).setImageResource(R.drawable.genesis_logo);
             ((ImageButton) view).setImageResource(R.drawable.google_logo);

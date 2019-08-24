@@ -20,7 +20,6 @@ import com.darkweb.genesissearchengine.pluginManager.*;
 
 import com.example.myapplication.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoView;
 
 
@@ -76,7 +75,7 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
             {
                 initBoogle();
             }
-            else if(!status.search_status.equals("Duck Duck Go"))
+            else if(!status.search_status.equals(enums.searchEngine.HiddenWeb.toString()))
             {
                 viewController.getInstance().disableSplashScreen();
             }
@@ -277,10 +276,11 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
     public void onloadURL(String url,boolean isHiddenWeb,boolean isUrlSavable,boolean isRepeatAllowed) {
         if(isHiddenWeb)
         {
-            geckoclient.loadGeckoURL(url,geckoView,isUrlSavable,webView.getVisibility()==View.VISIBLE);
+            geckoclient.loadGeckoURL(url,geckoView,isUrlSavable,webView.getVisibility()==View.VISIBLE || isInternetErrorOpened());
         }
         else if(!home_model.getInstance().isUrlRepeatable(url,webView.getUrl()) || isRepeatAllowed || webView.getVisibility() == View.GONE)
         {
+            webviewclient.saveCache(url);
             webView.loadUrl(url);
             onRequestTriggered(isHiddenWeb,url);
         }
@@ -363,7 +363,7 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
         geckoclient.initialize(geckoView);
         if(webView.getVisibility() != View.VISIBLE)
         {
-            geckoclient.onReloadHiddenView(geckoView);
+            geckoclient.onReloadHiddenView(geckoView,searchbar.getText().toString());
         }
     }
 
@@ -384,7 +384,7 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
 
     public void onReloadHiddenView()
     {
-        geckoclient.onReloadHiddenView(geckoView);
+        geckoclient.onReloadHiddenView(geckoView,searchbar.getText().toString());
     }
 
     public boolean isGeckoViewRunning()

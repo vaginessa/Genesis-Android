@@ -24,9 +24,9 @@ public class fabricManager
 
     public void init(Context context)
     {
-        Fabric.with(context, new Crashlytics());
-        analyticmanager.getInstance().initialize(home_model.getInstance().getAppContext());
-        analyticmanager.getInstance().logUser();
+        // Fabric.with(context, new Crashlytics());
+        // analyticmanager.getInstance().initialize(home_model.getInstance().getAppContext());
+        // analyticmanager.getInstance().logUser();
     }
 
     /*Helper Methods*/

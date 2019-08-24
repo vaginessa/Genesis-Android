@@ -13,7 +13,6 @@ import com.anchorfree.hydrasdk.api.data.ServerCredentials;
 import com.anchorfree.hydrasdk.api.response.User;
 import com.anchorfree.hydrasdk.callbacks.Callback;
 import com.anchorfree.hydrasdk.callbacks.CompletableCallback;
-import com.anchorfree.hydrasdk.callbacks.VpnStateListener;
 import com.anchorfree.hydrasdk.dns.DnsRule;
 import com.anchorfree.hydrasdk.exceptions.HydraException;
 import com.anchorfree.hydrasdk.vpnservice.VPNState;
@@ -38,7 +37,7 @@ public class proxy_controller {
 
     /*LOCAL VARIABLE DECLARATIONS*/
 
-    private boolean isLoading = false;
+    public boolean isRunning = false;
     private static final String CHANNEL_ID = "vpn";
     private static VPNState currentVpnState = VPNState.IDLE;
 
@@ -121,8 +120,9 @@ public class proxy_controller {
 
     public void loadBoogle()
     {
-        if(status.search_status.equals("Duck Duck Go"))
+        if(status.search_status.equals("Hidden Web"))
         {
+            isRunning = true;
             home_model.getInstance().getHomeInstance().initBoogle();
         }
     }
