@@ -9,7 +9,7 @@ import com.darkweb.genesissearchengine.appManager.home_activity.home_model;
 import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.helperMethod;
-import com.darkweb.genesissearchengine.pluginManager.orbot_manager;
+import com.darkweb.genesissearchengine.pluginManager.orbotManager;
 import com.example.myapplication.R;
 
 public class list_ehandler
@@ -80,7 +80,7 @@ public class list_ehandler
 
         if(!url_temp.contains("boogle") && !url_temp.equals(constants.backendGoogle) && !url_temp.equals(constants.backendBing))
         {
-            if(orbot_manager.getInstance().initOrbot(url_temp))
+            if(orbotManager.getInstance().initOrbot(url_temp))
             {
                 home_model.getInstance().getHomeInstance().onloadURL(url_temp,true,false,false);
             }

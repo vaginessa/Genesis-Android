@@ -9,16 +9,13 @@ import android.widget.TextView;
 import com.darkweb.genesissearchengine.appManager.list_manager.list_controller;
 import com.darkweb.genesissearchengine.appManager.setting_manager.setting_controller;
 import com.darkweb.genesissearchengine.appManager.setting_manager.setting_model;
-import com.darkweb.genesissearchengine.constants.constants;
-import com.darkweb.genesissearchengine.constants.enums;
-import com.darkweb.genesissearchengine.constants.keys;
-import com.darkweb.genesissearchengine.constants.status;
+import com.darkweb.genesissearchengine.constants.*;
 import com.darkweb.genesissearchengine.dataManager.preference_manager;
 import com.darkweb.genesissearchengine.helperMethod;
 import com.darkweb.genesissearchengine.pluginManager.fabricManager;
-import com.darkweb.genesissearchengine.pluginManager.message_manager;
-import com.darkweb.genesissearchengine.pluginManager.orbot_manager;
-import com.darkweb.genesissearchengine.pluginManager.proxy_controller;
+import com.darkweb.genesissearchengine.pluginManager.messageManager;
+import com.darkweb.genesissearchengine.pluginManager.orbotManager;
+import com.darkweb.genesissearchengine.pluginManager.proxyManager;
 import com.example.myapplication.R;
 
 import java.io.IOException;
@@ -26,7 +23,7 @@ import java.net.URL;
 
 public class home_ehandler
 {
-    home_controller appContoller;
+    homeController appContoller;
 
     public home_ehandler()
     {
@@ -41,7 +38,7 @@ public class home_ehandler
             return false;
         }
 
-        helperMethod.hideKeyboard();
+        helperMethod.hideKeyboard(home_model.getInstance().getHomeInstance());
         String url = helperMethod.completeURL(v.getText().toString());
         try
         {
@@ -52,13 +49,11 @@ public class home_ehandler
             {
                 if(host.getHost().contains(constants.backendUrlHost) || host.getHost().contains(constants.frontEndUrlHost) || host.getHost().contains(constants.frontEndUrlHost_v1))
                 {
-                    fabricManager.getInstance().sendEvent("EDITOR BASE URL REQUEST : " + url);
                     appContoller.onloadURL(url.replace(constants.frontEndUrlHost_v1,constants.backendUrlHost),false,true,true);
                     return true;
                 }
                 else
                 {
-                    fabricManager.getInstance().sendEvent("EDITOR ONION URL REQUEST : " + url);
                     home_model.getInstance().getHomeInstance().onloadURL(url,true,true,true);
                     return true;
                 }
@@ -71,14 +66,13 @@ public class home_ehandler
         home_model.getInstance().addHistory(editedURL);
         appContoller.onloadURL(editedURL,false,true,true);
         appContoller.onClearSearchBarCursorView();
-        fabricManager.getInstance().sendEvent("EDITOR SEARCHED : " + editedURL);
 
         return true;
     }
 
     public String getSearchEngine(String query)
     {
-        if(status.search_status.equals(enums.searchEngine.HiddenWeb.toString()))
+        if(status.search_status.equals("Hidden Web"))
         {
             return  "https://boogle.store/search?q="+query+"&p_num=1&s_type=all&savesearch=on";
         }
@@ -95,7 +89,6 @@ public class home_ehandler
 
     public void onReloadButtonPressed(View view)
     {
-        fabricManager.getInstance().sendEvent("RELOAD BUTTON PRESSSED : ");
         appContoller.onReload();
     }
 
@@ -107,28 +100,25 @@ public class home_ehandler
     void onHomeButtonPressed()
     {
         appContoller.stopHiddenView(true,true);
-        fabricManager.getInstance().sendEvent("HOME BUTTON PRESSSED : ");
         viewController.getInstance().checkSSLTextColor();
         appContoller.initSearchEngine();
-        helperMethod.hideKeyboard();
+        helperMethod.hideKeyboard(home_model.getInstance().getHomeInstance());
     }
 
     void onFloatingButtonPressed()
     {
-        fabricManager.getInstance().sendEvent("FLOATING BUTTON PRESSSED : ");
-        message_manager.getInstance().reportURL();
+        messageManager.getInstance().createMessage(enums.popup_type.report_url);
     }
 
     void onBackPressed()
     {
-        fabricManager.getInstance().sendEvent("BACK BUTTON PRESSSED : ");
         appContoller.onBackPressedView();
     }
 
     void onMenuPressed(int menuId)
     {
         if (menuId == R.id.menu1) {
-            helperMethod.openActivity(list_controller.class,constants.list_history);
+            helperMethod.openActivity(list_controller.class,constants.list_history,home_model.getInstance().getHomeInstance());
         }
 
         else if (menuId == R.id.menu2) {
@@ -136,31 +126,32 @@ public class home_ehandler
         }
 
         else if (menuId == R.id.menu3) {
-            helperMethod.openActivity(setting_controller.class,constants.list_history);
+            helperMethod.openActivity(setting_controller.class,constants.list_history,home_model.getInstance().getHomeInstance());
         }
         else if (menuId == R.id.menu4)
         {
-            message_manager.getInstance().bookmark(home_model.getInstance().getHomeInstance().getSearchBarUrl());
+            messageManager.getInstance().setData(home_model.getInstance().getHomeInstance().getSearchBarUrl());
+            messageManager.getInstance().createMessage(enums.popup_type.bookmark);
         }
         else if (menuId == R.id.menu5)
         {
-            helperMethod.openActivity(list_controller.class,constants.list_bookmark);
+            helperMethod.openActivity(list_controller.class,constants.list_bookmark,home_model.getInstance().getHomeInstance());
         }
         else if (menuId == R.id.menu6)
         {
-            message_manager.getInstance().reportURL();
+            messageManager.getInstance().createMessage(enums.popup_type.report_url);
         }
         else if (menuId == R.id.menu7)
         {
-            helperMethod.rateApp();
+            helperMethod.rateApp(home_model.getInstance().getHomeInstance());
         }
         else if (menuId == R.id.menu8)
         {
-            helperMethod.shareApp();
+            helperMethod.shareApp(home_model.getInstance().getHomeInstance());
         }
         else if (menuId == R.id.menu0)
         {
-            helperMethod.openDownloadFolder();
+            helperMethod.openDownloadFolder(home_model.getInstance().getHomeInstance());
         }/*
         else if (menuId == R.id.menu9)
         {
@@ -178,13 +169,13 @@ public class home_ehandler
         if(status.gateway == false)
         {
             status.gateway = true;
-            proxy_controller.getInstance().startVPNConnection();
+            proxyManager.getInstance().startVPNConnection();
             preference_manager.getInstance().setBool(keys.gateway,true);
         }
         else
         {
             status.gateway = false;
-            proxy_controller.getInstance().disconnectConnection();
+            proxyManager.getInstance().disconnectConnection();
             preference_manager.getInstance().setBool(keys.gateway,false);
         }
     }
@@ -198,7 +189,7 @@ public class home_ehandler
         if(status.search_status.equals("Google"))
         {
             appContoller.stopHiddenView(true,true);
-            preference_manager.getInstance().setString(keys.search_engine,enums.searchEngine.HiddenWeb.toString());
+            preference_manager.getInstance().setString(keys.search_engine, strings.darkweb);
             status.search_status = enums.searchEngine.HiddenWeb.toString();
             home_model.getInstance().getHomeInstance().initSearchEngine();
             ((ImageButton) view).setImageResource(R.drawable.genesis_logo);
@@ -206,7 +197,7 @@ public class home_ehandler
         }
         else
         {
-            if(orbot_manager.getInstance().initOrbot("https://google.com"))
+            if(orbotManager.getInstance().initOrbot("https://google.com"))
             {
                 preference_manager.getInstance().setString(keys.search_engine,"Google");
                 status.search_status = "Google";

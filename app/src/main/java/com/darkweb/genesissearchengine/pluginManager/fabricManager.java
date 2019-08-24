@@ -1,8 +1,7 @@
 package com.darkweb.genesissearchengine.pluginManager;
 
-import android.content.Context;
+import androidx.appcompat.app.AppCompatActivity;
 import com.crashlytics.android.Crashlytics;
-import com.darkweb.genesissearchengine.appManager.home_activity.home_model;
 import io.fabric.sdk.android.Fabric;
 
 public class fabricManager
@@ -10,6 +9,8 @@ public class fabricManager
     /*Private Variables*/
 
     private static final fabricManager ourInstance = new fabricManager();
+    private pluginController plugin_controller;
+    private AppCompatActivity app_context;
 
     /*Initializations*/
 
@@ -18,21 +19,13 @@ public class fabricManager
         return ourInstance;
     }
 
-    private fabricManager()
-    {
+    private fabricManager(){
+        plugin_controller = pluginController.getInstance();
+        app_context = plugin_controller.getAppContext();
     }
 
-    public void init(Context context)
-    {
-        // Fabric.with(context, new Crashlytics());
-        // analyticmanager.getInstance().initialize(home_model.getInstance().getAppContext());
-        // analyticmanager.getInstance().logUser();
-    }
-
-    /*Helper Methods*/
-
-    public void sendEvent(String value)
-    {
-        //analyticmanager.getInstance().sendEvent(value);
+    public void init(){
+        // Fabric.with(app_context, new Crashlytics());
+        // plugin_controller.initializeAnalyticsManager();
     }
 }

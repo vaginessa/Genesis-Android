@@ -21,7 +21,7 @@ public class home_model
     private static int port = 9150;
 
     private Context appContext;
-    private home_controller appInstance;
+    private homeController appInstance;
 
     /*Initializations*/
     public void initialization(){
@@ -59,11 +59,11 @@ public class home_model
     }
 
 
-    public home_controller getHomeInstance()
+    public homeController getHomeInstance()
     {
         return appInstance;
     }
-    public void setAppInstance(home_controller appInstance)
+    public void setAppInstance(homeController appInstance)
     {
         this.appInstance = appInstance;
     }

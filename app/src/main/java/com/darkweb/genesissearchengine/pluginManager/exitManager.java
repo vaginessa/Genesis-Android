@@ -3,10 +3,20 @@ package com.darkweb.genesissearchengine.pluginManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import com.darkweb.genesissearchengine.constants.keys;
-import com.darkweb.genesissearchengine.dataManager.preference_manager;
 
 public class exitManager extends Service {
+
+    /*Private Variables*/
+
+    private pluginController plugin_controller;
+
+    /*Initializations*/
+
+    public exitManager(){
+        plugin_controller = pluginController.getInstance();
+    }
+
+    /*Helper Methods*/
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -21,14 +31,12 @@ public class exitManager extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        preference_manager.getInstance().setBool(keys.low_memory,false);
-        proxy_controller.getInstance().disconnectConnection();
+        plugin_controller.stopAllServices();
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         stopSelf();
-        preference_manager.getInstance().setBool(keys.low_memory,false);
-        proxy_controller.getInstance().disconnectConnection();
+        plugin_controller.stopAllServices();
    }
 }

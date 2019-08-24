@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.text.SpannableString;
@@ -19,10 +20,9 @@ import com.darkweb.genesissearchengine.constants.*;
 import com.darkweb.genesissearchengine.dataManager.preference_manager;
 import com.darkweb.genesissearchengine.helperMethod;
 import com.darkweb.genesissearchengine.httpManager.serverRequestManager;
-import com.darkweb.genesissearchengine.pluginManager.admanager;
-import com.darkweb.genesissearchengine.pluginManager.message_manager;
-import com.darkweb.genesissearchengine.pluginManager.orbot_manager;
-import com.darkweb.genesissearchengine.pluginManager.proxy_controller;
+import com.darkweb.genesissearchengine.pluginManager.messageManager;
+import com.darkweb.genesissearchengine.pluginManager.orbotManager;
+import com.darkweb.genesissearchengine.pluginManager.proxyManager;
 import com.example.myapplication.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -131,7 +131,7 @@ public class viewController
     void onRequestTriggered(boolean isHiddenWeb, String url)
     {
         onProgressBarUpdate(4);
-        helperMethod.hideKeyboard();
+        helperMethod.hideKeyboard(home_model.getInstance().getHomeInstance());
         pageLoadedSuccessfully = true;
         onUpdateSearchBar(url);
         checkSSLTextColor();
@@ -187,7 +187,7 @@ public class viewController
                             }
                         }
                         preference_manager.getInstance().setBool(keys.hasOrbotInstalled,false);
-                        if(!status.gateway || proxy_controller.getInstance().isRunning)
+                        if(!status.gateway || proxyManager.getInstance().isProxyRunning() || !status.search_status.equals("Hidden Web"))
                         {
                             startPostTask(messages.DISABLE_SPLASH_SCREEN);
                         }
@@ -230,7 +230,7 @@ public class viewController
                 }
                 else if(msg.what == messages.UPDATE_LOADING_TEXT)
                 {
-                    loadingText.setText(orbot_manager.getInstance().getLogs());
+                    loadingText.setText(orbotManager.getInstance().getLogs());
                 }
                 else if(msg.what == messages.DISABLE_SPLASH_SCREEN)
                 {
@@ -263,7 +263,7 @@ public class viewController
         {
             onWelcomeMessageCheck();
         }
-        admanager.getInstance().initialize();
+        home_model.getInstance().getHomeInstance().initializeAds();
         status.isApplicationLoaded = true;
         splashScreen.animate().alpha(0.0f).setDuration(200).setListener(null).withEndAction((() -> splashScreen.setVisibility(View.GONE)));
     }
@@ -284,7 +284,7 @@ public class viewController
     @SuppressLint("RestrictedApi")
     void onPageFinished(boolean status)
     {
-        helperMethod.hideKeyboard();
+        helperMethod.hideKeyboard(home_model.getInstance().getHomeInstance());
         progressBar.setProgress(100);
 
         if(!status)
@@ -358,7 +358,7 @@ public class viewController
     private void initSplashScreen()
     {
         boolean hasSoftKey = helperMethod.hasSoftKeys(home_model.getInstance().getHomeInstance().getWindowManager());
-        int height = helperMethod.screenHeight(hasSoftKey);
+        int height = helperMethod.screenHeight(hasSoftKey,home_model.getInstance().getHomeInstance());
 
         splashlogo.getLayoutParams().height = height;
         loading.setAnimation(helperMethod.getRotationAnimation());
@@ -393,7 +393,7 @@ public class viewController
             if(home_model.getInstance().getNavigation().size()==1)
             {
                 onProgressBarUpdate(0);
-                helperMethod.onMinimizeApp();
+                helperMethod.onMinimizeApp(home_model.getInstance().getHomeInstance());
                 return;
             }
             else if(home_model.getInstance().getNavigation().get(home_model.getInstance().getNavigation().size()-2).type().equals(enums.navigationType.base))
@@ -457,7 +457,7 @@ public class viewController
     {
         if(!preference_manager.getInstance().getBool("FirstTimeLoaded",false))
         {
-            message_manager.getInstance().welcomeMessage();
+            messageManager.getInstance().createMessage(enums.popup_type.welcome);
         }
         serverRequestManager.getInstance().versionChecker();
     }
@@ -521,7 +521,7 @@ public class viewController
         if(preference_manager.getInstance().getBool(keys.low_memory,false))
         {
             preference_manager.getInstance().setBool(keys.low_memory,false);
-            helperMethod.showToast("App Closed Due To Low Memory");
+            helperMethod.showToast("App Closed Due To Low Memory",home_model.getInstance().getHomeInstance());
         }
     }
 
@@ -541,7 +541,7 @@ public class viewController
     public void updateSearchEngineLogo()
     {
         home_model.getInstance().getHomeInstance().findViewById(R.id.switchEngine);
-        if(status.search_status.equals("Google"))
+        if(status.search_status.equals("Google") || status.search_status.equals("Bing"))
         {
             ImageButton button = home_model.getInstance().getHomeInstance().findViewById(R.id.switchEngine);
             button.setImageResource(R.drawable.genesis_logo);

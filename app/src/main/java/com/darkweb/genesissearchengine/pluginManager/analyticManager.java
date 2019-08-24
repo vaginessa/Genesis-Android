@@ -2,61 +2,55 @@ package com.darkweb.genesissearchengine.pluginManager;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import androidx.appcompat.app.AppCompatActivity;
 import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
-
 import java.util.UUID;
 
-public class analyticmanager
+@SuppressWarnings("FieldCanBeLocal")
+
+public class analyticManager
 {
     /*Private Variables*/
 
-    private static final analyticmanager ourInstance = new analyticmanager();
+    private AppCompatActivity app_context;
+    private pluginController plugin_controller;
     private String uniqueID = null;
-
-    public static analyticmanager getInstance() {
-        return ourInstance;
-    }
 
     /*Initializations*/
 
-    private analyticmanager()
-    {
+    public static analyticManager getInstance() {
+        return ourInstance;
+    }
+    private static final analyticManager ourInstance = new analyticManager();
+
+    private analyticManager(){
+        plugin_controller = pluginController.getInstance();
+        app_context = plugin_controller.getAppContext();
     }
 
-    public void initialize(Context context)
-    {
+    void initialize(){
         final String PREF_UNIQUE_ID = "PREF_UNIQUE_ID";
 
         if (uniqueID == null)
         {
-            SharedPreferences sharedPrefs = context.getSharedPreferences(
+            SharedPreferences sharedPrefs = app_context.getSharedPreferences(
                     PREF_UNIQUE_ID, Context.MODE_PRIVATE);
             uniqueID = sharedPrefs.getString(PREF_UNIQUE_ID, null);
             if (uniqueID == null) {
                 uniqueID = UUID.randomUUID().toString();
                 SharedPreferences.Editor editor = sharedPrefs.edit();
                 editor.putString(PREF_UNIQUE_ID, uniqueID);
-                editor.commit();
+                editor.apply();
             }
         }
     }
 
     /*Helper Methods*/
 
-    public void logUser()
-    {
+    void logUser(){
         Crashlytics.setUserIdentifier(uniqueID);
         Crashlytics.setUserEmail("user@fabric.io");
         Crashlytics.setUserName(uniqueID);
-    }
-
-    public void sendEvent(String value)
-    {
-        //firebase.getInstance().logEvent(value,uniqueID);
-        //Answers.getInstance().logCustom(new CustomEvent(value));
-
     }
 
 }

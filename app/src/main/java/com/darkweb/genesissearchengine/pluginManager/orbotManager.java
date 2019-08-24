@@ -3,21 +3,20 @@ package com.darkweb.genesissearchengine.pluginManager;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
-import com.darkweb.genesissearchengine.appManager.home_activity.home_model;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import com.darkweb.genesissearchengine.constants.*;
 import com.darkweb.genesissearchengine.helperMethod;
 import com.msopentech.thali.android.toronionproxy.AndroidOnionProxyManager;
 import com.msopentech.thali.toronionproxy.OnionProxyManager;
 import org.mozilla.gecko.PrefsHelper;
-
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class orbot_manager {
+public class orbotManager
+{
 
     /*Private Variables*/
 
@@ -26,24 +25,25 @@ public class orbot_manager {
     private static OnionProxyManager onionProxyManager = null;
     private Handler updateUIHandler = null;
 
-    /*Local Initialization*/
+    private pluginController plugin_controller;
+    private AppCompatActivity app_context;
 
-    private static final orbot_manager ourInstance = new orbot_manager();
+    /*Initialization*/
 
-    public static orbot_manager getInstance()
+    private static final orbotManager ourInstance = new orbotManager();
+    public static orbotManager getInstance()
     {
         return ourInstance;
     }
-
-    private orbot_manager()
-    {
+    private orbotManager(){
         createUpdateUiHandler();
+        plugin_controller = pluginController.getInstance();
+        app_context = plugin_controller.getAppContext();
     }
 
     /*Orbot Initialization*/
 
-    public boolean initOrbot(String url)
-    {
+    public boolean initOrbot(String url){
         try
         {
             ExecutorService executor = Executors.newFixedThreadPool(1);
@@ -58,8 +58,8 @@ public class orbot_manager {
 
         if(!status.isTorInitialized)
         {
-            fabricManager.getInstance().sendEvent("TOR NOT INITIALIZED : " + url);
-            message_manager.getInstance().startingOrbotInfo(url);
+            messageManager.getInstance().setData(url);
+            messageManager.getInstance().createMessage(enums.popup_type.start_orbot);
             return false;
         }
         else
@@ -80,7 +80,7 @@ public class orbot_manager {
                     status.isTorInitialized = false;
                 }
             }
-            catch (Exception e)
+            catch (Exception ignored)
             {
             }
             return Boolean.FALSE;
@@ -91,6 +91,7 @@ public class orbot_manager {
     {
         new Thread()
         {
+            @SuppressWarnings("InfiniteLoopStatement")
             public void run()
             {
                 while (true)
@@ -110,11 +111,11 @@ public class orbot_manager {
                         }
                         if(!isLoading && !status.isTorInitialized)
                         {
-                            if(helperMethod.isNetworkAvailable())
+                            if(helperMethod.isNetworkAvailable(app_context))
                             {
                                 if(onionProxyManager == null)
                                 {
-                                    onionProxyManager = new AndroidOnionProxyManager(home_model.getInstance().getAppContext(), strings.torfolder);
+                                    onionProxyManager = new AndroidOnionProxyManager(app_context, strings.torfolder);
                                 }
                                 isLoading = false;
                                 status.isTorInitialized = false;
@@ -161,15 +162,13 @@ public class orbot_manager {
                                 continue;
                             }
 
-                            home_model.getInstance().setPort(onionProxyManager.getIPv4LocalHostSocksPort());
-                            proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("localhost", onionProxyManager.getIPv4LocalHostSocksPort()));
-                            startPostTask(messages.REINIT_HIDDEN);
+                            plugin_controller.setPort(onionProxyManager.getIPv4LocalHostSocksPort());
+                            startPostTask();
                             isLoading = false;
                             break;
 
                         } catch (Exception ex) {
                             ex.printStackTrace();
-                            continue;
                         }
                     }
                 }
@@ -197,12 +196,9 @@ public class orbot_manager {
 
     /*------------------------------------------------------- POST TASK HANDLER -------------------------------------------------------*/
 
-    public Proxy proxy;
-
-
-    private void startPostTask(int m_id){
+    private void startPostTask(){
         Message message = new Message();
-        message.what = m_id;
+        message.what = messages.REINIT_HIDDEN;
         updateUIHandler.sendMessage(message);
     }
 
@@ -211,19 +207,19 @@ public class orbot_manager {
         updateUIHandler = new Handler()
         {
             @Override
-            public void handleMessage(Message msg)
+            public void handleMessage(@NonNull Message msg)
             {
                 initializeProxy();
             }
         };
     }
 
-    public void initializeProxy()
+    private void initializeProxy()
     {
         status.isTorInitialized = true;
         PrefsHelper.setPref(keys.proxy_type, constants.proxy_type);
         PrefsHelper.setPref(keys.proxy_socks,constants.proxy_socks);
-        PrefsHelper.setPref(keys.proxy_socks_port, home_model.getInstance().getPort());
+        PrefsHelper.setPref(keys.proxy_socks_port, plugin_controller.getPort());
         PrefsHelper.setPref(keys.proxy_socks_version,constants.proxy_socks_version);
         PrefsHelper.setPref(keys.proxy_socks_remote_dns,constants.proxy_socks_remote_dns);
         PrefsHelper.setPref(keys.proxy_cache,constants.proxy_cache);

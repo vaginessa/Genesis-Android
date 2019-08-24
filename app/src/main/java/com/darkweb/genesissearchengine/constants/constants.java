@@ -14,19 +14,15 @@ public class constants
     public static String backendGenesis = "https://boogle.store/";
     public static String backendUrlHost = "boogle.store";
     public static String updateUrl = "https://boogle.store/manual?abi=";
-
     public static String frontEndUrlHost = "genesis.store";
     public static String frontEndUrlHost_v1 = "genesis.onion";
-
     public static String backendGoogle = "https://www.google.com/";
     public static String backendBing = "https://www.bing.com/";
-    public static String allowedHost = ".onion";
     public static String playstoreUrl = "https://play.google.com/store/apps/details?id=com.darkweb.genesissearchengine";
 
     /*BUILD CONSTANTS*/
 
-    public static String build_type = "playstore";
-    //public static String build_type = "local";
+    public static String build_type = "playstore"; //  "local" :: "playstore"
 
     /*PROXY CONSTANTS*/
 
@@ -50,5 +46,16 @@ public class constants
     public static int max_history_size=500;
     public static int max_bookmark_size=500;
     public static String databae_name="genesis_dbase";
+
+    /*ADMOB CONSTANTS*/
+
+    public static String admobKey = "ca-app-pub-5074525529134731~2926711128";
+    public static String testKey = "5AAFC2DFAE5C3906292EB576F0822FD7";
+
+    /*PROXY CONSTANTS*/
+
+    public static String channel_id = "vpn";
+    public static String bypassDomains_1 = "*facebook.com";
+    public static String bypassDomains_2 = "*wtfismyip.com";
 
 }

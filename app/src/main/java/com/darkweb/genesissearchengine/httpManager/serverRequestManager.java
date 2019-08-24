@@ -77,7 +77,7 @@ public class serverRequestManager
         /*String version = preference_manager.getInstance().getString("version","none",this);
         if(!version.equals(version_code) && !version.equals("none"))
         {
-            message_manager.getInstance().versionWarning(this,Build.SUPPORTED_ABIS[0]);
+            messageManager.getInstance().versionWarning(this,Build.SUPPORTED_ABIS[0]);
         }
         webRequestHandler.getInstance().getVersion(this);*/
     }

@@ -19,11 +19,12 @@ import com.darkweb.genesissearchengine.dataManager.preference_manager;
 import com.darkweb.genesissearchengine.pluginManager.*;
 
 import com.example.myapplication.R;
+import com.google.android.gms.ads.AdView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.mozilla.geckoview.GeckoView;
 
 
-public class home_controller extends AppCompatActivity implements ComponentCallbacks2
+public class homeController extends AppCompatActivity implements ComponentCallbacks2
 {
     /*View Webviews*/
     private WebView webView;
@@ -39,6 +40,7 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
     private ImageView loadingIcon;
     private ImageView splashlogo;
     private TextView loadingText;
+    private AdView banner_ads = null;
 
     /*Redirection Objects*/
     private geckoClients geckoclient = null;
@@ -64,11 +66,10 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
             initializeLocalEventHandlers();
             initAdManager();
             initExitService();
-            proxy_controller.getInstance().autoStart();
+            proxyManager.getInstance().autoStart();
 
-            orbot_manager.getInstance().reinitOrbot();
+            orbotManager.getInstance().reinitOrbot();
             viewController.getInstance().initialization(webView,webviewContainer,loadingText,progressBar,searchbar,splashScreen,requestFailure,floatingButton, loadingIcon,splashlogo);
-            firebase.getInstance().initialize();
             geckoclient.initialize(geckoView);
             home_model.getInstance().initialization();
             if(!status.gateway)
@@ -84,7 +85,8 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
         {
             initializeAppModel();
             setContentView(R.layout.invalid_setup_view);
-            message_manager.getInstance().abiError(Build.SUPPORTED_ABIS[0]);
+            messageManager.getInstance().setData(Build.SUPPORTED_ABIS[0]);
+            messageManager.getInstance().createMessage(enums.popup_type.abi_error);
         }
 
     }
@@ -191,7 +193,6 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
         webView = findViewById(R.id.pageLoader1);
         geckoView = findViewById(R.id.webLoader);
 
-
         progressBar = findViewById(R.id.progressBar);
         requestFailure = findViewById(R.id.requestFailure);
         splashScreen = findViewById(R.id.splashScreen);
@@ -201,6 +202,7 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
         splashlogo = findViewById(R.id.backsplash);
         loadingText = findViewById(R.id.loadingText);
         webviewContainer = findViewById(R.id.webviewContainer);
+        banner_ads = findViewById(R.id.adView);
 
         webviewclient = new webviewClient();
         geckoclient = new geckoClients();
@@ -209,7 +211,7 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
 
     public void initializeCrashlytics()
     {
-        fabricManager.getInstance().init(this);
+        fabricManager.getInstance().init();
     }
 
     public void initializeWebView()
@@ -276,6 +278,7 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
     public void onloadURL(String url,boolean isHiddenWeb,boolean isUrlSavable,boolean isRepeatAllowed) {
         if(isHiddenWeb)
         {
+            geckoclient.saveCache(url);
             geckoclient.loadGeckoURL(url,geckoView,isUrlSavable,webView.getVisibility()==View.VISIBLE || isInternetErrorOpened());
         }
         else if(!home_model.getInstance().isUrlRepeatable(url,webView.getUrl()) || isRepeatAllowed || webView.getVisibility() == View.GONE)
@@ -336,7 +339,8 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
 
     public void onShowAd(enums.adID id)
     {
-        admanager.getInstance().showAd(id);
+
+        //adManager.getInstance().showAd(id);
     }
 
     public void openMenu(View view) {
@@ -413,6 +417,11 @@ public class home_controller extends AppCompatActivity implements ComponentCallb
 
         eventhandler.onMenuPressed(item.getItemId());
         return super.onOptionsItemSelected(item);
+    }
+
+    public void initializeAds()
+    {
+        adManager.getInstance().initialize(banner_ads);
     }
 
 

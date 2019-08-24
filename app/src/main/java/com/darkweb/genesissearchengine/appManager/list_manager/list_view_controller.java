@@ -7,8 +7,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.darkweb.genesissearchengine.appManager.database_manager.database_controller;
 import com.darkweb.genesissearchengine.appManager.home_activity.home_model;
 import com.darkweb.genesissearchengine.constants.constants;
+import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.strings;
-import com.darkweb.genesissearchengine.pluginManager.message_manager;
+import com.darkweb.genesissearchengine.pluginManager.messageManager;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -36,7 +37,7 @@ class list_view_controller
     {
         if(home_model.getInstance().getHistory().size()>0)
         {
-            message_manager.getInstance().clearData();
+            messageManager.getInstance().createMessage(enums.popup_type.clear_data);
         }
     }
 

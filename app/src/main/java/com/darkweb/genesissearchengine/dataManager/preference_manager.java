@@ -1,5 +1,6 @@
 package com.darkweb.genesissearchengine.dataManager;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import com.darkweb.genesissearchengine.appManager.home_activity.home_model;
@@ -23,6 +24,7 @@ public class preference_manager
     {
     }
 
+    @SuppressLint("CommitPrefEdits")
     public void initialize()
     {
         prefs = PreferenceManager.getDefaultSharedPreferences(home_model.getInstance().getAppContext());

@@ -14,12 +14,11 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.darkweb.genesissearchengine.constants.*;
-import com.darkweb.genesissearchengine.dataManager.preference_manager;
 import com.darkweb.genesissearchengine.helperMethod;
 import com.darkweb.genesissearchengine.pluginManager.fabricManager;
 import com.darkweb.genesissearchengine.pluginManager.localNotification;
-import com.darkweb.genesissearchengine.pluginManager.message_manager;
-import com.darkweb.genesissearchengine.pluginManager.orbot_manager;
+import com.darkweb.genesissearchengine.pluginManager.messageManager;
+import com.darkweb.genesissearchengine.pluginManager.orbotManager;
 import org.mozilla.geckoview.*;
 
 import java.util.LinkedList;
@@ -32,6 +31,7 @@ class geckoClients
     private GeckoRuntime runtime1 = null;
     private final Handler internetErrorHandler = new Handler();
 
+    private boolean wasURLSaved = false;
     private boolean isRunning = false;
     private boolean isContentLoading = false;
     private String  navigatedURL = "";
@@ -41,19 +41,9 @@ class geckoClients
     private boolean wasBackPressed = false;
     private boolean isUrlSavable = true;
 
-    private int urlRequestCount = 0;
-    private boolean isAppRated = false;
-    private boolean canAdBeShown = false;
-
-    geckoClients()
-    {
-        isAppRated = preference_manager.getInstance().getBool(keys.isAppRated,false);
-    }
-
     void loadGeckoURL(String url,GeckoView geckoView,boolean isUrlSavable,boolean reinit)
     {
-        boolean init_status = orbot_manager.getInstance().initOrbot(url);
-        canAdBeShown = true;
+        boolean init_status = orbotManager.getInstance().initOrbot(url);
 
         if (init_status)
         {
@@ -62,6 +52,7 @@ class geckoClients
                 initialize(geckoView);
             }
 
+            wasURLSaved = false;
             this.isUrlSavable = isUrlSavable;
             navigatedURL = "";
             loadingCompeleted = false;
@@ -73,6 +64,10 @@ class geckoClients
             isContentLoading = false;
             isRunning = false;
         }
+    }
+
+    public void saveCache(String url)
+    {
     }
 
     void initialize(GeckoView geckoView)
@@ -90,11 +85,6 @@ class geckoClients
         session1.setContentDelegate(new ExampleContentDelegate());
     }
 
-    public void initializeDownloadManager()
-    {
-        //DownloadsFeature downloadsFeature = new DownloadsFeature(home_model.getInstance().getAppContext(),null,null,null,session1);
-    }
-
     class navigationDelegate implements GeckoSession.NavigationDelegate
     {
         @Override
@@ -105,6 +95,7 @@ class geckoClients
             {
                 home_model.getInstance().addHistory(navigatedURL);
                 home_model.getInstance().addNavigation(navigatedURL,enums.navigationType.onion);
+                wasURLSaved = true;
             }
         }
 
@@ -123,10 +114,10 @@ class geckoClients
         @Override
         public void onPageStart(GeckoSession session, String url)
         {
+            wasURLSaved = false;
             wasBackPressed = false;
             isRunning = true;
             loadingCompeleted = false;
-            fabricManager.getInstance().sendEvent("ONION GECKO_CLIENT URL REQEST : " + url + "--");
 
             home_model.getInstance().getHomeInstance().onUpdateSearchBarView(url);
             isContentLoading = !navigatedURL.equals(url);
@@ -139,66 +130,40 @@ class geckoClients
         {
             internetErrorHandler.removeCallbacksAndMessages(null);
 
-            internetErrorHandler.postDelayed(new Runnable()
+            internetErrorHandler.postDelayed(() ->
             {
-                @Override
-                public void run()
+                if(loadingCompeleted)
                 {
-                    if(loadingCompeleted)
+                    if(isFirstTimeLoad)
                     {
-                        if(isFirstTimeLoad)
-                        {
-                            home_model.getInstance().getHomeInstance().hideSplashScreen();
-                        }
-                        if(!success && !isContentLoading && !wasBackPressed)
-                        {
-                            home_model.getInstance().getHomeInstance().onPageFinished(true);
-                            home_model.getInstance().getHomeInstance().onInternetErrorView();
-                            fabricManager.getInstance().sendEvent("ONION GECKO_CLIENT URL ERROR : " + success + "--" + isContentLoading);
-                        }
-                        else if(success)
-                        {
-                            urlRequestCount++;
-                            if(urlRequestCount==5)
-                            {
-                                if(!isAppRated)
-                                {
-                                    //isAppRated = true;
-                                    //message_manager.getInstance().rateApp();
-                                }
-                            }
-                            else if(helperMethod.getHost(navigatedURL).contains(".onion"))
-                            {
-                                home_model.getInstance().getHomeInstance().onShowAd(enums.adID.hidden_onion_start);
-                                canAdBeShown = false;
-                                /*if(isFirstTimeLoad && navigatedURL.contains(".onion"))
-                                {
-                                    home_model.getInstance().getHomeInstance().onShowAd(enums.adID.hidden_onion_start);
-                                }
-                                else if(!isFirstTimeLoad && navigatedURL.contains(".onion"))
-                                {
-                                    home_model.getInstance().getHomeInstance().onShowAd(enums.adID.hidden_onion);
-                                }
-                                else if(!isFirstTimeLoad && !navigatedURL.contains(".onion"))
-                                {
-                                    home_model.getInstance().getHomeInstance().onShowAd(enums.adID.hidden_base);
-                                }*/
-                            }
-                            else
-                            {
-                                canAdBeShown = true;
-                            }
-
-                            home_model.getInstance().getHomeInstance().onDisableInternetError();
-                            home_model.getInstance().getHomeInstance().onProgressBarUpdateView(0);
-                            fabricManager.getInstance().sendEvent("ONION GECKO_CLIENT URL SUCCESS : " + success + "--" + isContentLoading);
-                            home_model.getInstance().getHomeInstance().onPageFinished(true);
-                        }
-
-                        isUrlSavable = true;
-                        isFirstTimeLoad = false;
-
+                        home_model.getInstance().getHomeInstance().hideSplashScreen();
                     }
+                    if(!success && !isContentLoading && !wasBackPressed)
+                    {
+                        home_model.getInstance().getHomeInstance().onPageFinished(true);
+                        home_model.getInstance().getHomeInstance().onInternetErrorView();
+
+                        if(!wasURLSaved && home_model.getInstance().getNavigation().size()>0 && !home_model.getInstance().getNavigation().get(home_model.getInstance().getNavigation().size()-1).getURL().equals(url))
+                        {
+                            home_model.getInstance().addHistory(navigatedURL);
+                            home_model.getInstance().addNavigation(navigatedURL,enums.navigationType.onion);
+                        }
+                    }
+                    else if(success)
+                    {
+                        if(helperMethod.getHost(navigatedURL).contains(".onion"))
+                        {
+                            home_model.getInstance().getHomeInstance().onShowAd(enums.adID.hidden_onion_start);
+                        }
+
+                        home_model.getInstance().getHomeInstance().onDisableInternetError();
+                        home_model.getInstance().getHomeInstance().onProgressBarUpdateView(0);
+                        home_model.getInstance().getHomeInstance().onPageFinished(true);
+                    }
+
+                    isUrlSavable = true;
+                    isFirstTimeLoad = false;
+
                 }
             }, 500);
         }
@@ -393,7 +358,8 @@ class geckoClients
 
         url = Uri.parse(response.uri);
         downloadFile = response.filename != null ? response.filename : url.getLastPathSegment();
-        message_manager.getInstance().downloadFile(downloadFile);
+        messageManager.getInstance().setData(downloadFile);
+        messageManager.getInstance().createMessage(enums.popup_type.download_file);
     }
 
     String downloadFile = "";

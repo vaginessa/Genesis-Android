@@ -9,7 +9,7 @@ public class strings
     /*Messsage Manager*/
 
     public static String welcome_message_title = "Welcome | Deep Web Gateway";
-    public static String welcome_message_desc = "\nWelcome to Deep Web | Dark Web Gateway. This application provide you a platform to Search and Open Dark Web urls.\n\nYou cannot open any url related to normal internet as its not the intended purpose. You can check out following urls to get yourself started\n\nHere are few Suggestions\n";
+    public static String welcome_message_desc = "\nWelcome to Deep Web | Dark Web Gateway. This application provide you a platform to Search and Open Dark Web urls.\n\nHere are few Suggestions\n";
     public static String welcome_message_bt1 = "Deep Web Online Market";
     public static String welcome_message_bt2 = "Leaked Documents and Books";
     public static String welcome_message_bt3 = "Dark Web News and Articles";
@@ -75,10 +75,6 @@ public class strings
     public static String history_text = "history";
     public static String bing_text = "Bing";
     public static String google_text = "Google";
-
-
-
-
 
 }
 

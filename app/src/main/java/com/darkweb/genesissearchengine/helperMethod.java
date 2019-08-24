@@ -17,8 +17,9 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ShareCompat;
-import com.darkweb.genesissearchengine.appManager.home_activity.home_model;
 import com.darkweb.genesissearchengine.constants.keys;
 import com.darkweb.genesissearchengine.dataManager.preference_manager;
 import com.example.myapplication.BuildConfig;
@@ -28,10 +29,11 @@ import java.net.URL;
 
 public class helperMethod
 {
-    /*Helper Methods*/
+    /*Helper Methods General*/
 
-    public static boolean isNetworkAvailable(){
-        ConnectivityManager cm = (ConnectivityManager)  home_model.getInstance().getAppContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+    public static boolean isNetworkAvailable(AppCompatActivity context){
+        ConnectivityManager cm = (ConnectivityManager)  context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert cm != null;
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
     }
@@ -46,42 +48,42 @@ public class helperMethod
         return url;
     }
 
-    public static void hideKeyboard() {
-        View view = home_model.getInstance().getHomeInstance().findViewById(android.R.id.content);
+    public static void hideKeyboard(AppCompatActivity context) {
+        View view = context.findViewById(android.R.id.content);
         if (view != null)
         {
-            InputMethodManager imm = (InputMethodManager) home_model.getInstance().getHomeInstance().getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            assert imm != null;
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 
-    public static void rateApp(){
+    public static void rateApp(AppCompatActivity context){
         preference_manager.getInstance().setBool(keys.isAppRated,true);
-        home_model.getInstance().getHomeInstance().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.darkweb.genesissearchengine")));
+        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.darkweb.genesissearchengine")));
     }
 
-    public static void shareApp() {
-        ShareCompat.IntentBuilder.from(home_model.getInstance().getHomeInstance())
+    public static void shareApp(AppCompatActivity context) {
+        ShareCompat.IntentBuilder.from(context)
                 .setType("text/plain")
                 .setChooserTitle("Hi! Check out this Awesome App")
                 .setSubject("Hi! Check out this Awesome App")
-                .setText("Genesis | Onion Search | http://play.google.com/store/apps/details?id=" + home_model.getInstance().getHomeInstance().getPackageName())
+                .setText("Genesis | Onion Search | http://play.google.com/store/apps/details?id=" + context.getPackageName())
                 .startChooser();
     }
 
-    public static void openDownloadFolder()
+    public static void openDownloadFolder(AppCompatActivity context)
     {
-        home_model.getInstance().getHomeInstance().startActivity(new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS));
+        context.startActivity(new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS));
     }
 
 
     public static String getHost(String link){
-        URL url = null;
+        URL url;
         try
         {
             url = new URL(link);
-            String host = url.getHost();
-            return host;
+            return url.getHost();
         }
         catch (MalformedURLException e)
         {
@@ -91,25 +93,30 @@ public class helperMethod
 
     }
 
-    public static void openActivity( Class<?> cls,int type){
-        Intent myIntent = new Intent(home_model.getInstance().getHomeInstance(), cls);
+    public static void openActivity( Class<?> cls,int type,AppCompatActivity context){
+        Intent myIntent = new Intent(context, cls);
         myIntent.putExtra(keys.list_type, type);
-        home_model.getInstance().getHomeInstance().startActivity(myIntent);
+        context.startActivity(myIntent);
     }
 
-    public static void onMinimizeApp(){
+    public static void onMinimizeApp(AppCompatActivity context){
         Intent startMain = new Intent(Intent.ACTION_MAIN);
         startMain.addCategory(Intent.CATEGORY_HOME);
         startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        home_model.getInstance().getHomeInstance().startActivity(startMain);
+        context.startActivity(startMain);
     }
 
-    /*Splash Screen Initializations*/
+    public static void showToast(String messaage,AppCompatActivity context)
+    {
+        Toast.makeText(context.getApplicationContext(),messaage,Toast.LENGTH_SHORT).show();
+    }
 
-    public static int screenHeight(boolean hasSoftKeys) {
+    /*Helper Methods Splash Screen*/
+
+    public static int screenHeight(boolean hasSoftKeys,AppCompatActivity context) {
         if(!hasSoftKeys)
         {
-            return Resources.getSystem().getDisplayMetrics().heightPixels -(helperMethod.getNavigationBarHeight());
+            return Resources.getSystem().getDisplayMetrics().heightPixels -(helperMethod.getNavigationBarHeight(context));
         }
         else
         {
@@ -122,8 +129,8 @@ public class helperMethod
         return (Resources.getSystem().getDisplayMetrics().widthPixels);
     }
 
-    public static int getNavigationBarHeight() {
-        Resources resources = home_model.getInstance().getAppContext().getResources();
+    private static int getNavigationBarHeight(AppCompatActivity context) {
+        Resources resources = context.getResources();
         int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
         if (resourceId > 0) {
             return resources.getDimensionPixelSize(resourceId);
@@ -166,18 +173,12 @@ public class helperMethod
 
     public static boolean isBuildValid (){
         return BuildConfig.FLAVOR.equals("aarch64") && Build.SUPPORTED_ABIS[0].equals("arm64-v8a") || BuildConfig.FLAVOR.equals("arm") && Build.SUPPORTED_ABIS[0].equals("armeabi-v7a") || BuildConfig.FLAVOR.equals("x86") && Build.SUPPORTED_ABIS[0].equals("x86") || BuildConfig.FLAVOR.equals("x86_64") && Build.SUPPORTED_ABIS[0].equals("x86_64");
-
     }
 
-    public static void openPlayStore(String packageName)
+    public static void openPlayStore(String packageName,AppCompatActivity context)
     {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse("market://details?id="+packageName));
-        home_model.getInstance().getHomeInstance().startActivity(intent);
-    }
-
-    public static void showToast(String messaage)
-    {
-        Toast.makeText(home_model.getInstance().getHomeInstance().getApplicationContext(),messaage,Toast.LENGTH_SHORT).show();
+        context.startActivity(intent);
     }
 }
