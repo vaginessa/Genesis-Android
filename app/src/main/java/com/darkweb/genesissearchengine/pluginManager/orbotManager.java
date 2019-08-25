@@ -38,11 +38,12 @@ public class orbotManager
 
     private void initialize(){
         createUpdateUiHandler();
+        autoValidator();
     }
 
     /*Orbot Initialization*/
 
-    static private class reCheckProxyStatus implements Callable<Boolean>
+    static private class getProxtStatus implements Callable<Boolean>
     {
         @Override
         public Boolean call()
@@ -61,7 +62,7 @@ public class orbotManager
         }
     }
 
-    private void reinitOrbot()
+    private void autoValidator()
     {
         new Thread()
         {
@@ -207,7 +208,7 @@ public class orbotManager
         try
         {
             ExecutorService executor = Executors.newFixedThreadPool(1);
-            reCheckProxyStatus task = new reCheckProxyStatus();
+            getProxtStatus task = new getProxtStatus();
             Future<Boolean> future = executor.submit(task);
             future.get();
         }
