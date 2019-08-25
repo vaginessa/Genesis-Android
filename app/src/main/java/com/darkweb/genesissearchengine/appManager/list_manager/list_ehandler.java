@@ -82,9 +82,13 @@ public class list_ehandler
 
         if(!url_temp.contains("boogle") && !url_temp.equals(constants.backendGoogle) && !url_temp.equals(constants.backendBing))
         {
-            if(pluginController.getInstance().OrbotManagerInit(url_temp))
+            if(pluginController.getInstance().OrbotManagerInit())
             {
                 homeModel.getInstance().getHomeInstance().onloadURL(url_temp,true,false,false);
+            }
+            else
+            {
+                pluginController.getInstance().MessageManagerHandler(null, enums.popup_type.start_orbot);
             }
         }
         else

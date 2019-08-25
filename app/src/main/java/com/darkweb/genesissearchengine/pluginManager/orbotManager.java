@@ -204,7 +204,7 @@ public class orbotManager
         return "Loading Please Wait";
     }
 
-    boolean initOrbot(){
+    boolean isOrbotRunning(){
         try
         {
             ExecutorService executor = Executors.newFixedThreadPool(1);
@@ -217,16 +217,7 @@ public class orbotManager
             return false;
         }
 
-        if(!status.isTorInitialized)
-        {
-            callback.callbackFailure(messages.ONION_NOT_INITIALIZED);
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        return status.isTorInitialized;
     }
-
 
 }

@@ -44,7 +44,7 @@ class geckoClients
 
     void loadGeckoURL(String url,GeckoView geckoView,boolean isUrlSavable,boolean reinit)
     {
-        boolean init_status = pluginController.getInstance().OrbotManagerInit(url);
+        boolean init_status = pluginController.getInstance().OrbotManagerInit();
 
         if (init_status)
         {
@@ -64,6 +64,10 @@ class geckoClients
             wasBackPressed = false;
             isContentLoading = false;
             isRunning = false;
+        }
+        else
+        {
+            pluginController.getInstance().MessageManagerHandler(null,enums.popup_type.start_orbot);
         }
     }
 

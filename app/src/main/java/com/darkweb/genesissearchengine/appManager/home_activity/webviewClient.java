@@ -47,9 +47,13 @@ public class webviewClient
                     homeModel.getInstance().getHomeInstance().stopHiddenView(false,true);
                     isGeckoView = true;
 
-                    if(pluginController.getInstance().OrbotManagerInit(url))
+                    if(pluginController.getInstance().OrbotManagerInit())
                     {
                         homeModel.getInstance().getHomeInstance().onloadURL(url,true,true,false);
+                    }
+                    else
+                    {
+                        pluginController.getInstance().MessageManagerHandler(null,enums.popup_type.start_orbot);
                     }
                     return true;
                 }

@@ -196,17 +196,16 @@ public class home_ehandler
         }
         else
         {
-            if(pluginController.getInstance().OrbotManagerInit("https://google.com"))
+            if(pluginController.getInstance().OrbotManagerInit())
             {
                 preferenceController.getInstance().setString(keys.search_engine,"Google");
                 status.search_status = "Google";
                 homeModel.getInstance().getHomeInstance().initSearchEngine();
                 ((ImageButton) view).setImageResource(R.drawable.genesis_logo);
             }
+            else {
+                pluginController.getInstance().MessageManagerHandler(null, enums.popup_type.start_orbot);
+            }
         }
-
     }
-
-
-
 }

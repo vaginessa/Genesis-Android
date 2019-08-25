@@ -95,8 +95,8 @@ public class pluginController
     }
 
     /*Onion Proxy Manager*/
-    public boolean OrbotManagerInit(String url){
-        return orbot_manager.initOrbot(url);
+    public boolean OrbotManagerInit(){
+        return orbot_manager.isOrbotRunning();
     }
     public String orbotLogs(){
         return orbot_manager.getLogs();
