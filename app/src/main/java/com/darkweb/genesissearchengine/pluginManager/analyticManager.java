@@ -4,32 +4,29 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import androidx.appcompat.app.AppCompatActivity;
 import com.crashlytics.android.Crashlytics;
+import com.darkweb.genesissearchengine.constants.constants;
+
 import java.util.UUID;
 
 @SuppressWarnings("FieldCanBeLocal")
-
-public class analyticManager
+class analyticManager
 {
     /*Private Variables*/
 
     private AppCompatActivity app_context;
-    private pluginController plugin_controller;
+    private callbackManager.callbackListener callback;
     private String uniqueID = null;
 
     /*Initializations*/
 
-    public static analyticManager getInstance() {
-        return ourInstance;
-    }
-    private static final analyticManager ourInstance = new analyticManager();
-
-    private analyticManager(){
-        plugin_controller = pluginController.getInstance();
-        app_context = plugin_controller.getAppContext();
+    analyticManager(AppCompatActivity app_context,callbackManager.callbackListener callback){
+        this.app_context = app_context;
+        this.callback = callback;
+        initialize();
     }
 
-    void initialize(){
-        final String PREF_UNIQUE_ID = "PREF_UNIQUE_ID";
+    private void initialize(){
+        final String PREF_UNIQUE_ID = constants.unique_key_id;
 
         if (uniqueID == null)
         {
@@ -49,7 +46,7 @@ public class analyticManager
 
     void logUser(){
         Crashlytics.setUserIdentifier(uniqueID);
-        Crashlytics.setUserEmail("user@fabric.io");
+        Crashlytics.setUserEmail(constants.user_email);
         Crashlytics.setUserName(uniqueID);
     }
 

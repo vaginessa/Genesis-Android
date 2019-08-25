@@ -4,16 +4,20 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 public class exitManager extends Service {
 
     /*Private Variables*/
 
-    private pluginController plugin_controller;
+    private AppCompatActivity app_context;
+    private callbackManager.callbackListener callback;
 
     /*Initializations*/
 
-    public exitManager(){
-        plugin_controller = pluginController.getInstance();
+    exitManager(AppCompatActivity app_context, callbackManager.callbackListener callback){
+        this.app_context = app_context;
+        this.callback = callback;
     }
 
     /*Helper Methods*/
@@ -31,12 +35,12 @@ public class exitManager extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        plugin_controller.stopAllServices();
+        callback.callbackSuccess(null,null);
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         stopSelf();
-        plugin_controller.stopAllServices();
+        callback.callbackSuccess(null,null);
    }
 }

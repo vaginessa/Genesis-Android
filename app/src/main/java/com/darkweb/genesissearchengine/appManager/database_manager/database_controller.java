@@ -2,7 +2,8 @@ package com.darkweb.genesissearchengine.appManager.database_manager;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import com.darkweb.genesissearchengine.appManager.home_activity.home_model;
+
+import com.darkweb.genesissearchengine.appManager.home_activity.homeModel;
 import com.darkweb.genesissearchengine.appManager.list_manager.list_row_model;
 import com.darkweb.genesissearchengine.constants.constants;
 
@@ -33,7 +34,7 @@ public class database_controller
     {
         try
         {
-            database_instance = home_model.getInstance().getHomeInstance().openOrCreateDatabase(constants.databae_name, MODE_PRIVATE, null);
+            database_instance = homeModel.getInstance().getHomeInstance().openOrCreateDatabase(constants.databae_name, MODE_PRIVATE, null);
             database_instance.execSQL("CREATE TABLE IF NOT EXISTS " + "history" + " (id INT(4),date VARCHAR,url VARCHAR);");
             database_instance.execSQL("CREATE TABLE IF NOT EXISTS " + "bookmark" + " (id INT(4),title VARCHAR,url VARCHAR);");
 
@@ -65,7 +66,7 @@ public class database_controller
         if (c.moveToFirst()){
             do {
                 tempmodel.add(new list_row_model(c.getString(2), c.getString(1),Integer.parseInt(c.getString(0))));
-                home_model.getInstance().initSuggestions(c.getString(2));
+                homeModel.getInstance().initSuggestions(c.getString(2));
             } while(c.moveToNext());
         }
         c.close();

@@ -7,23 +7,27 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.SystemClock;
+
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
-import com.darkweb.genesissearchengine.appManager.home_activity.home_model;
+
+import com.darkweb.genesissearchengine.appManager.home_activity.homeModel;
 import com.example.myapplication.R;
 
 public class localNotification
 {
     @SuppressLint("StaticFieldLeak")
-    private static final localNotification ourInstance = new localNotification();
 
-    public static localNotification getInstance()
-    {
-        return ourInstance;
-    }
+    /*Private Variables*/
+    private AppCompatActivity app_context;
+    private callbackManager.callbackListener callback;
 
-    private localNotification()
-    {
-        mContext = home_model.getInstance().getAppContext();
+    /*Initializations*/
+
+    localNotification(AppCompatActivity app_context,callbackManager.callbackListener callback){
+        this.app_context = app_context;
+        this.callback = callback;
+        mContext = homeModel.getInstance().getAppContext();
     }
 
     private Context mContext;
@@ -35,7 +39,7 @@ public class localNotification
      */
     public void createNotification(String title, String message)
     {
-        Intent resultIntent = new Intent(mContext , home_model.getInstance().getHomeInstance().getClass());
+        Intent resultIntent = new Intent(mContext , homeModel.getInstance().getHomeInstance().getClass());
         resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         PendingIntent resultPendingIntent = PendingIntent.getActivity(mContext,

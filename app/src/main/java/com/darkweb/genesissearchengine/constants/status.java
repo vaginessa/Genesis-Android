@@ -1,6 +1,6 @@
 package com.darkweb.genesissearchengine.constants;
 
-import com.darkweb.genesissearchengine.dataManager.preference_manager;
+import com.darkweb.genesissearchengine.dataManager.preferenceController;
 
 public class status
 {
@@ -11,6 +11,7 @@ public class status
     public static boolean isTorInitialized = false;
     public static String version_code = "7.0";
     public static String current_ABI = "7.0";
+    public static int onionProxyPort = 0;
 
     /*Settings Status*/
 
@@ -23,10 +24,10 @@ public class status
 
     public static void initStatus()
     {
-        status.java_status = preference_manager.getInstance().getBool(keys.java_script,true);
-        status.history_status = preference_manager.getInstance().getBool(keys.history_clear,true);
-        status.search_status = preference_manager.getInstance().getString(keys.search_engine,strings.darkweb);
-        status.gateway = preference_manager.getInstance().getBool(keys.gateway,false);
+        status.java_status = preferenceController.getInstance().getBool(keys.java_script,true);
+        status.history_status = preferenceController.getInstance().getBool(keys.history_clear,true);
+        status.search_status = preferenceController.getInstance().getString(keys.search_engine,strings.darkweb);
+        status.gateway = preferenceController.getInstance().getBool(keys.gateway,false);
     }
 
 }

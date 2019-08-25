@@ -6,8 +6,10 @@ import android.net.Uri;
 import android.os.Handler;
 import android.text.InputType;
 import android.widget.EditText;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+
 import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.enums;
@@ -20,88 +22,24 @@ public class messageManager
     /*Private Variables*/
 
     private boolean is_popup_open = false;
-    private pluginController plugin_controller;
-    private AppCompatActivity app_context;
     private CFAlertDialog.Builder popup_instance;
     private String data;
 
+    private AppCompatActivity app_context;
+    private callbackManager.callbackListener callback;
+
     /*Initializations*/
 
-    private static final messageManager ourInstance = new messageManager();
-
-    public static messageManager getInstance()
+    messageManager(AppCompatActivity app_context, callbackManager.callbackListener callback)
     {
-        return ourInstance;
+        this.app_context = app_context;
+        this.callback = callback;
+        initialize();
     }
 
-    private messageManager()
+    private void initialize()
     {
-        plugin_controller = pluginController.getInstance();
-        app_context = plugin_controller.getAppContext();
         popup_instance = new CFAlertDialog.Builder(app_context);
-    }
-
-    public void setData(String data)
-    {
-        this.data = data;
-    }
-
-    public void createMessage(enums.popup_type type)
-    {
-        if(!is_popup_open)
-        {
-            is_popup_open = true;
-            popup_instance = new CFAlertDialog.Builder(app_context);
-            onDismissListener();
-            switch (type)
-            {
-                case welcome:
-                    welcomeMessage();
-                    break;
-
-                case abi_error:
-                    abiError();
-                    break;
-
-                case rate_success:
-                    ratedSuccessfully();
-                    break;
-
-                case reported_success:
-                    reportedSuccessfully();
-                    break;
-
-                case bookmark:
-                    bookmark();
-                    break;
-
-                case clear_data:
-                    clearData();
-                    break;
-
-                case report_url:
-                    reportURL();
-                    break;
-
-                case rate_app:
-                    rateApp();
-                    break;
-
-                case download_file:
-                    downloadFile();
-                    break;
-
-                case start_orbot:
-                    startingOrbotInfo();
-                    break;
-
-                case version_warning:
-                    versionWarning();
-                    break;
-            }
-
-            popup_instance.show();
-        }
     }
 
     private void onDismissListener()
@@ -120,26 +58,26 @@ public class messageManager
                 .addButton(strings.welcome_message_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
                     dialog.dismiss();
-                    plugin_controller.onLoadURL(constants.blackMarket);
+                    callback.callbackSuccess(constants.blackMarket, enums.callbackType.welcome);
                 })
                 .addButton(strings.welcome_message_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
                     dialog.dismiss();
-                    plugin_controller.onLoadURL(constants.leakedDocument);
+                    callback.callbackSuccess(constants.leakedDocument, enums.callbackType.welcome);
                 })
                 .addButton(strings.welcome_message_bt3, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
                     dialog.dismiss();
-                    plugin_controller.onLoadURL(constants.news);
+                    callback.callbackSuccess(constants.news, enums.callbackType.welcome);
                 })
                 .addButton(strings.welcome_message_bt4, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
                     dialog.dismiss();
-                    plugin_controller.onLoadURL(constants.softwares);
+                    callback.callbackSuccess(constants.softwares, enums.callbackType.welcome);
                 })
                 .addButton(strings.welcome_message_bt5, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
-                    plugin_controller.setWelcomeCancelPreference();
+                    callback.callbackSuccess(null, enums.callbackType.cancel_welcome);
                     dialog.dismiss();
                 });
 
@@ -210,7 +148,7 @@ public class messageManager
                 .setMessage("Bookmark URL | " + data + "\n")
                 .addButton(strings.bookmark_url_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
-                    //home_model.getInstance().addBookmark(url.replace("genesis.onion","boogle.store"),input.getText().toString());
+                    callback.callbackSuccess(data.replace("genesis.onion","boogle.store")+"split"+input.getText().toString(),null);
                     dialog.dismiss();
                 })
                 .addButton(strings.bookmark_url_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
@@ -221,19 +159,17 @@ public class messageManager
 
     private void clearData()
     {
-                CFAlertDialog.Builder popup_instance = new CFAlertDialog.Builder(app_context)
-                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+        popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(strings.clear_title)
                 .setBackgroundColor(app_context.getResources().getColor(R.color.blue_dark_v2))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .setMessage(strings.clear_desc)
-                .addButton(strings.clear_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) -> {
-                    plugin_controller.onClearHistory();
+                .addButton(strings.clear_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                {
+                    callback.callbackSuccess(null, enums.callbackType.clear_history);
                     dialog.dismiss();
                 })
                 .addButton(strings.clear_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) -> dialog.dismiss());
-
-        popup_instance.show();
     }
 
     private void reportURL()
@@ -246,7 +182,7 @@ public class messageManager
                 .addButton(strings.report_url_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
                     dialog.dismiss();
-                    createMessage(enums.popup_type.reported_success);
+                    createMessage(strings.emptyStr, enums.popup_type.reported_success);
                 })
                 .addButton(strings.report_url_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                         dialog.dismiss());
@@ -262,17 +198,16 @@ public class messageManager
                 .setMessage(strings.rate_message)
                 .addButton(strings.rate_positive, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
-                    //preference_manager.getInstance().setBool(keys.isAppRated,true);
+                    callback.callbackSuccess(null,enums.callbackType.app_rated);
                     app_context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.darkweb.genesissearchengine")));
                     dialog.dismiss();
                 })
                 .addButton(strings.rate_negative, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
-                    //preference_manager.getInstance().setBool(keys.isAppRated,true);
+                    callback.callbackSuccess(null,enums.callbackType.app_rated);
                     dialog.dismiss();
-                    createMessage(enums.popup_type.rate_success);
+                    createMessage(strings.emptyStr, enums.popup_type.rate_success);
                 });
-
     }
 
     private void downloadFile()
@@ -284,7 +219,7 @@ public class messageManager
                 .setMessage(strings.download_message + data)
                 .addButton(strings.download_positive, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
-                    // home_model.getInstance().getHomeInstance().downloadFile();
+                    callback.callbackSuccess(null,enums.callbackType.download_file);
                     dialog.dismiss();
                 })
                 .addButton(strings.download_negative, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
@@ -313,10 +248,10 @@ public class messageManager
                 {
                     if (!data.equals(strings.emptyStr))
                     {
-                        plugin_controller.onLoadURL(data);
+                        callback.callbackSuccess(data, enums.callbackType.welcome);
                     } else
                     {
-                        plugin_controller.onReload();
+                        callback.callbackSuccess(null, enums.callbackType.reload);
                     }
                 }, 500);
 
@@ -340,4 +275,64 @@ public class messageManager
 
     }
 
+    /*External Helper Methods*/
+
+    void createMessage(String data, enums.popup_type type)
+    {
+        this.data = data;
+        if (!is_popup_open)
+        {
+            is_popup_open = true;
+            popup_instance = new CFAlertDialog.Builder(app_context);
+            onDismissListener();
+            switch (type)
+            {
+                case welcome:
+                    welcomeMessage();
+                    break;
+
+                case abi_error:
+                    abiError();
+                    break;
+
+                case rate_success:
+                    ratedSuccessfully();
+                    break;
+
+                case reported_success:
+                    reportedSuccessfully();
+                    break;
+
+                case bookmark:
+                    bookmark();
+                    break;
+
+                case clear_data:
+                    clearData();
+                    break;
+
+                case report_url:
+                    reportURL();
+                    break;
+
+                case rate_app:
+                    rateApp();
+                    break;
+
+                case download_file:
+                    downloadFile();
+                    break;
+
+                case start_orbot:
+                    startingOrbotInfo();
+                    break;
+
+                case version_warning:
+                    versionWarning();
+                    break;
+            }
+
+            popup_instance.show();
+        }
+    }
 }

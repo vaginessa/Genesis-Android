@@ -15,7 +15,7 @@ import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.keys;
 import com.darkweb.genesissearchengine.constants.status;
-import com.darkweb.genesissearchengine.dataManager.preference_manager;
+import com.darkweb.genesissearchengine.dataManager.preferenceController;
 import com.darkweb.genesissearchengine.pluginManager.*;
 
 import com.example.myapplication.R;
@@ -57,21 +57,14 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         {
             setContentView(R.layout.home_view);
             initializeAppModel();
-            preference_manager.getInstance().initialize();
-            initializeCrashlytics();
-
             status.initStatus();
             initializeConnections();
             initializeWebView();
             initializeLocalEventHandlers();
-            initAdManager();
             initExitService();
-            proxyManager.getInstance().autoStart();
-
-            orbotManager.getInstance().reinitOrbot();
             viewController.getInstance().initialization(webView,webviewContainer,loadingText,progressBar,searchbar,splashScreen,requestFailure,floatingButton, loadingIcon,splashlogo);
             geckoclient.initialize(geckoView);
-            home_model.getInstance().initialization();
+            homeModel.getInstance().initialization();
             if(!status.gateway)
             {
                 initBoogle();
@@ -85,8 +78,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         {
             initializeAppModel();
             setContentView(R.layout.invalid_setup_view);
-            messageManager.getInstance().setData(Build.SUPPORTED_ABIS[0]);
-            messageManager.getInstance().createMessage(enums.popup_type.abi_error);
+            pluginController.getInstance().MessageManagerHandler(Build.SUPPORTED_ABIS[0],enums.popup_type.abi_error);
         }
 
     }
@@ -101,17 +93,13 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         viewController.getInstance().lowMemoryError();
     }
 
-    public void initAdManager()
-    {
-    }
-
     @Override
     public void onTrimMemory(int level)
     {
         Log.i("CURRENT_LEVEL:" , level+"");
         if(isAppPaused && (level==80 || level==15))
         {
-           preference_manager.getInstance().setBool(keys.low_memory,true);
+           preferenceController.getInstance().setBool(keys.low_memory,true);
            finish();
         }
     }
@@ -143,13 +131,13 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         {
             webView.stopLoading();
             onloadURL(constants.backendBing,true,false,true);
-            if(home_model.getInstance().getNavigation().size()!=1)
+            if(homeModel.getInstance().getNavigation().size()!=1)
             {
-                home_model.getInstance().addNavigation(constants.backendBing,enums.navigationType.onion);
+                homeModel.getInstance().addNavigation(constants.backendBing,enums.navigationType.onion);
             }
-            if(home_model.getInstance().getNavigation().size()>0)
+            if(homeModel.getInstance().getNavigation().size()>0)
             {
-                home_model.getInstance().getNavigation().set(0,new navigation_model(constants.backendBing,enums.navigationType.onion));
+                homeModel.getInstance().getNavigation().set(0,new navigation_model(constants.backendBing,enums.navigationType.onion));
             }
             return false;
         }
@@ -157,26 +145,26 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         {
             webView.stopLoading();
             onloadURL(constants.backendGoogle,true,false,true);
-            if(home_model.getInstance().getNavigation().size()!=1)
+            if(homeModel.getInstance().getNavigation().size()!=1)
             {
-                home_model.getInstance().addNavigation(constants.backendGoogle,enums.navigationType.onion);
+                homeModel.getInstance().addNavigation(constants.backendGoogle,enums.navigationType.onion);
             }
-            if(home_model.getInstance().getNavigation().size()>0)
+            if(homeModel.getInstance().getNavigation().size()>0)
             {
-                home_model.getInstance().getNavigation().set(0,new navigation_model(constants.backendGoogle,enums.navigationType.onion));
+                homeModel.getInstance().getNavigation().set(0,new navigation_model(constants.backendGoogle,enums.navigationType.onion));
             }
             return false;
         }
         else
         {
             onloadURL(constants.backendGenesis,false,false,true);
-            if(home_model.getInstance().getNavigation().size()!=1)
+            if(homeModel.getInstance().getNavigation().size()!=1)
             {
-                home_model.getInstance().addNavigation(constants.backendGenesis,enums.navigationType.base);
+                homeModel.getInstance().addNavigation(constants.backendGenesis,enums.navigationType.base);
             }
-            if(home_model.getInstance().getNavigation().size()>0)
+            if(homeModel.getInstance().getNavigation().size()>0)
             {
-                home_model.getInstance().getNavigation().set(0,new navigation_model(constants.backendGenesis,enums.navigationType.base));
+                homeModel.getInstance().getNavigation().set(0,new navigation_model(constants.backendGenesis,enums.navigationType.base));
             }
             return true;
         }
@@ -184,8 +172,8 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
     public void initializeAppModel()
     {
-        home_model.getInstance().setAppContext(this);
-        home_model.getInstance().setAppInstance(this);
+        homeModel.getInstance().setAppContext(this);
+        homeModel.getInstance().setAppInstance(this);
     }
 
     public void initializeConnections()
@@ -207,11 +195,6 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         webviewclient = new webviewClient();
         geckoclient = new geckoClients();
         eventhandler = new home_ehandler();
-    }
-
-    public void initializeCrashlytics()
-    {
-        fabricManager.getInstance().init();
     }
 
     public void initializeWebView()
@@ -281,7 +264,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             geckoclient.saveCache(url);
             geckoclient.loadGeckoURL(url,geckoView,isUrlSavable,webView.getVisibility()==View.VISIBLE || isInternetErrorOpened());
         }
-        else if(!home_model.getInstance().isUrlRepeatable(url,webView.getUrl()) || isRepeatAllowed || webView.getVisibility() == View.GONE)
+        else if(!homeModel.getInstance().isUrlRepeatable(url,webView.getUrl()) || isRepeatAllowed || webView.getVisibility() == View.GONE)
         {
             webviewclient.saveCache(url);
             webView.loadUrl(url);
@@ -419,11 +402,10 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         return super.onOptionsItemSelected(item);
     }
 
-    public void initializeAds()
+    public AdView getBannerAd()
     {
-        adManager.getInstance().initialize(banner_ads);
+        return banner_ads;
     }
-
 
 
 }

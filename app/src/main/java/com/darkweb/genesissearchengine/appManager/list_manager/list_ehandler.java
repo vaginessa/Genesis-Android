@@ -5,11 +5,13 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import com.darkweb.genesissearchengine.appManager.home_activity.home_model;
+
+import com.darkweb.genesissearchengine.appManager.home_activity.homeModel;
 import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.helperMethod;
 import com.darkweb.genesissearchengine.pluginManager.orbotManager;
+import com.darkweb.genesissearchengine.pluginManager.pluginController;
 import com.example.myapplication.R;
 
 public class list_ehandler
@@ -76,18 +78,18 @@ public class list_ehandler
     {
         String url_temp = helperMethod.completeURL(url);
 
-        home_model.getInstance().addNavigation(url, enums.navigationType.onion);
+        homeModel.getInstance().addNavigation(url, enums.navigationType.onion);
 
         if(!url_temp.contains("boogle") && !url_temp.equals(constants.backendGoogle) && !url_temp.equals(constants.backendBing))
         {
-            if(orbotManager.getInstance().initOrbot(url_temp))
+            if(pluginController.getInstance().OrbotManagerInit(url_temp))
             {
-                home_model.getInstance().getHomeInstance().onloadURL(url_temp,true,false,false);
+                homeModel.getInstance().getHomeInstance().onloadURL(url_temp,true,false,false);
             }
         }
         else
         {
-            home_model.getInstance().getHomeInstance().onloadURL(url_temp,false,false,false);
+            homeModel.getInstance().getHomeInstance().onloadURL(url_temp,false,false,false);
         }
         list_model.getInstance().getListInstance().closeView();
 

@@ -3,31 +3,39 @@ package com.darkweb.genesissearchengine.dataManager;
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import com.darkweb.genesissearchengine.appManager.home_activity.home_model;
 
-public class preference_manager
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.darkweb.genesissearchengine.appManager.home_activity.homeModel;
+
+public class preferenceController
 {
+    /*Private Variables*/
+
+    private AppCompatActivity app_context;
+
     /*Private Declarations*/
 
-    private static final preference_manager ourInstance = new preference_manager();
+    private static final preferenceController ourInstance = new preferenceController();
     private SharedPreferences prefs;
     private SharedPreferences.Editor edit;
 
-    public static preference_manager getInstance()
+    public static preferenceController getInstance()
     {
         return ourInstance;
     }
 
     /*Initializations*/
 
-    private preference_manager()
+    private preferenceController()
     {
+        app_context = homeModel.getInstance().getHomeInstance();
     }
 
     @SuppressLint("CommitPrefEdits")
     public void initialize()
     {
-        prefs = PreferenceManager.getDefaultSharedPreferences(home_model.getInstance().getAppContext());
+        prefs = PreferenceManager.getDefaultSharedPreferences(app_context);
         edit = prefs.edit();
     }
 

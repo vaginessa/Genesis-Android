@@ -15,10 +15,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.darkweb.genesissearchengine.constants.*;
 import com.darkweb.genesissearchengine.helperMethod;
-import com.darkweb.genesissearchengine.pluginManager.fabricManager;
 import com.darkweb.genesissearchengine.pluginManager.localNotification;
 import com.darkweb.genesissearchengine.pluginManager.messageManager;
 import com.darkweb.genesissearchengine.pluginManager.orbotManager;
+import com.darkweb.genesissearchengine.pluginManager.pluginController;
+
 import org.mozilla.geckoview.*;
 
 import java.util.LinkedList;
@@ -43,7 +44,7 @@ class geckoClients
 
     void loadGeckoURL(String url,GeckoView geckoView,boolean isUrlSavable,boolean reinit)
     {
-        boolean init_status = orbotManager.getInstance().initOrbot(url);
+        boolean init_status = pluginController.getInstance().OrbotManagerInit(url);
 
         if (init_status)
         {
@@ -57,8 +58,8 @@ class geckoClients
             navigatedURL = "";
             loadingCompeleted = false;
             session1.loadUri(url);
-            home_model.getInstance().getHomeInstance().onRequestTriggered(true,url);
-            home_model.getInstance().getHomeInstance().onProgressBarUpdateView(4);
+            homeModel.getInstance().getHomeInstance().onRequestTriggered(true,url);
+            homeModel.getInstance().getHomeInstance().onProgressBarUpdateView(4);
             isFirstTimeLoad = true;
             wasBackPressed = false;
             isContentLoading = false;
@@ -73,7 +74,7 @@ class geckoClients
     void initialize(GeckoView geckoView)
     {
         session1 = new GeckoSession();
-        runtime1 = GeckoRuntime.getDefault(home_model.getInstance().getAppContext());
+        runtime1 = GeckoRuntime.getDefault(homeModel.getInstance().getAppContext());
         runtime1.getSettings().setJavaScriptEnabled(status.java_status);
         session1.open(runtime1);
         geckoView.releaseSession();
@@ -91,10 +92,10 @@ class geckoClients
         public void onLocationChange(GeckoSession session, String url)
         {
             navigatedURL = url;
-            if(isUrlSavable && home_model.getInstance().getNavigation().size()>0 && !url.equals("about:blank"))
+            if(isUrlSavable && homeModel.getInstance().getNavigation().size()>0 && !url.equals("about:blank"))
             {
-                home_model.getInstance().addHistory(navigatedURL);
-                home_model.getInstance().addNavigation(navigatedURL,enums.navigationType.onion);
+                homeModel.getInstance().addHistory(navigatedURL);
+                homeModel.getInstance().addNavigation(navigatedURL,enums.navigationType.onion);
                 wasURLSaved = true;
             }
         }
@@ -119,7 +120,7 @@ class geckoClients
             isRunning = true;
             loadingCompeleted = false;
 
-            home_model.getInstance().getHomeInstance().onUpdateSearchBarView(url);
+            homeModel.getInstance().getHomeInstance().onUpdateSearchBarView(url);
             isContentLoading = !navigatedURL.equals(url);
 
             navigatedURL = url;
@@ -136,29 +137,29 @@ class geckoClients
                 {
                     if(isFirstTimeLoad)
                     {
-                        home_model.getInstance().getHomeInstance().hideSplashScreen();
+                        homeModel.getInstance().getHomeInstance().hideSplashScreen();
                     }
                     if(!success && !isContentLoading && !wasBackPressed)
                     {
-                        home_model.getInstance().getHomeInstance().onPageFinished(true);
-                        home_model.getInstance().getHomeInstance().onInternetErrorView();
+                        homeModel.getInstance().getHomeInstance().onPageFinished(true);
+                        homeModel.getInstance().getHomeInstance().onInternetErrorView();
 
-                        if(!wasURLSaved && home_model.getInstance().getNavigation().size()>0 && !home_model.getInstance().getNavigation().get(home_model.getInstance().getNavigation().size()-1).getURL().equals(url))
+                        if(!wasURLSaved && homeModel.getInstance().getNavigation().size()>0 && !homeModel.getInstance().getNavigation().get(homeModel.getInstance().getNavigation().size()-1).getURL().equals(url))
                         {
-                            home_model.getInstance().addHistory(navigatedURL);
-                            home_model.getInstance().addNavigation(navigatedURL,enums.navigationType.onion);
+                            homeModel.getInstance().addHistory(navigatedURL);
+                            homeModel.getInstance().addNavigation(navigatedURL,enums.navigationType.onion);
                         }
                     }
                     else if(success)
                     {
                         if(helperMethod.getHost(navigatedURL).contains(".onion"))
                         {
-                            home_model.getInstance().getHomeInstance().onShowAd(enums.adID.hidden_onion_start);
+                            homeModel.getInstance().getHomeInstance().onShowAd(enums.adID.hidden_onion_start);
                         }
 
-                        home_model.getInstance().getHomeInstance().onDisableInternetError();
-                        home_model.getInstance().getHomeInstance().onProgressBarUpdateView(0);
-                        home_model.getInstance().getHomeInstance().onPageFinished(true);
+                        homeModel.getInstance().getHomeInstance().onDisableInternetError();
+                        homeModel.getInstance().getHomeInstance().onProgressBarUpdateView(0);
+                        homeModel.getInstance().getHomeInstance().onPageFinished(true);
                     }
 
                     isUrlSavable = true;
@@ -180,11 +181,11 @@ class geckoClients
             }
             else if(progress>=5)
             {
-                home_model.getInstance().getHomeInstance().onProgressBarUpdateView(progress);
+                homeModel.getInstance().getHomeInstance().onProgressBarUpdateView(progress);
             }
             else
             {
-                home_model.getInstance().getHomeInstance().onProgressBarUpdateView(4);
+                homeModel.getInstance().getHomeInstance().onProgressBarUpdateView(4);
             }
         }
 
@@ -204,12 +205,12 @@ class geckoClients
         wasBackPressed = true;
         session1.stop();
 
-        if(home_model.getInstance().getHomeInstance().isInternetErrorOpened())
+        if(homeModel.getInstance().getHomeInstance().isInternetErrorOpened())
         {
             initialize(geckoView);
         }
 
-        session1.loadUri(home_model.getInstance().getNavigation().get(home_model.getInstance().getNavigation().size()-1).getURL());
+        session1.loadUri(homeModel.getInstance().getNavigation().get(homeModel.getInstance().getNavigation().size()-1).getURL());
     }
 
     void stopHiddenView(GeckoView geckoView,boolean releaseView,boolean backPressed)
@@ -324,11 +325,11 @@ class geckoClients
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndTypeAndNormalize(Uri.parse(response.uri), response.contentType);
-                home_model.getInstance().getHomeInstance().startActivity(intent);
+                homeModel.getInstance().getHomeInstance().startActivity(intent);
             } catch (ActivityNotFoundException e) {
 
                 wasBackPressed = true;
-                home_model.getInstance().getHomeInstance().onProgressBarUpdateView(0);
+                homeModel.getInstance().getHomeInstance().onProgressBarUpdateView(0);
                 downloadFile(response);
             }
         }
@@ -346,10 +347,10 @@ class geckoClients
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 3;
     private LinkedList<GeckoSession.WebResponseInfo> mPendingDownloads = new LinkedList<>();
     private void downloadFile(GeckoSession.WebResponseInfo response, String userAgent) {
-        if (ContextCompat.checkSelfPermission(home_model.getInstance().getHomeInstance(),
+        if (ContextCompat.checkSelfPermission(homeModel.getInstance().getHomeInstance(),
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             mPendingDownloads.add(response);
-            ActivityCompat.requestPermissions(home_model.getInstance().getHomeInstance(),
+            ActivityCompat.requestPermissions(homeModel.getInstance().getHomeInstance(),
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     REQUEST_WRITE_EXTERNAL_STORAGE);
             return;
@@ -358,8 +359,8 @@ class geckoClients
 
         url = Uri.parse(response.uri);
         downloadFile = response.filename != null ? response.filename : url.getLastPathSegment();
-        messageManager.getInstance().setData(downloadFile);
-        messageManager.getInstance().createMessage(enums.popup_type.download_file);
+
+        pluginController.getInstance().MessageManagerHandler(downloadFile,enums.popup_type.download_file);
     }
 
     String downloadFile = "";
@@ -368,9 +369,9 @@ class geckoClients
     void downloadFile()
     {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            localNotification.getInstance().createNotification("Downloading | " + downloadFile,"Starting Download");
+            pluginController.getInstance().createNotification("Downloading | " + downloadFile,"Starting Download");
         }
-        home_model.getInstance().getHomeInstance().startService(DownloadFileService.getDownloadService(home_model.getInstance().getHomeInstance(), url.toString()+"__"+downloadFile, Environment.DIRECTORY_DOWNLOADS));
+        homeModel.getInstance().getHomeInstance().startService(DownloadFileService.getDownloadService(homeModel.getInstance().getHomeInstance(), url.toString()+"__"+downloadFile, Environment.DIRECTORY_DOWNLOADS));
     }
 
     private class ExampleContentBlockingDelegate

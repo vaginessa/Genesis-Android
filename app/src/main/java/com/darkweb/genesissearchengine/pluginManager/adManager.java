@@ -4,46 +4,35 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.darkweb.genesissearchengine.constants.constants;
 import com.google.android.gms.ads.*;
 
-public class adManager
+class adManager
 {
 
     /*Private Variables*/
 
-    private AdView banner_ads = null;
-    private pluginController plugin_controller;
     private AppCompatActivity app_context;
+    private callbackManager.callbackListener callback;
+    private AdView banner_ads = null;
 
     /*Initializations*/
 
-    private static final adManager ourInstance = new adManager();
-    public static adManager getInstance() {
-        return ourInstance;
+    adManager(AppCompatActivity app_context,callbackManager.callbackListener callback,AdView banner_ads) {
+        this.app_context = app_context;
+        this.callback = callback;
+        initialize(banner_ads);
     }
 
-    private adManager() {
-        plugin_controller = pluginController.getInstance();
-        app_context = plugin_controller.getAppContext();
-    }
-
-    public void initialize(AdView banner_ads){
+    private void initialize(AdView banner_ads){
         this.banner_ads = banner_ads;
         MobileAds.initialize(app_context, constants.admobKey);
-        initBannerAds();
     }
 
-    private void initBannerAds(){
-        AdRequest request = new AdRequest.Builder().addTestDevice(constants.testKey).build();
-        banner_ads.loadAd(request);
-        admobListeners();
-    }
-
-    /*Helper Methods*/
+    /*Local Helper Methods*/
 
     private void admobListeners(){
             banner_ads.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
-                plugin_controller.onBannerAdLoaded();
+                callback.callbackSuccess(null,null);
             }
 
             @Override
@@ -52,7 +41,7 @@ public class adManager
 
             @Override
             public void onAdOpened() {
-                plugin_controller.onBannerAdLoaded();
+                callback.callbackSuccess(null,null);
             }
 
             @Override
@@ -68,4 +57,13 @@ public class adManager
             }
         });
     }
+
+    /*External Helper Methods*/
+
+    void initializeBannerAds(){
+        AdRequest request = new AdRequest.Builder().addTestDevice(constants.testKey).build();
+        banner_ads.loadAd(request);
+        admobListeners();
+    }
+
 }

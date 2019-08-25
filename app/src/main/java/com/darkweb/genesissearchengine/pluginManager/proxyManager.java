@@ -29,29 +29,25 @@ public class proxyManager
 {
     /*Private Variables*/
 
-    private pluginController plugin_controller;
     private AppCompatActivity app_context;
+    private callbackManager.callbackListener callback;
+
     private boolean is_running = false;
     private static final String channel_id = constants.channel_id;
 
     /*Initializations*/
 
-    private static final proxyManager ourInstance = new proxyManager();
-    public static proxyManager getInstance() {
-        return ourInstance;
+    proxyManager(AppCompatActivity app_context,callbackManager.callbackListener callback){
+        this.app_context = app_context;
+        this.callback = callback;
+        initialize();
     }
 
-    private proxyManager(){
-        plugin_controller = pluginController.getInstance();
-        app_context = plugin_controller.getAppContext();
+    private void initialize(){
+
     }
 
     /*Initialize Hydra*/
-
-    private void startVPN() {
-        initHydraSdk();
-        connect();
-    }
 
     private void initHydraSdk() {
 
@@ -83,20 +79,6 @@ public class proxyManager
 
     /*Hydra States*/
 
-    public void disconnectConnection() {
-
-        HydraSdk.stopVPN(TrackingConstants.GprReasons.M_UI, new CompletableCallback() {
-            @Override
-            public void complete() {
-
-            }
-
-            @Override
-            public void error(@NonNull HydraException e) {
-            }
-        });
-    }
-
     private void connect() {
         AuthMethod authMethod = AuthMethod.anonymous();
         HydraSdk.login(authMethod, new Callback<User>()
@@ -119,7 +101,7 @@ public class proxyManager
     }
 
 
-    public void startVPNConnection()
+    private void startVPNConnection()
     {
         HydraSdk.startVPN(createConnectionRequest(), new Callback<ServerCredentials>()
         {
@@ -141,16 +123,10 @@ public class proxyManager
 
     private void loadBoogle()
     {
-        plugin_controller.initBoogle();
         is_running = true;
     }
 
     /*Helper Methods*/
-
-    public void autoStart()
-    {
-        startVPN();
-    }
 
     private SessionConfig createConnectionRequest()
     {
@@ -166,7 +142,28 @@ public class proxyManager
         return builder.build();
     }
 
-    public boolean isProxyRunning(){
+    /*External Helper Methods*/
+
+    void startVPN() {
+        initHydraSdk();
+        connect();
+    }
+
+    void disconnectConnection() {
+
+        HydraSdk.stopVPN(TrackingConstants.GprReasons.M_UI, new CompletableCallback() {
+            @Override
+            public void complete() {
+
+            }
+
+            @Override
+            public void error(@NonNull HydraException e) {
+            }
+        });
+    }
+
+    boolean isProxyRunning(){
         return is_running;
     }
 

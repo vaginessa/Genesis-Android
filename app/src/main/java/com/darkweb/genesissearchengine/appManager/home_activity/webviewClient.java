@@ -6,8 +6,8 @@ import android.webkit.WebViewClient;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.status;
 import com.darkweb.genesissearchengine.helperMethod;
-import com.darkweb.genesissearchengine.pluginManager.fabricManager;
 import com.darkweb.genesissearchengine.pluginManager.orbotManager;
+import com.darkweb.genesissearchengine.pluginManager.pluginController;
 
 public class webviewClient
 {
@@ -17,8 +17,8 @@ public class webviewClient
     {
         if(url.contains("boogle"))
         {
-            home_model.getInstance().addNavigation(url,enums.navigationType.base);
-            home_model.getInstance().addHistory(url);
+            homeModel.getInstance().addNavigation(url,enums.navigationType.base);
+            homeModel.getInstance().addHistory(url);
         }
     }
 
@@ -31,33 +31,34 @@ public class webviewClient
             {
                 if(url.contains("advert"))
                 {
-                    home_model.getInstance().getHomeInstance().onProgressBarUpdateView(0);
-                    helperMethod.openPlayStore(url.split("__")[1],home_model.getInstance().getHomeInstance());
+                    homeModel.getInstance().getHomeInstance().onProgressBarUpdateView(0);
+                    helperMethod.openPlayStore(url.split("__")[1], homeModel.getInstance().getHomeInstance());
                     return true;
                 }
 
                 isGeckoView = false;
-                if(home_model.getInstance().isUrlRepeatable(url,view.getUrl()))
+                if(homeModel.getInstance().isUrlRepeatable(url,view.getUrl()))
                 {
-                    home_model.getInstance().getHomeInstance().onProgressBarUpdateView(0);
+                    homeModel.getInstance().getHomeInstance().onProgressBarUpdateView(0);
                     return true;
                 }
                 if(!url.contains("boogle"))
                 {
-                    home_model.getInstance().getHomeInstance().stopHiddenView(false,true);
+                    homeModel.getInstance().getHomeInstance().stopHiddenView(false,true);
                     isGeckoView = true;
-                    if(orbotManager.getInstance().initOrbot(url))
+
+                    if(pluginController.getInstance().OrbotManagerInit(url))
                     {
-                        home_model.getInstance().getHomeInstance().onloadURL(url,true,true,false);
+                        homeModel.getInstance().getHomeInstance().onloadURL(url,true,true,false);
                     }
                     return true;
                 }
                 else
                 {
-                    home_model.getInstance().getHomeInstance().stopHiddenView(false,true);
-                    home_model.getInstance().addNavigation(url,enums.navigationType.base);
-                    home_model.getInstance().addHistory(url);
-                    home_model.getInstance().getHomeInstance().onRequestTriggered(false,url);
+                    homeModel.getInstance().getHomeInstance().stopHiddenView(false,true);
+                    homeModel.getInstance().addNavigation(url,enums.navigationType.base);
+                    homeModel.getInstance().addHistory(url);
+                    homeModel.getInstance().getHomeInstance().onRequestTriggered(false,url);
                     return false;
                 }
             }
@@ -65,16 +66,16 @@ public class webviewClient
             public void onPageFinished(WebView  view, String  url)
             {
                 super.onPageFinished(view, url);
-                home_model.getInstance().getHomeInstance().onPageFinished(false);
-                home_model.getInstance().getHomeInstance().onUpdateSearchBarView(url);
-                home_model.getInstance().getHomeInstance().onProgressBarUpdateView(0);
+                homeModel.getInstance().getHomeInstance().onPageFinished(false);
+                homeModel.getInstance().getHomeInstance().onUpdateSearchBarView(url);
+                homeModel.getInstance().getHomeInstance().onProgressBarUpdateView(0);
                 status.isApplicationLoaded = true;
             }
 
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl)
             {
-                home_model.getInstance().getHomeInstance().onInternetErrorView();
+                homeModel.getInstance().getHomeInstance().onInternetErrorView();
             }
         };
 
@@ -88,11 +89,11 @@ public class webviewClient
                 {
                     if(newProgress<95 && newProgress>5)
                     {
-                        home_model.getInstance().getHomeInstance().onProgressBarUpdateView(newProgress);
+                        homeModel.getInstance().getHomeInstance().onProgressBarUpdateView(newProgress);
                     }
                     else if(newProgress<=5)
                     {
-                        home_model.getInstance().getHomeInstance().onProgressBarUpdateView(4);
+                        homeModel.getInstance().getHomeInstance().onProgressBarUpdateView(4);
                     }
                 }
             }

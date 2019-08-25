@@ -3,62 +3,66 @@ package com.darkweb.genesissearchengine.appManager.setting_manager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
-import com.darkweb.genesissearchengine.constants.keys;
-import com.darkweb.genesissearchengine.dataManager.preference_manager;
 import com.example.myapplication.R;
 
-public class settings_ehandler
+public class settingsEhandler
 {
+    /*Private Variables*/
+
+    private settingModel setting_model;
+    private settingController setting_controller;
+
     /*Initializations*/
 
-    private static final settings_ehandler ourInstance = new settings_ehandler();
-
-    public static settings_ehandler getInstance()
+    private static final settingsEhandler ourInstance = new settingsEhandler();
+    public static settingsEhandler getInstance()
     {
         return ourInstance;
     }
 
-    private settings_ehandler()
+    private settingsEhandler()
     {
+        this.setting_controller = settingModel.getInstance().getSettingInstance();
+        this.setting_model = settingModel.getInstance();
     }
 
     /*Listeners*/
 
     private void onJavaScriptListener(int position)
     {
-        if(position==1 && setting_model.getInstance().java_status)
+        if(position==1 && setting_model.java_status)
         {
-            setting_model.getInstance().java_status = false;
+            setting_model.java_status = false;
         }
-        else if(position==0 && !setting_model.getInstance().java_status)
+        else if(position==0 && !setting_model.java_status)
         {
-            setting_model.getInstance().java_status = true;
+            setting_model.java_status = true;
         }
     }
 
     private void onSearchListner(AdapterView<?> parentView,int position)
     {
-        if(!setting_model.getInstance().search_status.equals(parentView.getItemAtPosition(position).toString()))
+        if(!setting_model.search_status.equals(parentView.getItemAtPosition(position).toString()))
         {
-            setting_model.getInstance().search_status = parentView.getItemAtPosition(position).toString();
+            setting_model.search_status = parentView.getItemAtPosition(position).toString();
         }
     }
 
     private void onHistoryListener(int position)
     {
-        if(position==1 && setting_model.getInstance().history_status)
+        if(position==1 && setting_model.history_status)
         {
-            setting_model.getInstance().history_status = false;
+            setting_model.history_status = false;
         }
-        else if(position==0 && !setting_model.getInstance().history_status)
+        else if(position==0 && !setting_model.history_status)
         {
-            setting_model.getInstance().history_status = true;
+            setting_model.history_status = true;
         }
     }
 
     void onBackPressed()
     {
-        setting_model.getInstance().getSettingInstance().closeView();
+        setting_controller.closeView();
     }
 
     /*Listener Initializations*/

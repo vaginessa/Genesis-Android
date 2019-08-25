@@ -58,4 +58,9 @@ public class constants
     public static String bypassDomains_1 = "*facebook.com";
     public static String bypassDomains_2 = "*wtfismyip.com";
 
+    /*ANALYTICS CONSTANTS*/
+
+    public static String unique_key_id = "*PREF_UNIQUE_ID";
+    public static String user_email = "user@fabric.io";
+
 }

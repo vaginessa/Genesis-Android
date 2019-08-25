@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.text.SpannableString;
@@ -17,12 +16,11 @@ import android.widget.*;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.MenuCompat;
 import com.darkweb.genesissearchengine.constants.*;
-import com.darkweb.genesissearchengine.dataManager.preference_manager;
+import com.darkweb.genesissearchengine.dataManager.preferenceController;
 import com.darkweb.genesissearchengine.helperMethod;
-import com.darkweb.genesissearchengine.httpManager.serverRequestManager;
 import com.darkweb.genesissearchengine.pluginManager.messageManager;
 import com.darkweb.genesissearchengine.pluginManager.orbotManager;
-import com.darkweb.genesissearchengine.pluginManager.proxyManager;
+import com.darkweb.genesissearchengine.pluginManager.pluginController;
 import com.example.myapplication.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -73,7 +71,7 @@ public class viewController
         this.loadingText = loadingText;
         this.webviewContainer = webviewContainer;
 
-        home_model.getInstance().getHomeInstance().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        homeModel.getInstance().getHomeInstance().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         checkSSLTextColor();
         initSplashScreen();
         initLock();
@@ -85,7 +83,7 @@ public class viewController
 
     private void initializeSuggestionView()
     {
-        AutoCompleteAdapter suggestionAdapter = new AutoCompleteAdapter(home_model.getInstance().getHomeInstance(), R.layout.hint_view, R.id.hintCompletionHeader, home_model.getInstance().getSuggestions());
+        AutoCompleteAdapter suggestionAdapter = new AutoCompleteAdapter(homeModel.getInstance().getHomeInstance(), R.layout.hint_view, R.id.hintCompletionHeader, homeModel.getInstance().getSuggestions());
 
         int width = Math.round(helperMethod.screenWidth());
         searchbar.setThreshold(2);
@@ -95,7 +93,7 @@ public class viewController
         searchbar.setDropDownHorizontalOffset(Math.round(width*0.114f)*-1);
 
         Drawable drawable;
-        Resources res = home_model.getInstance().getHomeInstance().getResources();
+        Resources res = homeModel.getInstance().getHomeInstance().getResources();
         try {
             drawable = Drawable.createFromXml(res, res.getXml(R.xml.rouned_corner));
             searchbar.setDropDownBackgroundDrawable(drawable);
@@ -112,7 +110,7 @@ public class viewController
 
     private boolean isHiddenView()
     {
-        return home_model.getInstance().getHomeInstance().isGeckoViewRunning();
+        return homeModel.getInstance().getHomeInstance().isGeckoViewRunning();
     }
 
     private void initViews()
@@ -122,7 +120,7 @@ public class viewController
 
     private void initLock()
     {
-        Drawable img = home_model.getInstance().getHomeInstance().getResources().getDrawable( R.drawable.icon_lock);
+        Drawable img = homeModel.getInstance().getHomeInstance().getResources().getDrawable( R.drawable.icon_lock);
         searchbar.measure(0, 0);
         img.setBounds( 0, (int)(searchbar.getMeasuredHeight()*0.00), (int)(searchbar.getMeasuredHeight()*1.10), (int)(searchbar.getMeasuredHeight()*0.69) );
         searchbar.setCompoundDrawables( img, null, null, null );
@@ -131,7 +129,7 @@ public class viewController
     void onRequestTriggered(boolean isHiddenWeb, String url)
     {
         onProgressBarUpdate(4);
-        helperMethod.hideKeyboard(home_model.getInstance().getHomeInstance());
+        helperMethod.hideKeyboard(homeModel.getInstance().getHomeInstance());
         pageLoadedSuccessfully = true;
         onUpdateSearchBar(url);
         checkSSLTextColor();
@@ -154,7 +152,7 @@ public class viewController
         onClearSearchBarCursor();
         onProgressBarUpdate(0);
         disableFloatingView();
-        home_model.getInstance().getHomeInstance().releaseSession();
+        homeModel.getInstance().getHomeInstance().releaseSession();
     }
 
     public void disableSplashScreen()
@@ -168,7 +166,7 @@ public class viewController
                 {
                     try
                     {
-                        boolean isFirstInstall = preference_manager.getInstance().getBool(keys.hasOrbotInstalled,true);
+                        boolean isFirstInstall = preferenceController.getInstance().getBool(keys.hasOrbotInstalled,true);
                         boolean isHidden = (status.search_status.equals(enums.searchEngine.Google.toString()) || status.search_status.equals(enums.searchEngine.Bing.toString()));
                         while (!status.isTorInitialized && (isFirstInstall || status.search_status.equals(enums.searchEngine.Google.toString()) || status.search_status.equals(enums.searchEngine.Bing.toString())))
                         {
@@ -186,8 +184,8 @@ public class viewController
                                 startPostTask(messages.INSTALL_COMPLETED);
                             }
                         }
-                        preference_manager.getInstance().setBool(keys.hasOrbotInstalled,false);
-                        if(!status.gateway || proxyManager.getInstance().isProxyRunning() || !status.search_status.equals("Hidden Web"))
+                        preferenceController.getInstance().setBool(keys.hasOrbotInstalled,false);
+                        if(!status.gateway || pluginController.getInstance().proxyStatus() || !status.search_status.equals("Hidden Web"))
                         {
                             startPostTask(messages.DISABLE_SPLASH_SCREEN);
                         }
@@ -230,14 +228,14 @@ public class viewController
                 }
                 else if(msg.what == messages.UPDATE_LOADING_TEXT)
                 {
-                    loadingText.setText(orbotManager.getInstance().getLogs());
+                    loadingText.setText(pluginController.getInstance().orbotLogs());
                 }
                 else if(msg.what == messages.DISABLE_SPLASH_SCREEN)
                 {
 
                     if(!status.search_status.equals("Hidden Web"))
                     {
-                        boolean e_status = home_model.getInstance().getHomeInstance().initSearchEngine();
+                        boolean e_status = homeModel.getInstance().getHomeInstance().initSearchEngine();
 
                         if(e_status)
                         {
@@ -263,7 +261,7 @@ public class viewController
         {
             onWelcomeMessageCheck();
         }
-        home_model.getInstance().getHomeInstance().initializeAds();
+        pluginController.getInstance().initializeBannerAds();
         status.isApplicationLoaded = true;
         splashScreen.animate().alpha(0.0f).setDuration(200).setListener(null).withEndAction((() -> splashScreen.setVisibility(View.GONE)));
     }
@@ -284,7 +282,7 @@ public class viewController
     @SuppressLint("RestrictedApi")
     void onPageFinished(boolean status)
     {
-        helperMethod.hideKeyboard(home_model.getInstance().getHomeInstance());
+        helperMethod.hideKeyboard(homeModel.getInstance().getHomeInstance());
         progressBar.setProgress(100);
 
         if(!status)
@@ -298,7 +296,7 @@ public class viewController
             disableSplashScreen();
             floatingButton.animate().alpha(0).withEndAction((() -> floatingButton.setVisibility(View.GONE)));
 
-            home_model.getInstance().getHomeInstance().stopHiddenView(false,false);
+            homeModel.getInstance().getHomeInstance().stopHiddenView(false,false);
         }
         else
         {
@@ -357,8 +355,8 @@ public class viewController
 
     private void initSplashScreen()
     {
-        boolean hasSoftKey = helperMethod.hasSoftKeys(home_model.getInstance().getHomeInstance().getWindowManager());
-        int height = helperMethod.screenHeight(hasSoftKey,home_model.getInstance().getHomeInstance());
+        boolean hasSoftKey = helperMethod.hasSoftKeys(homeModel.getInstance().getHomeInstance().getWindowManager());
+        int height = helperMethod.screenHeight(hasSoftKey, homeModel.getInstance().getHomeInstance());
 
         splashlogo.getLayoutParams().height = height;
         loading.setAnimation(helperMethod.getRotationAnimation());
@@ -388,17 +386,17 @@ public class viewController
 
     void onBackPressed()
     {
-        if(home_model.getInstance().getNavigation().size()>0)
+        if(homeModel.getInstance().getNavigation().size()>0)
         {
-            if(home_model.getInstance().getNavigation().size()==1)
+            if(homeModel.getInstance().getNavigation().size()==1)
             {
                 onProgressBarUpdate(0);
-                helperMethod.onMinimizeApp(home_model.getInstance().getHomeInstance());
+                helperMethod.onMinimizeApp(homeModel.getInstance().getHomeInstance());
                 return;
             }
-            else if(home_model.getInstance().getNavigation().get(home_model.getInstance().getNavigation().size()-2).type().equals(enums.navigationType.base))
+            else if(homeModel.getInstance().getNavigation().get(homeModel.getInstance().getNavigation().size()-2).type().equals(enums.navigationType.base))
             {
-                home_model.getInstance().getHomeInstance().stopHiddenView(true,true);
+                homeModel.getInstance().getHomeInstance().stopHiddenView(true,true);
                 if(webView.getVisibility()==View.VISIBLE)
                 {
                     onProgressBarUpdate(4);
@@ -410,7 +408,7 @@ public class viewController
                 }
 
                 /*CHANGED BUT NOT TESTED*/
-                home_model.getInstance().getNavigation().remove(home_model.getInstance().getNavigation().size()-1);
+                homeModel.getInstance().getNavigation().remove(homeModel.getInstance().getNavigation().size()-1);
 
                 webView.bringToFront();
                 webView.setAlpha(1);
@@ -421,16 +419,16 @@ public class viewController
             }
             else
             {
-                home_model.getInstance().getHomeInstance().stopHiddenView(true,true);
-                home_model.getInstance().getNavigation().remove(home_model.getInstance().getNavigation().size()-1);
+                homeModel.getInstance().getHomeInstance().stopHiddenView(true,true);
+                homeModel.getInstance().getNavigation().remove(homeModel.getInstance().getNavigation().size()-1);
                 if(webView.getVisibility()==View.VISIBLE)
                 {
-                    home_model.getInstance().getHomeInstance().onReInitGeckoView();
-                    home_model.getInstance().getHomeInstance().onReloadHiddenView();
+                    homeModel.getInstance().getHomeInstance().onReInitGeckoView();
+                    homeModel.getInstance().getHomeInstance().onReloadHiddenView();
                 }
                 else
                 {
-                    home_model.getInstance().getHomeInstance().onHiddenGoBack();
+                    homeModel.getInstance().getHomeInstance().onHiddenGoBack();
                 }
             }
         }
@@ -455,11 +453,10 @@ public class viewController
 
     private void onWelcomeMessageCheck()
     {
-        if(!preference_manager.getInstance().getBool("FirstTimeLoaded",false))
+        if(!preferenceController.getInstance().getBool("FirstTimeLoaded",false))
         {
-            messageManager.getInstance().createMessage(enums.popup_type.welcome);
+            pluginController.getInstance().MessageManagerHandler(null,enums.popup_type.welcome);
         }
-        serverRequestManager.getInstance().versionChecker();
     }
 
     public void onShowAds()
@@ -471,13 +468,13 @@ public class viewController
     {
         LinearLayout parentView = (LinearLayout)view.getParent();
 
-        PopupMenu popup = new PopupMenu(home_model.getInstance().getHomeInstance(), parentView,Gravity.RIGHT);
+        PopupMenu popup = new PopupMenu(homeModel.getInstance().getHomeInstance(), parentView,Gravity.RIGHT);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.menu_main, popup.getMenu());
         MenuCompat.setGroupDividerEnabled(popup.getMenu(), true);
         popup.setOnMenuItemClickListener(item ->
         {
-            home_model.getInstance().getHomeInstance().onMenuOptionSelected(item);
+            homeModel.getInstance().getHomeInstance().onMenuOptionSelected(item);
             return true;
         });
 
@@ -507,7 +504,7 @@ public class viewController
         }
         else
         {
-            home_model.getInstance().getHomeInstance().onReloadHiddenView();
+            homeModel.getInstance().getHomeInstance().onReloadHiddenView();
         }
     }
 
@@ -518,16 +515,16 @@ public class viewController
 
     void lowMemoryError()
     {
-        if(preference_manager.getInstance().getBool(keys.low_memory,false))
+        if(preferenceController.getInstance().getBool(keys.low_memory,false))
         {
-            preference_manager.getInstance().setBool(keys.low_memory,false);
-            helperMethod.showToast("App Closed Due To Low Memory",home_model.getInstance().getHomeInstance());
+            preferenceController.getInstance().setBool(keys.low_memory,false);
+            helperMethod.showToast("App Closed Due To Low Memory", homeModel.getInstance().getHomeInstance());
         }
     }
 
     public void setBannerAdMargin()
     {
-        final float scale = home_model.getInstance().getHomeInstance().getResources().getDisplayMetrics().density;
+        final float scale = homeModel.getInstance().getHomeInstance().getResources().getDisplayMetrics().density;
         int padding_102dp = (int) (52 * scale + 0.52f);
 
         webviewContainer.setPadding(0,padding_102dp,0,0);
@@ -540,15 +537,15 @@ public class viewController
 
     public void updateSearchEngineLogo()
     {
-        home_model.getInstance().getHomeInstance().findViewById(R.id.switchEngine);
+        homeModel.getInstance().getHomeInstance().findViewById(R.id.switchEngine);
         if(status.search_status.equals("Google") || status.search_status.equals("Bing"))
         {
-            ImageButton button = home_model.getInstance().getHomeInstance().findViewById(R.id.switchEngine);
+            ImageButton button = homeModel.getInstance().getHomeInstance().findViewById(R.id.switchEngine);
             button.setImageResource(R.drawable.genesis_logo);
         }
         else
         {
-            ImageButton button = home_model.getInstance().getHomeInstance().findViewById(R.id.switchEngine);
+            ImageButton button = homeModel.getInstance().getHomeInstance().findViewById(R.id.switchEngine);
             button.setImageResource(R.drawable.google_logo);
         }
     }

@@ -14,4 +14,5 @@ public class messages
     public final static int LOAD_COMPLETED =9;
     public final static int BANNER_ADS_LOADED =10;
     public final static int REINIT_HIDDEN =11;
+    public final static int ONION_NOT_INITIALIZED =11;
 }

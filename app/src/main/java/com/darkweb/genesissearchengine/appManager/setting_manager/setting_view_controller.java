@@ -2,11 +2,10 @@ package com.darkweb.genesissearchengine.appManager.setting_manager;
 
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import com.darkweb.genesissearchengine.appManager.home_activity.home_model;
 import com.darkweb.genesissearchengine.constants.keys;
 import com.darkweb.genesissearchengine.constants.status;
 import com.darkweb.genesissearchengine.constants.strings;
-import com.darkweb.genesissearchengine.dataManager.preference_manager;
+import com.darkweb.genesissearchengine.dataManager.preferenceController;
 
 import static com.darkweb.genesissearchengine.constants.status.history_status;
 import static com.darkweb.genesissearchengine.constants.status.java_status;
@@ -18,6 +17,9 @@ class setting_view_controller
     private Spinner search;
     private Spinner javascript;
     private Spinner history;
+    private settingController setting_controller;
+    private settingModel setting_model;
+    private preferenceController preference_controller;
 
     /*Initializations*/
 
@@ -26,6 +28,9 @@ class setting_view_controller
         this.search = search;
         this.javascript = javascript;
         this.history = history;
+        this.setting_controller = settingModel.getInstance().getSettingInstance();
+        this.setting_model = settingModel.getInstance();
+        preference_controller = preferenceController.getInstance();
 
         initViews();
         initJavascript();
@@ -70,7 +75,7 @@ class setting_view_controller
     @SuppressWarnings("unchecked")
     private void initSearchEngine()
     {
-        String myString = preference_manager.getInstance().getString(keys.search_engine, strings.darkweb);
+        String myString = preference_controller.getString(keys.search_engine, strings.darkweb);
 
         ArrayAdapter myAdap = (ArrayAdapter) search.getAdapter();
         int spinnerPosition = myAdap.getPosition(myString);
@@ -82,26 +87,26 @@ class setting_view_controller
     void closeView()
     {
 
-        if(!status.search_status.equals(setting_model.getInstance().search_status))
+        if(!status.search_status.equals(setting_model.search_status))
         {
-            status.search_status = setting_model.getInstance().search_status;
-            home_model.getInstance().getHomeInstance().initSearchEngine();
-            preference_manager.getInstance().setString(keys.search_engine, setting_model.getInstance().search_status);
+            status.search_status = setting_model.search_status;
+            setting_controller.initSearchEngine();
+            preference_controller.setString(keys.search_engine, setting_model.search_status);
         }
-        if(status.java_status != setting_model.getInstance().java_status)
+        if(status.java_status != setting_model.java_status)
         {
-            status.java_status = setting_model.getInstance().java_status;
-            home_model.getInstance().getHomeInstance().onReInitGeckoView();
-            preference_manager.getInstance().setBool(keys.java_script, status.java_status);
+            status.java_status = setting_model.java_status;
+            setting_controller.reInitGeckoView();
+            preference_controller.setBool(keys.java_script, status.java_status);
         }
-        if(status.history_status != setting_model.getInstance().history_status)
+        if(status.history_status != setting_model.history_status)
         {
-            status.history_status = setting_model.getInstance().history_status;
-            preference_manager.getInstance().setBool(keys.history_clear, status.history_status);
+            status.history_status = setting_model.history_status;
+            preference_controller.setBool(keys.history_clear, status.history_status);
         }
 
 
-        setting_model.getInstance().getSettingInstance().finish();
+        setting_controller.finish();
     }
 
 }

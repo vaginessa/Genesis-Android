@@ -31,7 +31,7 @@ public class DownloadFileService extends IntentService
         String []fn = downloadPath.split("__");
 
         Uri uri = Uri.parse(fn[0]); // Path where you want to download file.
-        DownloadManager manager = (DownloadManager) home_model.getInstance().getHomeInstance().getSystemService(DOWNLOAD_SERVICE);
+        DownloadManager manager = (DownloadManager) homeModel.getInstance().getHomeInstance().getSystemService(DOWNLOAD_SERVICE);
         DownloadManager.Request req = new DownloadManager.Request(uri);
         req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fn[1]);
         req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);

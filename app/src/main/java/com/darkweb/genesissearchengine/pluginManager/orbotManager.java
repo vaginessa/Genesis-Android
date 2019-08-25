@@ -25,50 +25,24 @@ public class orbotManager
     private static OnionProxyManager onionProxyManager = null;
     private Handler updateUIHandler = null;
 
-    private pluginController plugin_controller;
     private AppCompatActivity app_context;
+    private callbackManager.callbackListener callback;
 
     /*Initialization*/
 
-    private static final orbotManager ourInstance = new orbotManager();
-    public static orbotManager getInstance()
-    {
-        return ourInstance;
+    orbotManager(AppCompatActivity app_context,callbackManager.callbackListener callback){
+        this.app_context = app_context;
+        this.callback = callback;
+        initialize();
     }
-    private orbotManager(){
+
+    private void initialize(){
         createUpdateUiHandler();
-        plugin_controller = pluginController.getInstance();
-        app_context = plugin_controller.getAppContext();
     }
 
     /*Orbot Initialization*/
 
-    public boolean initOrbot(String url){
-        try
-        {
-            ExecutorService executor = Executors.newFixedThreadPool(1);
-            reCheckProxyStatus task = new reCheckProxyStatus();
-            Future<Boolean> future = executor.submit(task);
-            future.get();
-        }
-        catch (Exception ex)
-        {
-            return false;
-        }
-
-        if(!status.isTorInitialized)
-        {
-            messageManager.getInstance().setData(url);
-            messageManager.getInstance().createMessage(enums.popup_type.start_orbot);
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
-
-    static public class reCheckProxyStatus implements Callable<Boolean>
+    static private class reCheckProxyStatus implements Callable<Boolean>
     {
         @Override
         public Boolean call()
@@ -87,7 +61,7 @@ public class orbotManager
         }
     }
 
-    public void reinitOrbot()
+    private void reinitOrbot()
     {
         new Thread()
         {
@@ -162,7 +136,7 @@ public class orbotManager
                                 continue;
                             }
 
-                            plugin_controller.setPort(onionProxyManager.getIPv4LocalHostSocksPort());
+                            callback.callbackSuccess(null,null);
                             startPostTask();
                             isLoading = false;
                             break;
@@ -175,23 +149,6 @@ public class orbotManager
 
             }.start();
         }
-    }
-
-    /*Helper Methods*/
-
-    public String getLogs()
-    {
-        if(onionProxyManager!=null)
-        {
-            String Logs = onionProxyManager.getLastLog();
-            if(Logs.equals(""))
-            {
-                return "Loading Please Wait";
-            }
-            Logs=Logs.replace("FAILED","Securing");
-            return Logs;
-        }
-        return "Loading Please Wait";
     }
 
     /*------------------------------------------------------- POST TASK HANDLER -------------------------------------------------------*/
@@ -219,7 +176,7 @@ public class orbotManager
         status.isTorInitialized = true;
         PrefsHelper.setPref(keys.proxy_type, constants.proxy_type);
         PrefsHelper.setPref(keys.proxy_socks,constants.proxy_socks);
-        PrefsHelper.setPref(keys.proxy_socks_port, plugin_controller.getPort());
+        PrefsHelper.setPref(keys.proxy_socks_port, status.onionProxyPort);
         PrefsHelper.setPref(keys.proxy_socks_version,constants.proxy_socks_version);
         PrefsHelper.setPref(keys.proxy_socks_remote_dns,constants.proxy_socks_remote_dns);
         PrefsHelper.setPref(keys.proxy_cache,constants.proxy_cache);
@@ -227,6 +184,47 @@ public class orbotManager
         PrefsHelper.setPref(keys.proxy_useragent_override, constants.proxy_useragent_override);
         PrefsHelper.setPref(keys.proxy_donottrackheader_enabled,constants.proxy_donottrackheader_enabled);
         PrefsHelper.setPref(keys.proxy_donottrackheader_value,constants.proxy_donottrackheader_value);
+    }
+
+    /*External Helper Methods*/
+
+    String getLogs()
+    {
+        if(onionProxyManager!=null)
+        {
+            String Logs = onionProxyManager.getLastLog();
+            if(Logs.equals(""))
+            {
+                return "Loading Please Wait";
+            }
+            Logs=Logs.replace("FAILED","Securing");
+            return Logs;
+        }
+        return "Loading Please Wait";
+    }
+
+    boolean initOrbot(){
+        try
+        {
+            ExecutorService executor = Executors.newFixedThreadPool(1);
+            reCheckProxyStatus task = new reCheckProxyStatus();
+            Future<Boolean> future = executor.submit(task);
+            future.get();
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+
+        if(!status.isTorInitialized)
+        {
+            callback.callbackFailure(messages.ONION_NOT_INITIALIZED);
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
 

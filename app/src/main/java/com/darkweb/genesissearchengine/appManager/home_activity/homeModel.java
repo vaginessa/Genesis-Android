@@ -11,7 +11,7 @@ import com.darkweb.genesissearchengine.constants.status;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class home_model
+public class homeModel
 {
     /*Data Objects*/
     private ArrayList<list_row_model> history = new ArrayList<list_row_model>();
@@ -31,21 +31,17 @@ public class home_model
     }
 
     /*Setter Getter Initializations*/
-    private static final home_model ourInstance = new home_model();
-    public static home_model getInstance()
+    private static final homeModel ourInstance = new homeModel();
+    public static homeModel getInstance()
     {
         return ourInstance;
     }
 
 
     /*Getters Setters*/
-    public int getPort()
-    {
-        return port;
-    }
     public void setPort(int port)
     {
-        home_model.port = port;
+        status.onionProxyPort = port;
     }
 
 
@@ -78,7 +74,7 @@ public class home_model
         {
             database_controller.getInstance().execSQL("delete from history where 1",null);
         }
-        home_model.getInstance().getHomeInstance().reInitializeSuggestion();
+        homeModel.getInstance().getHomeInstance().reInitializeSuggestion();
     }
     public void addHistory(String url) {
 
@@ -153,7 +149,7 @@ public class home_model
             suggestions.add(actual_url);
         }
         suggestions.add(url.replace("https://","").replace("http://",""));
-        home_model.getInstance().getHomeInstance().reInitializeSuggestion();
+        homeModel.getInstance().getHomeInstance().reInitializeSuggestion();
     }
     public ArrayList<String> getSuggestions() {
         return new ArrayList<String>(suggestions);
@@ -173,7 +169,7 @@ public class home_model
 
     /*Helper Method*/
     public boolean isUrlRepeatable(String url,String viewUrl){
-        return url.equals(viewUrl) && !home_model.getInstance().getHomeInstance().isInternetErrorOpened() || url.contains("https://boogle.store/search?q=&");
+        return url.equals(viewUrl) && !homeModel.getInstance().getHomeInstance().isInternetErrorOpened() || url.contains("https://boogle.store/search?q=&");
 
     }
 
