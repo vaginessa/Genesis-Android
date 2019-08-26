@@ -7,15 +7,11 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import com.darkweb.genesissearchengine.appManager.list_manager.list_controller;
-import com.darkweb.genesissearchengine.appManager.setting_manager.settingController;
-import com.darkweb.genesissearchengine.appManager.setting_manager.settingModel;
+import com.darkweb.genesissearchengine.appManager.settingManager.settingController;
 import com.darkweb.genesissearchengine.constants.*;
 import com.darkweb.genesissearchengine.dataManager.preferenceController;
 import com.darkweb.genesissearchengine.helperMethod;
-import com.darkweb.genesissearchengine.pluginManager.messageManager;
-import com.darkweb.genesissearchengine.pluginManager.orbotManager;
 import com.darkweb.genesissearchengine.pluginManager.pluginController;
-import com.darkweb.genesissearchengine.pluginManager.proxyManager;
 import com.example.myapplication.R;
 
 import java.io.IOException;
@@ -181,8 +177,8 @@ public class home_ehandler
 
     public void switchSearchEngine(View view)
     {
-        settingModel.getInstance().search_status = "Google";
-        preferenceController.getInstance().setString(keys.search_engine, settingModel.getInstance().search_status);
+        // settingModel.getInstance().search_status = "Google";
+        preferenceController.getInstance().setString(keys.search_engine, "Google");
 
 
         if(status.search_status.equals("Google"))

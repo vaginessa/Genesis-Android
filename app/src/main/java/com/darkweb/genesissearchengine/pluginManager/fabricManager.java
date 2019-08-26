@@ -7,19 +7,19 @@ class fabricManager
     /*Private Variables*/
 
     private AppCompatActivity app_context;
-    private callbackManager.callbackListener callback;
+    private eventObserver.eventListener event;
 
     /*Initializations*/
 
-    fabricManager(AppCompatActivity app_context,callbackManager.callbackListener callback){
+    fabricManager(AppCompatActivity app_context, eventObserver.eventListener event){
         this.app_context = app_context;
-        this.callback = callback;
+        this.event = event;
         initialize();
     }
 
     private void initialize(){
         // Fabric.with(app_context, new Crashlytics());
         // plugin_controller.initializeAnalyticsManager();
-        callback.callbackSuccess(null,null);
+        event.invokeObserver(null,null);
     }
 }

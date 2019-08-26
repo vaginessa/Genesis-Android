@@ -14,14 +14,14 @@ class analyticManager
     /*Private Variables*/
 
     private AppCompatActivity app_context;
-    private callbackManager.callbackListener callback;
+    private eventObserver.eventListener event;
     private String uniqueID = null;
 
     /*Initializations*/
 
-    analyticManager(AppCompatActivity app_context,callbackManager.callbackListener callback){
+    analyticManager(AppCompatActivity app_context, eventObserver.eventListener event){
         this.app_context = app_context;
-        this.callback = callback;
+        this.event = event;
         initialize();
     }
 

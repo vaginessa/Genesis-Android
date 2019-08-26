@@ -26,13 +26,13 @@ public class orbotManager
     private Handler updateUIHandler = null;
 
     private AppCompatActivity app_context;
-    private callbackManager.callbackListener callback;
+    private eventObserver.eventListener event;
 
     /*Initialization*/
 
-    orbotManager(AppCompatActivity app_context,callbackManager.callbackListener callback){
+    orbotManager(AppCompatActivity app_context, eventObserver.eventListener event){
         this.app_context = app_context;
-        this.callback = callback;
+        this.event = event;
         initialize();
     }
 
@@ -137,7 +137,6 @@ public class orbotManager
                                 continue;
                             }
 
-                            callback.callbackSuccess(null,null);
                             startPostTask();
                             isLoading = false;
                             break;
@@ -175,6 +174,7 @@ public class orbotManager
     private void initializeProxy()
     {
         status.isTorInitialized = true;
+        event.invokeObserver(status.onionProxyPort,null);
         PrefsHelper.setPref(keys.proxy_type, constants.proxy_type);
         PrefsHelper.setPref(keys.proxy_socks,constants.proxy_socks);
         PrefsHelper.setPref(keys.proxy_socks_port, status.onionProxyPort);

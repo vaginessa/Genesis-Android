@@ -11,14 +11,14 @@ public class exitManager extends Service {
     /*Private Variables*/
 
     private AppCompatActivity app_context;
-    private callbackManager.callbackListener callback;
+    private eventObserver.eventListener event;
 
     /*Initializations*/
 
-    exitManager(AppCompatActivity app_context, callbackManager.callbackListener callback){
+    /*exitManager(AppCompatActivity app_context, eventObserver.eventListener event){
         this.app_context = app_context;
-        this.callback = callback;
-    }
+        this.event = event;
+    }*/
 
     /*Helper Methods*/
 
@@ -35,12 +35,12 @@ public class exitManager extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        callback.callbackSuccess(null,null);
+        //event.invokeObserver(null,null);
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         stopSelf();
-        callback.callbackSuccess(null,null);
+        //event.invokeObserver(null,null);
    }
 }

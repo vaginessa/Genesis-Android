@@ -1,5 +1,6 @@
 package com.darkweb.genesissearchengine.appManager.home_activity;
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -11,6 +12,7 @@ import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.*;
+import android.view.animation.Animation;
 import android.webkit.WebView;
 import android.widget.*;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -22,6 +24,7 @@ import com.darkweb.genesissearchengine.pluginManager.messageManager;
 import com.darkweb.genesissearchengine.pluginManager.orbotManager;
 import com.darkweb.genesissearchengine.pluginManager.pluginController;
 import com.example.myapplication.R;
+import com.google.android.gms.ads.AdView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class viewController
@@ -37,6 +40,7 @@ public class viewController
     private ImageView loading;
     private ImageView splashlogo;
     private TextView loadingText;
+    private AdView banner_ads = null;
 
     /*Private Variables*/
     private boolean pageLoadedSuccessfully = true;
@@ -58,7 +62,7 @@ public class viewController
     {
     }
 
-    void initialization(WebView webView1,FrameLayout webviewContainer,TextView loadingText, ProgressBar progressBar, AutoCompleteTextView searchbar, ConstraintLayout splashScreen, ConstraintLayout requestFailure, FloatingActionButton floatingButton, ImageView loading, ImageView splashlogo)
+    void initialization(WebView webView1,FrameLayout webviewContainer,TextView loadingText, ProgressBar progressBar, AutoCompleteTextView searchbar, ConstraintLayout splashScreen, ConstraintLayout requestFailure, FloatingActionButton floatingButton, ImageView loading, ImageView splashlogo,AdView banner_ads)
     {
         this.webView = webView1;
         this.progressBar = progressBar;
@@ -70,6 +74,7 @@ public class viewController
         this.splashlogo = splashlogo;
         this.loadingText = loadingText;
         this.webviewContainer = webviewContainer;
+        this.banner_ads = banner_ads;
 
         homeModel.getInstance().getHomeInstance().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         checkSSLTextColor();
@@ -525,9 +530,18 @@ public class viewController
     public void setBannerAdMargin()
     {
         final float scale = homeModel.getInstance().getHomeInstance().getResources().getDisplayMetrics().density;
-        int padding_102dp = (int) (52 * scale + 0.52f);
+        int padding_102dp = (int) (48 * scale + 0.52f);
 
-        webviewContainer.setPadding(0,padding_102dp,0,0);
+        ValueAnimator animator = ValueAnimator.ofInt(webviewContainer.getPaddingTop(), padding_102dp);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator){
+                webviewContainer.setPadding(0,(Integer) valueAnimator.getAnimatedValue(), 0, 0);
+            }
+        });
+        animator.setDuration(250);
+        animator.start();
+        banner_ads.animate().setStartDelay(50).alpha(1f);
     }
 
     public void onBannerAdLoaded()

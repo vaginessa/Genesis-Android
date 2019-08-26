@@ -4,12 +4,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import androidx.recyclerview.widget.RecyclerView;
-import com.darkweb.genesissearchengine.appManager.database_manager.database_controller;
+import com.darkweb.genesissearchengine.appManager.databaseManager.databaseController;
 import com.darkweb.genesissearchengine.appManager.home_activity.homeModel;
 import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.strings;
-import com.darkweb.genesissearchengine.pluginManager.messageManager;
 import com.darkweb.genesissearchengine.pluginManager.pluginController;
 
 import java.util.ArrayList;
@@ -58,7 +57,7 @@ class list_view_controller
         {
             table = strings.history_text;
         }
-        database_controller.getInstance().execSQL("delete from "+table+" where 1",null);
+        databaseController.getInstance().execSQL("delete from "+table+" where 1",null);
         list_model.getInstance().getListInstance().initializeList();
     }
 

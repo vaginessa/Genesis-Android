@@ -30,16 +30,16 @@ public class proxyManager
     /*Private Variables*/
 
     private AppCompatActivity app_context;
-    private callbackManager.callbackListener callback;
+    private eventObserver.eventListener event;
 
     private boolean is_running = false;
     private static final String channel_id = constants.channel_id;
 
     /*Initializations*/
 
-    proxyManager(AppCompatActivity app_context,callbackManager.callbackListener callback){
+    proxyManager(AppCompatActivity app_context, eventObserver.eventListener event){
         this.app_context = app_context;
-        this.callback = callback;
+        this.event = event;
         initialize();
     }
 

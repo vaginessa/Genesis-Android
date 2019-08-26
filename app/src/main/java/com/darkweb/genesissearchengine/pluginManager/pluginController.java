@@ -48,7 +48,7 @@ public class pluginController
     {
         ad_manager = new adManager(getAppContext(),new admobCallback(),home_controller.getBannerAd());
         analytic_manager = new analyticManager(getAppContext(),new analyticCallback());
-        exit_manager = new exitManager(getAppContext(),new exitCallback());
+        // exit_manager = new exitManager(getAppContext(),new exitCallback());
         fabric_manager = new fabricManager(getAppContext(),new fabricCallback());
         firebase_manager = new firebaseManager(getAppContext(),new firebaseCallback());
         local_notification = new localNotification(getAppContext(),new notificationCallback());
@@ -105,160 +105,106 @@ public class pluginController
     /*------------------------------------------------ CALLBACK LISTENERS------------------------------------------------------------*/
 
     /*Ad Manager*/
-    private class admobCallback implements callbackManager.callbackListener{
+    private class admobCallback implements eventObserver.eventListener{
         @Override
-        public void callbackSuccess(String data, enums.callbackType callback_type)
+        public void invokeObserver(Object data, enums.eventType e_type)
         {
             home_controller.onBannerAdLoaded();
-        }
-
-        @Override
-        public void callbackFailure(int errorCode)
-        {
-
         }
     }
 
     /*Exit Manager*/
-    private class exitCallback implements callbackManager.callbackListener{
+    private class exitCallback implements eventObserver.eventListener{
         @Override
-        public void callbackSuccess(String data, enums.callbackType callback_type)
+        public void invokeObserver(Object data, enums.eventType e_type)
         {
             preferenceController.getInstance().setBool(keys.low_memory,false);
             proxy_manager.disconnectConnection();
         }
-
-        @Override
-        public void callbackFailure(int errorCode)
-        {
-
-        }
     }
 
     /*Analytics Manager*/
-    private class analyticCallback implements callbackManager.callbackListener{
+    private class analyticCallback implements eventObserver.eventListener{
         @Override
-        public void callbackSuccess(String data, enums.callbackType callback_type)
+        public void invokeObserver(Object data, enums.eventType e_type)
         {
             analytic_manager.logUser();
-        }
-
-        @Override
-        public void callbackFailure(int errorCode)
-        {
-
         }
     }
 
     /*Fabric Manager*/
-    private class fabricCallback implements callbackManager.callbackListener{
+    private class fabricCallback implements eventObserver.eventListener{
         @Override
-        public void callbackSuccess(String data, enums.callbackType callback_type)
+        public void invokeObserver(Object data, enums.eventType e_type)
         {
-        }
-
-        @Override
-        public void callbackFailure(int errorCode)
-        {
-
         }
     }
 
     /*Firebase Manager*/
-    private class firebaseCallback implements callbackManager.callbackListener{
+    private class firebaseCallback implements eventObserver.eventListener{
         @Override
-        public void callbackSuccess(String data, enums.callbackType callback_type)
+        public void invokeObserver(Object data, enums.eventType e_type)
         {
-        }
-
-        @Override
-        public void callbackFailure(int errorCode)
-        {
-
         }
     }
 
     /*Notification Manager*/
-    private class notificationCallback implements callbackManager.callbackListener{
+    private class notificationCallback implements eventObserver.eventListener{
         @Override
-        public void callbackSuccess(String data, enums.callbackType callback_type)
+        public void invokeObserver(Object data, enums.eventType e_type)
         {
-        }
-
-        @Override
-        public void callbackFailure(int errorCode)
-        {
-
         }
     }
 
     /*Proxy Manager*/
-    private class proxyCallback implements callbackManager.callbackListener{
+    private class proxyCallback implements eventObserver.eventListener{
         @Override
-        public void callbackSuccess(String data, enums.callbackType callback_type)
+        public void invokeObserver(Object data, enums.eventType e_type)
         {
             if(status.search_status.equals(strings.darkweb))
             {
                 home_controller.initBoogle();
             }
         }
-
-        @Override
-        public void callbackFailure(int errorCode)
-        {
-
-        }
     }
 
     /*Onion Proxy Manager*/
-    private class orbotCallback implements callbackManager.callbackListener{
+    private class orbotCallback implements eventObserver.eventListener{
         @Override
-        public void callbackSuccess(String data, enums.callbackType callback_type)
+        public void invokeObserver(Object data, enums.eventType e_type)
         {
-            home_model.setPort(Integer.parseInt(data));
-        }
-
-        @Override
-        public void callbackFailure(int errorCode)
-        {
-
+            home_model.setPort((int)data);
         }
     }
 
     /*Message Manager*/
-    private class messageCallback implements callbackManager.callbackListener{
+    private class messageCallback implements eventObserver.eventListener{
         @Override
-        public void callbackSuccess(String data, enums.callbackType callback_type)
+        public void invokeObserver(Object data, enums.eventType e_type)
         {
-            if(callback_type.equals(enums.callbackType.welcome))
+            if(e_type.equals(enums.eventType.welcome))
             {
-                home_controller.onloadURL(data,false,true,false);
+                home_controller.onloadURL(data.toString(),false,true,false);
             }
-            else if(callback_type.equals(enums.callbackType.cancel_welcome)){
+            else if(e_type.equals(enums.eventType.cancel_welcome)){
                 preferenceController.getInstance().setBool(keys.first_time_loaded,true);
             }
-            else if(callback_type.equals(enums.callbackType.reload)){
+            else if(e_type.equals(enums.eventType.reload)){
                 home_controller.onReload();
             }
-            else if(callback_type.equals(enums.callbackType.clear_history)){
+            else if(e_type.equals(enums.eventType.clear_history)){
                 list_model.getInstance().getListInstance().onClearAll();
             }
-            else if(callback_type.equals(enums.callbackType.bookmark)){
-                String [] dataParser = data.split("split");
+            else if(e_type.equals(enums.eventType.bookmark)){
+                String [] dataParser = data.toString().split("split");
                 home_model.addBookmark(dataParser[0],dataParser[1]);
             }
-            else if(callback_type.equals(enums.callbackType.app_rated)){
+            else if(e_type.equals(enums.eventType.app_rated)){
                 preferenceController.getInstance().setBool(keys.isAppRated,true);
             }
-            else if(callback_type.equals(enums.callbackType.download_file)){
+            else if(e_type.equals(enums.eventType.download_file)){
                 homeModel.getInstance().getHomeInstance().downloadFile();
             }
-        }
-
-        @Override
-        public void callbackFailure(int errorCode)
-        {
-
         }
     }
 

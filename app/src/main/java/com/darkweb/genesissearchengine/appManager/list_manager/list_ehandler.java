@@ -23,10 +23,6 @@ public class list_ehandler
     {
         return ourInstance;
     }
-    private list_ehandler(){
-    }
-
-    /*Listener Initializations*/
 
     void onEditorActionListener(EditText view)
     {

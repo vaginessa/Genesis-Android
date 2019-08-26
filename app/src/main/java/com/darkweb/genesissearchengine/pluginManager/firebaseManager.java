@@ -2,18 +2,18 @@ package com.darkweb.genesissearchengine.pluginManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class firebaseManager
+class firebaseManager
 {
     /*Private Variables*/
 
     private AppCompatActivity app_context;
-    private callbackManager.callbackListener callback;
+    private eventObserver.eventListener event;
 
     /*Initializations*/
 
-    firebaseManager(AppCompatActivity app_context,callbackManager.callbackListener callback){
+    firebaseManager(AppCompatActivity app_context, eventObserver.eventListener event){
         this.app_context = app_context;
-        this.callback = callback;
+        this.event = event;
     }
 
 }

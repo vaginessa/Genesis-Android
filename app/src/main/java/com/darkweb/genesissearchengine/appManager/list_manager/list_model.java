@@ -1,7 +1,7 @@
 package com.darkweb.genesissearchengine.appManager.list_manager;
 
 import android.content.Context;
-import com.darkweb.genesissearchengine.appManager.database_manager.database_controller;
+import com.darkweb.genesissearchengine.appManager.databaseManager.databaseController;
 import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.strings;
 
@@ -101,7 +101,7 @@ public class list_model
         {
             table = strings.history_text;
         }
-        database_controller.getInstance().execSQL("delete from "+table+" where id="+index,null);
+        databaseController.getInstance().execSQL("delete from "+table+" where id="+index,null);
     }
 
 

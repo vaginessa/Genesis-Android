@@ -1,4 +1,4 @@
-package com.darkweb.genesissearchengine.appManager.database_manager;
+package com.darkweb.genesissearchengine.appManager.databaseManager;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,20 +11,20 @@ import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class database_controller
+public class databaseController
 {
 
     /*Private Variables*/
 
-    private static final database_controller ourInstance = new database_controller();
+    private static final databaseController ourInstance = new databaseController();
     private SQLiteDatabase database_instance;
 
-    public static database_controller getInstance()
+    public static databaseController getInstance()
     {
         return ourInstance;
     }
 
-    private database_controller()
+    private databaseController()
     {
     }
 

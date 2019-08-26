@@ -62,7 +62,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             initializeWebView();
             initializeLocalEventHandlers();
             initExitService();
-            viewController.getInstance().initialization(webView,webviewContainer,loadingText,progressBar,searchbar,splashScreen,requestFailure,floatingButton, loadingIcon,splashlogo);
+            viewController.getInstance().initialization(webView,webviewContainer,loadingText,progressBar,searchbar,splashScreen,requestFailure,floatingButton, loadingIcon,splashlogo,banner_ads  );
             geckoclient.initialize(geckoView);
             homeModel.getInstance().initialization();
             if(!status.gateway)

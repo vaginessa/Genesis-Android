@@ -26,14 +26,14 @@ public class messageManager
     private String data;
 
     private AppCompatActivity app_context;
-    private callbackManager.callbackListener callback;
+    private eventObserver.eventListener event;
 
     /*Initializations*/
 
-    messageManager(AppCompatActivity app_context, callbackManager.callbackListener callback)
+    messageManager(AppCompatActivity app_context, eventObserver.eventListener event)
     {
         this.app_context = app_context;
-        this.callback = callback;
+        this.event = event;
         initialize();
     }
 
@@ -58,26 +58,26 @@ public class messageManager
                 .addButton(strings.welcome_message_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
                     dialog.dismiss();
-                    callback.callbackSuccess(constants.blackMarket, enums.callbackType.welcome);
+                    event.invokeObserver(constants.blackMarket, enums.eventType.welcome);
                 })
                 .addButton(strings.welcome_message_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
                     dialog.dismiss();
-                    callback.callbackSuccess(constants.leakedDocument, enums.callbackType.welcome);
+                    event.invokeObserver(constants.leakedDocument, enums.eventType.welcome);
                 })
                 .addButton(strings.welcome_message_bt3, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
                     dialog.dismiss();
-                    callback.callbackSuccess(constants.news, enums.callbackType.welcome);
+                    event.invokeObserver(constants.news, enums.eventType.welcome);
                 })
                 .addButton(strings.welcome_message_bt4, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
                     dialog.dismiss();
-                    callback.callbackSuccess(constants.softwares, enums.callbackType.welcome);
+                    event.invokeObserver(constants.softwares, enums.eventType.welcome);
                 })
                 .addButton(strings.welcome_message_bt5, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
-                    callback.callbackSuccess(null, enums.callbackType.cancel_welcome);
+                    event.invokeObserver(null, enums.eventType.cancel_welcome);
                     dialog.dismiss();
                 });
 
@@ -148,7 +148,7 @@ public class messageManager
                 .setMessage("Bookmark URL | " + data + "\n")
                 .addButton(strings.bookmark_url_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
-                    callback.callbackSuccess(data.replace("genesis.onion","boogle.store")+"split"+input.getText().toString(),null);
+                    event.invokeObserver(data.replace("genesis.onion","boogle.store")+"split"+input.getText().toString(),null);
                     dialog.dismiss();
                 })
                 .addButton(strings.bookmark_url_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
@@ -166,7 +166,7 @@ public class messageManager
                 .setMessage(strings.clear_desc)
                 .addButton(strings.clear_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
-                    callback.callbackSuccess(null, enums.callbackType.clear_history);
+                    event.invokeObserver(null, enums.eventType.clear_history);
                     dialog.dismiss();
                 })
                 .addButton(strings.clear_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) -> dialog.dismiss());
@@ -198,13 +198,13 @@ public class messageManager
                 .setMessage(strings.rate_message)
                 .addButton(strings.rate_positive, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
-                    callback.callbackSuccess(null,enums.callbackType.app_rated);
+                    event.invokeObserver(null, enums.eventType.app_rated);
                     app_context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.darkweb.genesissearchengine")));
                     dialog.dismiss();
                 })
                 .addButton(strings.rate_negative, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
-                    callback.callbackSuccess(null,enums.callbackType.app_rated);
+                    event.invokeObserver(null, enums.eventType.app_rated);
                     dialog.dismiss();
                     createMessage(strings.emptyStr, enums.popup_type.rate_success);
                 });
@@ -219,7 +219,7 @@ public class messageManager
                 .setMessage(strings.download_message + data)
                 .addButton(strings.download_positive, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
-                    callback.callbackSuccess(null,enums.callbackType.download_file);
+                    event.invokeObserver(null, enums.eventType.download_file);
                     dialog.dismiss();
                 })
                 .addButton(strings.download_negative, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
@@ -248,10 +248,10 @@ public class messageManager
                 {
                     if (!data.equals(strings.emptyStr))
                     {
-                        callback.callbackSuccess(data, enums.callbackType.welcome);
+                        event.invokeObserver(data, enums.eventType.welcome);
                     } else
                     {
-                        callback.callbackSuccess(null, enums.callbackType.reload);
+                        event.invokeObserver(null, enums.eventType.reload);
                     }
                 }, 500);
 

@@ -10,20 +10,21 @@ class adManager
     /*Private Variables*/
 
     private AppCompatActivity app_context;
-    private callbackManager.callbackListener callback;
+    private eventObserver.eventListener event;
     private AdView banner_ads = null;
 
     /*Initializations*/
 
-    adManager(AppCompatActivity app_context,callbackManager.callbackListener callback,AdView banner_ads) {
+    adManager(AppCompatActivity app_context, eventObserver.eventListener event, AdView banner_ads) {
         this.app_context = app_context;
-        this.callback = callback;
+        this.event = event;
         initialize(banner_ads);
     }
 
     private void initialize(AdView banner_ads){
         this.banner_ads = banner_ads;
         MobileAds.initialize(app_context, constants.admobKey);
+        banner_ads.setAlpha(0f);
     }
 
     /*Local Helper Methods*/
@@ -32,7 +33,7 @@ class adManager
             banner_ads.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
-                callback.callbackSuccess(null,null);
+                event.invokeObserver(null,null);
             }
 
             @Override
@@ -41,7 +42,6 @@ class adManager
 
             @Override
             public void onAdOpened() {
-                callback.callbackSuccess(null,null);
             }
 
             @Override

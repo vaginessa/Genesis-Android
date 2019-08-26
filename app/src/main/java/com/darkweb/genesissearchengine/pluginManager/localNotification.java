@@ -20,13 +20,13 @@ public class localNotification
 
     /*Private Variables*/
     private AppCompatActivity app_context;
-    private callbackManager.callbackListener callback;
+    private eventObserver.eventListener event;
 
     /*Initializations*/
 
-    localNotification(AppCompatActivity app_context,callbackManager.callbackListener callback){
+    localNotification(AppCompatActivity app_context, eventObserver.eventListener event){
         this.app_context = app_context;
-        this.callback = callback;
+        this.event = event;
         mContext = homeModel.getInstance().getAppContext();
     }
 

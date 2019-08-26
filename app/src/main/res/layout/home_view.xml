@@ -23,7 +23,6 @@
                                        ads:layout_constraintHorizontal_bias="0.5"
                                        ads:layout_constraintEnd_toEndOf="parent"/>
 
-
         <FrameLayout
                 android:id="@+id/webviewContainer"
                 android:layout_width="match_parent"
@@ -33,24 +32,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:alpha="1"
-                    android:layout_marginTop="55dp"
+                    android:layout_marginTop="58dp"
                     tools:layout_editor_absoluteY="8dp" tools:layout_editor_absoluteX="8dp">
             </org.mozilla.geckoview.GeckoView>
-            <!-- <ImageView
-                    android:id="@+id/pageLoader2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/white"
-                    android:alpha="1"
-                    android:clickable="false"
-                    android:layout_marginTop="55dp"
-                    tools:layout_editor_absoluteY="0dp" tools:layout_editor_absoluteX="0dp">
-            </ImageView> -->
             <WebView
                     android:id="@+id/pageLoader1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="55dp"
+                    android:layout_marginTop="58dp"
                     android:alpha="1"
                     android:background="@color/white"
                     tools:layout_editor_absoluteY="0dp" tools:layout_editor_absoluteX="0dp">
