@@ -12,16 +12,13 @@ import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.*;
-import android.view.animation.Animation;
 import android.webkit.WebView;
 import android.widget.*;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.MenuCompat;
 import com.darkweb.genesissearchengine.constants.*;
-import com.darkweb.genesissearchengine.dataManager.preferenceController;
+import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperMethod;
-import com.darkweb.genesissearchengine.pluginManager.messageManager;
-import com.darkweb.genesissearchengine.pluginManager.orbotManager;
 import com.darkweb.genesissearchengine.pluginManager.pluginController;
 import com.example.myapplication.R;
 import com.google.android.gms.ads.AdView;
@@ -84,6 +81,7 @@ public class viewController
         createUpdateUiHandler();
         initializeSuggestionView();
         updateSearchEngineLogo();
+        createMenu();
     }
 
     private void initializeSuggestionView()
@@ -171,7 +169,7 @@ public class viewController
                 {
                     try
                     {
-                        boolean isFirstInstall = preferenceController.getInstance().getBool(keys.hasOrbotInstalled,true);
+                        boolean isFirstInstall = dataController.getInstance().getBool(keys.hasOrbotInstalled,true);
                         boolean isHidden = (status.search_status.equals(enums.searchEngine.Google.toString()) || status.search_status.equals(enums.searchEngine.Bing.toString()));
                         while (!status.isTorInitialized && (isFirstInstall || status.search_status.equals(enums.searchEngine.Google.toString()) || status.search_status.equals(enums.searchEngine.Bing.toString())))
                         {
@@ -189,7 +187,7 @@ public class viewController
                                 startPostTask(messages.INSTALL_COMPLETED);
                             }
                         }
-                        preferenceController.getInstance().setBool(keys.hasOrbotInstalled,false);
+                        dataController.getInstance().setBool(keys.hasOrbotInstalled,false);
                         if(!status.gateway || pluginController.getInstance().proxyStatus() || !status.search_status.equals("Hidden Web"))
                         {
                             startPostTask(messages.DISABLE_SPLASH_SCREEN);
@@ -458,9 +456,9 @@ public class viewController
 
     private void onWelcomeMessageCheck()
     {
-        if(!preferenceController.getInstance().getBool("FirstTimeLoaded",false))
+        if(!dataController.getInstance().getBool("FirstTimeLoaded",false))
         {
-            pluginController.getInstance().MessageManagerHandler(null,enums.popup_type.welcome);
+            pluginController.getInstance().MessageManagerHandler(homeModel.getInstance().getHomeInstance(),null,enums.popup_type.welcome);
         }
     }
 
@@ -469,11 +467,12 @@ public class viewController
         startPostTask(messages.SHOW_ADS);
     }
 
-    void openMenu(View view)
-    {
-        LinearLayout parentView = (LinearLayout)view.getParent();
+    PopupMenu popup = null;
+    private void createMenu(){
+        ImageButton menu = homeModel.getInstance().getHomeInstance().findViewById(R.id.menu);
+        LinearLayout parentView = (LinearLayout)menu.getParent();
 
-        PopupMenu popup = new PopupMenu(homeModel.getInstance().getHomeInstance(), parentView,Gravity.RIGHT);
+        popup = new PopupMenu(homeModel.getInstance().getHomeInstance(), parentView,Gravity.RIGHT);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.menu_main, popup.getMenu());
         MenuCompat.setGroupDividerEnabled(popup.getMenu(), true);
@@ -485,7 +484,7 @@ public class viewController
 
         MenuItem item = popup.getMenu().findItem(R.id.menu2);
 
-        if(status.gateway == false)
+        if(!status.gateway)
         {
             item.setTitle("Tor Banned | Enable Gateway");
         }
@@ -493,7 +492,11 @@ public class viewController
         {
             item.setTitle("Disable Gateway");
         }
+    }
 
+    void openMenu(View view)
+    {
+        //createMenu();
         popup.show();
         view.bringToFront();
     }
@@ -520,9 +523,9 @@ public class viewController
 
     void lowMemoryError()
     {
-        if(preferenceController.getInstance().getBool(keys.low_memory,false))
+        if(dataController.getInstance().getBool(keys.low_memory,false))
         {
-            preferenceController.getInstance().setBool(keys.low_memory,false);
+            dataController.getInstance().setBool(keys.low_memory,false);
             helperMethod.showToast("App Closed Due To Low Memory", homeModel.getInstance().getHomeInstance());
         }
     }

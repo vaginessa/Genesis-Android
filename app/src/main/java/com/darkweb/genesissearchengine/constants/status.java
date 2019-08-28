@@ -1,6 +1,6 @@
 package com.darkweb.genesissearchengine.constants;
 
-import com.darkweb.genesissearchengine.dataManager.preferenceController;
+import com.darkweb.genesissearchengine.dataManager.dataController;
 
 public class status
 {
@@ -24,10 +24,10 @@ public class status
 
     public static void initStatus()
     {
-        status.java_status = preferenceController.getInstance().getBool(keys.java_script,true);
-        status.history_status = preferenceController.getInstance().getBool(keys.history_clear,true);
-        status.search_status = preferenceController.getInstance().getString(keys.search_engine,strings.darkweb);
-        status.gateway = preferenceController.getInstance().getBool(keys.gateway,false);
+        status.java_status = dataController.getInstance().getBool(keys.java_script,true);
+        status.history_status = dataController.getInstance().getBool(keys.history_clear,true);
+        status.search_status = dataController.getInstance().getString(keys.search_engine,strings.darkweb);
+        status.gateway = dataController.getInstance().getBool(keys.gateway,false);
     }
 
 }

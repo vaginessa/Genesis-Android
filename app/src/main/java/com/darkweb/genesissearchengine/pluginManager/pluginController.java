@@ -1,14 +1,16 @@
 package com.darkweb.genesissearchengine.pluginManager;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.darkweb.genesissearchengine.appManager.activityContextManager;
+import com.darkweb.genesissearchengine.appManager.historyManager.historyController;
 import com.darkweb.genesissearchengine.appManager.home_activity.homeController;
 import com.darkweb.genesissearchengine.appManager.home_activity.homeModel;
-import com.darkweb.genesissearchengine.appManager.list_manager.list_model;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.keys;
 import com.darkweb.genesissearchengine.constants.status;
 import com.darkweb.genesissearchengine.constants.strings;
-import com.darkweb.genesissearchengine.dataManager.preferenceController;
+import com.darkweb.genesissearchengine.dataManager.dataController;
 
 @SuppressWarnings("ALL")
 public class pluginController
@@ -24,11 +26,13 @@ public class pluginController
     private messageManager message_manager;
     private orbotManager orbot_manager;
     private proxyManager proxy_manager;
+    private activityContextManager contextManager;
 
     /*Private Variables*/
 
     private static final pluginController ourInstance = new pluginController();
     private homeController home_controller;
+    private historyController history_controller;
     private homeModel home_model;
 
     /*Initializations*/
@@ -41,6 +45,7 @@ public class pluginController
     {
         home_controller = homeModel.getInstance().getHomeInstance();
         home_model = homeModel.getInstance();
+        contextManager = activityContextManager.getInstance();
         instanceObjectInitialization();
     }
 
@@ -52,7 +57,7 @@ public class pluginController
         fabric_manager = new fabricManager(getAppContext(),new fabricCallback());
         firebase_manager = new firebaseManager(getAppContext(),new firebaseCallback());
         local_notification = new localNotification(getAppContext(),new notificationCallback());
-        message_manager = new messageManager(getAppContext(),new messageCallback());
+        message_manager = new messageManager(new messageCallback());
         orbot_manager = new orbotManager(getAppContext(),new orbotCallback());
         proxy_manager = new proxyManager(getAppContext(),new proxyCallback());
     }
@@ -67,8 +72,8 @@ public class pluginController
     /*---------------------------------------------- EXTERNAL REQUEST LISTENER-------------------------------------------------------*/
 
     /*Message Manager*/
-    public void MessageManagerHandler(String data,enums.popup_type type){
-        message_manager.createMessage(data,type);
+    public void MessageManagerHandler(AppCompatActivity app_context,String data,enums.popup_type type){
+        message_manager.createMessage(app_context,data,type);
     }
 
     /*Proxy Manager*/
@@ -118,7 +123,7 @@ public class pluginController
         @Override
         public void invokeObserver(Object data, enums.eventType e_type)
         {
-            preferenceController.getInstance().setBool(keys.low_memory,false);
+            dataController.getInstance().setBool(keys.low_memory,false);
             proxy_manager.disconnectConnection();
         }
     }
@@ -187,20 +192,25 @@ public class pluginController
                 home_controller.onloadURL(data.toString(),false,true,false);
             }
             else if(e_type.equals(enums.eventType.cancel_welcome)){
-                preferenceController.getInstance().setBool(keys.first_time_loaded,true);
+                dataController.getInstance().setBool(keys.first_time_loaded,true);
             }
             else if(e_type.equals(enums.eventType.reload)){
                 home_controller.onReload();
             }
             else if(e_type.equals(enums.eventType.clear_history)){
-                list_model.getInstance().getListInstance().onClearAll();
+                dataController.getInstance().clearHistory();
+                contextManager.getHistoryController().onclearData();
+            }
+            else if(e_type.equals(enums.eventType.clear_bookmark)){
+                dataController.getInstance().clearBookmark();
+                contextManager.getBookmarkController().onclearData();
             }
             else if(e_type.equals(enums.eventType.bookmark)){
                 String [] dataParser = data.toString().split("split");
                 home_model.addBookmark(dataParser[0],dataParser[1]);
             }
             else if(e_type.equals(enums.eventType.app_rated)){
-                preferenceController.getInstance().setBool(keys.isAppRated,true);
+                dataController.getInstance().setBool(keys.isAppRated,true);
             }
             else if(e_type.equals(enums.eventType.download_file)){
                 homeModel.getInstance().getHomeInstance().downloadFile();

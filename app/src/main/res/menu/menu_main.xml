@@ -3,28 +3,12 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="example.javatpoint.com.optionmenu.MainActivity">
 
-    <!--
-    <group android:id="@+id/group_0" >
-
-    <item  android:id="@+id/menu2"
-           android:title="Switch | Secure Google"
-           app:showAsAction="always"
-           android:icon="@android:drawable/btn_star"/>
-        <item  android:id="@+id/menu9"
-               android:title="Manage Search Engine"
-               app:showAsAction="always"
-               android:icon="@android:drawable/btn_star"/>
-        <item  android:id="@+id/menu11"
-               android:title="Current Location"
-               app:showAsAction="always"
-               android:icon="@android:drawable/btn_star"/>
-    </group>-->
     <group android:id="@+id/group_0" >
         <item  android:id="@+id/menu2"
                android:title="Tor Banned | Enable Gateway"
                app:showAsAction="always"
                android:icon="@android:drawable/btn_star"/>
-    </group>-->
+    </group>
     <item  android:id="@+id/menu0"
            android:title="Downloads"
            app:showAsAction="always"

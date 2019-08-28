@@ -57,10 +57,15 @@ public class strings
     public static String bookmark_url_bt1 = "Bookmark";
     public static String bookmark_url_bt2 = "Dismiss";
 
-    public static String clear_title = "Warning | Clearing Data";
-    public static String clear_desc = "You are about to clear your data if you are sure please continue\n";
-    public static String clear_bt1 = "Clear Data";
-    public static String clear_bt2 = "Dismiss";
+    public static String clear_history_title = "Warning | Clear History";
+    public static String clear_history_desc = "You are about to clear your history if you are sure please continue\n";
+    public static String clear_history_bt1 = "Clear History";
+    public static String clear_history_bt2 = "Dismiss";
+
+    public static String clear_bookmark_title = "Warning | Clear Bookmark";
+    public static String clear_bookmark_desc = "You are about to clear your bookmarks if you are sure please continue\n";
+    public static String clear_bookmark_bt1 = "Clear bookmark";
+    public static String clear_bookmark_bt2 = "Dismiss";
 
     public static String download_title = "Download Notification";
     public static String download_message = "Download File | ";

@@ -2,9 +2,11 @@ package com.darkweb.genesissearchengine.appManager.databaseManager;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import androidx.appcompat.app.AppCompatActivity;
 
+import com.darkweb.genesissearchengine.appManager.bookmarkManager.bookmarkRowModel;
+import com.darkweb.genesissearchengine.appManager.historyManager.historyRowModel;
 import com.darkweb.genesissearchengine.appManager.home_activity.homeModel;
-import com.darkweb.genesissearchengine.appManager.list_manager.list_row_model;
 import com.darkweb.genesissearchengine.constants.constants;
 
 import java.util.ArrayList;
@@ -30,11 +32,11 @@ public class databaseController
 
     /*Initializations*/
 
-    public void initialize()
+    public void initialize(AppCompatActivity app_context)
     {
         try
         {
-            database_instance = homeModel.getInstance().getHomeInstance().openOrCreateDatabase(constants.databae_name, MODE_PRIVATE, null);
+            database_instance = app_context.openOrCreateDatabase(constants.databae_name, MODE_PRIVATE, null);
             database_instance.execSQL("CREATE TABLE IF NOT EXISTS " + "history" + " (id INT(4),date VARCHAR,url VARCHAR);");
             database_instance.execSQL("CREATE TABLE IF NOT EXISTS " + "bookmark" + " (id INT(4),title VARCHAR,url VARCHAR);");
 
@@ -60,12 +62,12 @@ public class databaseController
         }
     }
 
-    public ArrayList<list_row_model> selectHistory(){
-        ArrayList<list_row_model> tempmodel = new ArrayList<>();
+    public ArrayList<historyRowModel> selectHistory(){
+        ArrayList<historyRowModel> tempmodel = new ArrayList<>();
         Cursor c = database_instance.rawQuery("SELECT * FROM history ORDER BY id DESC ", null);
         if (c.moveToFirst()){
             do {
-                tempmodel.add(new list_row_model(c.getString(2), c.getString(1),Integer.parseInt(c.getString(0))));
+                tempmodel.add(new historyRowModel(c.getString(2), c.getString(1),Integer.parseInt(c.getString(0))));
                 homeModel.getInstance().initSuggestions(c.getString(2));
             } while(c.moveToNext());
         }
@@ -74,18 +76,22 @@ public class databaseController
         return  tempmodel;
     }
 
-    public ArrayList<list_row_model> selectBookmark(){
-        ArrayList<list_row_model> tempmodel = new ArrayList<>();
+    public ArrayList<bookmarkRowModel> selectBookmark(){
+        ArrayList<bookmarkRowModel> tempmodel = new ArrayList<>();
         Cursor c = database_instance.rawQuery("SELECT * FROM bookmark ORDER BY id DESC ", null);
 
         if (c.moveToFirst()){
             do {
-                tempmodel.add(new list_row_model(c.getString(2), c.getString(1),Integer.parseInt(c.getString(0))));
+                tempmodel.add(new bookmarkRowModel(c.getString(2), c.getString(1),Integer.parseInt(c.getString(0))));
             } while(c.moveToNext());
         }
         c.close();
 
         return  tempmodel;
+    }
+
+    public void deleteFromList(int index,String table) {
+        databaseController.getInstance().execSQL("delete from "+table+" where id="+index,null);
     }
 
 }

@@ -10,7 +10,7 @@ import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.keys;
 import com.darkweb.genesissearchengine.constants.status;
 import com.darkweb.genesissearchengine.constants.strings;
-import com.darkweb.genesissearchengine.dataManager.preferenceController;
+import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.example.myapplication.R;
 import com.darkweb.genesissearchengine.appManager.home_activity.homeModel;
 import static com.darkweb.genesissearchengine.constants.status.history_status;
@@ -60,7 +60,7 @@ public class settingController extends AppCompatActivity
         javascript = findViewById(R.id.javascript_manager);
         history = findViewById(R.id.history_manager);
 
-        String currentSearchEngine = preferenceController.getInstance().getString(keys.search_engine, strings.darkweb);
+        String currentSearchEngine = dataController.getInstance().getString(keys.search_engine, strings.darkweb);
         viewController = new settingViewController(search,javascript,history,this,currentSearchEngine,new settingModelCallback());
     }
 
@@ -124,16 +124,16 @@ public class settingController extends AppCompatActivity
             if(e_type == enums.eventType.update_searcn){
                 status.search_status = (String)data;
                 home_controller.initSearchEngine();
-                preferenceController.getInstance().setString(keys.search_engine, setting_model.getSearchStatus());
+                dataController.getInstance().setString(keys.search_engine, setting_model.getSearchStatus());
             }
             else if(e_type == enums.eventType.update_javascript){
                 status.java_status = (boolean)data;
                 home_controller.onReInitGeckoView();
-                preferenceController.getInstance().setBool(keys.java_script, status.java_status);
+                dataController.getInstance().setBool(keys.java_script, status.java_status);
             }
             else if(e_type == enums.eventType.update_history){
                 history_status = (boolean)data;
-                preferenceController.getInstance().setBool(keys.history_clear, history_status);
+                dataController.getInstance().setBool(keys.history_clear, history_status);
             }
             else if(e_type == enums.eventType.close_view){
                 finish();

@@ -2,20 +2,23 @@ package com.darkweb.genesissearchengine.appManager.home_activity;
 
 import android.content.Context;
 import android.net.Uri;
+
+import com.darkweb.genesissearchengine.appManager.bookmarkManager.bookmarkController;
+import com.darkweb.genesissearchengine.appManager.bookmarkManager.bookmarkRowModel;
 import com.darkweb.genesissearchengine.appManager.databaseManager.databaseController;
-import com.darkweb.genesissearchengine.appManager.list_manager.list_row_model;
-import com.darkweb.genesissearchengine.constants.constants;
+import com.darkweb.genesissearchengine.appManager.historyManager.historyRowModel;
+import com.darkweb.genesissearchengine.appManager.historyManager.historyRowModel;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.status;
+import com.darkweb.genesissearchengine.dataManager.dataController;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class homeModel
 {
     /*Data Objects*/
-    private ArrayList<list_row_model> history = new ArrayList<list_row_model>();
-    private ArrayList<list_row_model> bookmarks = new ArrayList<list_row_model>();
+    private ArrayList<historyRowModel> history = new ArrayList<>();
+    private ArrayList<bookmarkRowModel> bookmarks = new ArrayList<>();
     private ArrayList<navigation_model> navigation = new ArrayList<navigation_model>();
     private HashSet<String> suggestions = new HashSet<String>();
     private static int port = 9150;
@@ -25,7 +28,6 @@ public class homeModel
 
     /*Initializations*/
     public void initialization(){
-        databaseController.getInstance().initialize();
         initializeHistory();
         initializeBookmarks();
     }
@@ -77,30 +79,9 @@ public class homeModel
         homeModel.getInstance().getHomeInstance().reInitializeSuggestion();
     }
     public void addHistory(String url) {
-
-        if(history.size()> constants.max_history_size)
-        {
-            databaseController.getInstance().execSQL("delete from history where id="+history.get(history.size()-1).getId(),null);
-            history.remove(history.size()-1);
-        }
-
-        int autoval = 0;
-        if(history.size()>0)
-        {
-            autoval = history.get(0).getId()+1;
-        }
-
-        addSuggestions(url);
-        SimpleDateFormat d_form = new SimpleDateFormat("dd MMMM | hh:mm a");
-        String date = d_form.format(new Date());
-
-        String[] params = new String[1];
-        params[0] = url;
-
-        databaseController.getInstance().execSQL("INSERT INTO history(id,date,url) VALUES("+autoval+",'"+date+"',?);",params);
-        history.add(0,new list_row_model(url,date,autoval));
+        dataController.getInstance().addHistory(url);
     }
-    public ArrayList<list_row_model> getHistory() {
+    public ArrayList<historyRowModel> getHistory() {
         return history;
     }
 
@@ -109,31 +90,9 @@ public class homeModel
         bookmarks = databaseController.getInstance().selectBookmark();
     }
     public void addBookmark(String url,String title){
-        int autoval = 0;
-        if(bookmarks.size()> constants.max_bookmark_size)
-        {
-            databaseController.getInstance().execSQL("delete from bookmark where id="+bookmarks.get(bookmarks.size()-1).getId(),null);
-            bookmarks.remove(history.size()-1);
-        }
-
-        if(bookmarks.size()>0)
-        {
-            autoval = bookmarks.get(0).getId()+1;
-        }
-
-        if(title.equals(""))
-        {
-            title = "New_Bookmark"+autoval;
-        }
-
-        String[] params = new String[2];
-        params[0] = title;
-        params[1] = url;
-
-        databaseController.getInstance().execSQL("INSERT INTO bookmark(id,title,url) VALUES("+autoval+",?,?);",params);
-        bookmarks.add(0,new list_row_model(url,title,autoval));
+        dataController.getInstance().addBookmark(url,title);
     }
-    public ArrayList<list_row_model> getBookmark(){
+    public ArrayList<bookmarkRowModel> getBookmark(){
         return bookmarks;
     }
 

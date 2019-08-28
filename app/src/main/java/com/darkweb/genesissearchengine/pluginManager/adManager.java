@@ -61,7 +61,7 @@ class adManager
     /*External Helper Methods*/
 
     void initializeBannerAds(){
-        AdRequest request = new AdRequest.Builder().addTestDevice(constants.testKey).build();
+        AdRequest request = new AdRequest.Builder().build();
         banner_ads.loadAd(request);
         admobListeners();
     }

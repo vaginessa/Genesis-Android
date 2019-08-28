@@ -6,10 +6,12 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import com.darkweb.genesissearchengine.appManager.list_manager.list_controller;
+
+import com.darkweb.genesissearchengine.appManager.bookmarkManager.bookmarkController;
+import com.darkweb.genesissearchengine.appManager.historyManager.historyController;
 import com.darkweb.genesissearchengine.appManager.settingManager.settingController;
 import com.darkweb.genesissearchengine.constants.*;
-import com.darkweb.genesissearchengine.dataManager.preferenceController;
+import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperMethod;
 import com.darkweb.genesissearchengine.pluginManager.pluginController;
 import com.example.myapplication.R;
@@ -103,7 +105,7 @@ public class home_ehandler
 
     void onFloatingButtonPressed()
     {
-        pluginController.getInstance().MessageManagerHandler(null,enums.popup_type.report_url);
+        pluginController.getInstance().MessageManagerHandler(homeModel.getInstance().getHomeInstance(),null,enums.popup_type.report_url);
     }
 
     void onBackPressed()
@@ -114,7 +116,7 @@ public class home_ehandler
     void onMenuPressed(int menuId)
     {
         if (menuId == R.id.menu1) {
-            helperMethod.openActivity(list_controller.class,constants.list_history, homeModel.getInstance().getHomeInstance());
+            helperMethod.openActivity(historyController.class,constants.list_history, homeModel.getInstance().getHomeInstance());
         }
 
         else if (menuId == R.id.menu2) {
@@ -126,15 +128,15 @@ public class home_ehandler
         }
         else if (menuId == R.id.menu4)
         {
-            pluginController.getInstance().MessageManagerHandler(homeModel.getInstance().getHomeInstance().getSearchBarUrl(),enums.popup_type.bookmark);
+            pluginController.getInstance().MessageManagerHandler(homeModel.getInstance().getHomeInstance(),homeModel.getInstance().getHomeInstance().getSearchBarUrl(),enums.popup_type.bookmark);
         }
         else if (menuId == R.id.menu5)
         {
-            helperMethod.openActivity(list_controller.class,constants.list_bookmark, homeModel.getInstance().getHomeInstance());
+            helperMethod.openActivity(bookmarkController.class,constants.list_bookmark, homeModel.getInstance().getHomeInstance());
         }
         else if (menuId == R.id.menu6)
         {
-            pluginController.getInstance().MessageManagerHandler(null,enums.popup_type.report_url);
+            pluginController.getInstance().MessageManagerHandler(homeModel.getInstance().getHomeInstance(),null,enums.popup_type.report_url);
         }
         else if (menuId == R.id.menu7)
         {
@@ -147,7 +149,8 @@ public class home_ehandler
         else if (menuId == R.id.menu0)
         {
             helperMethod.openDownloadFolder(homeModel.getInstance().getHomeInstance());
-        }/*
+        }
+        /*
         else if (menuId == R.id.menu9)
         {
             helperMethod.openActivity(settingController.class,constants.list_history);
@@ -165,26 +168,26 @@ public class home_ehandler
         {
             status.gateway = true;
             pluginController.getInstance().proxyManager(true);
-            preferenceController.getInstance().setBool(keys.gateway,true);
+            dataController.getInstance().setBool(keys.gateway,true);
         }
         else
         {
             status.gateway = false;
             pluginController.getInstance().proxyManager(false);
-            preferenceController.getInstance().setBool(keys.gateway,false);
+            dataController.getInstance().setBool(keys.gateway,false);
         }
     }
 
     public void switchSearchEngine(View view)
     {
         // settingModel.getInstance().search_status = "Google";
-        preferenceController.getInstance().setString(keys.search_engine, "Google");
+        dataController.getInstance().setString(keys.search_engine, "Google");
 
 
         if(status.search_status.equals("Google"))
         {
             appContoller.stopHiddenView(true,true);
-            preferenceController.getInstance().setString(keys.search_engine, strings.darkweb);
+            dataController.getInstance().setString(keys.search_engine, strings.darkweb);
             status.search_status = enums.searchEngine.HiddenWeb.toString();
             homeModel.getInstance().getHomeInstance().initSearchEngine();
             ((ImageButton) view).setImageResource(R.drawable.genesis_logo);
@@ -194,13 +197,13 @@ public class home_ehandler
         {
             if(pluginController.getInstance().OrbotManagerInit())
             {
-                preferenceController.getInstance().setString(keys.search_engine,"Google");
+                dataController.getInstance().setString(keys.search_engine,"Google");
                 status.search_status = "Google";
                 homeModel.getInstance().getHomeInstance().initSearchEngine();
                 ((ImageButton) view).setImageResource(R.drawable.genesis_logo);
             }
             else {
-                pluginController.getInstance().MessageManagerHandler(null, enums.popup_type.start_orbot);
+                pluginController.getInstance().MessageManagerHandler(homeModel.getInstance().getHomeInstance(),null, enums.popup_type.start_orbot);
             }
         }
     }

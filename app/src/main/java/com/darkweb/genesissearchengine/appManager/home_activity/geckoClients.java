@@ -67,7 +67,7 @@ class geckoClients
         }
         else
         {
-            pluginController.getInstance().MessageManagerHandler(null,enums.popup_type.start_orbot);
+            pluginController.getInstance().MessageManagerHandler(homeModel.getInstance().getHomeInstance(),null,enums.popup_type.start_orbot);
         }
     }
 
@@ -364,7 +364,7 @@ class geckoClients
         url = Uri.parse(response.uri);
         downloadFile = response.filename != null ? response.filename : url.getLastPathSegment();
 
-        pluginController.getInstance().MessageManagerHandler(downloadFile,enums.popup_type.download_file);
+        pluginController.getInstance().MessageManagerHandler(homeModel.getInstance().getHomeInstance(),downloadFile,enums.popup_type.download_file);
     }
 
     String downloadFile = "";

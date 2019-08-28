@@ -30,9 +30,8 @@ public class messageManager
 
     /*Initializations*/
 
-    messageManager(AppCompatActivity app_context, eventObserver.eventListener event)
+    messageManager(eventObserver.eventListener event)
     {
-        this.app_context = app_context;
         this.event = event;
         initialize();
     }
@@ -148,7 +147,7 @@ public class messageManager
                 .setMessage("Bookmark URL | " + data + "\n")
                 .addButton(strings.bookmark_url_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
-                    event.invokeObserver(data.replace("genesis.onion","boogle.store")+"split"+input.getText().toString(),null);
+                    event.invokeObserver(data.replace("genesis.onion","boogle.store")+"split"+input.getText().toString(),enums.eventType.bookmark);
                     dialog.dismiss();
                 })
                 .addButton(strings.bookmark_url_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
@@ -157,19 +156,34 @@ public class messageManager
 
     }
 
-    private void clearData()
+    private void clearHistory()
     {
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                .setTitle(strings.clear_title)
+                .setTitle(strings.clear_history_title)
                 .setBackgroundColor(app_context.getResources().getColor(R.color.blue_dark_v2))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
-                .setMessage(strings.clear_desc)
-                .addButton(strings.clear_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                .setMessage(strings.clear_history_desc)
+                .addButton(strings.clear_history_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
                     event.invokeObserver(null, enums.eventType.clear_history);
                     dialog.dismiss();
                 })
-                .addButton(strings.clear_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) -> dialog.dismiss());
+                .addButton(strings.clear_history_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) -> dialog.dismiss());
+    }
+
+    private void clearBookmark()
+    {
+        popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                .setTitle(strings.clear_bookmark_title)
+                .setBackgroundColor(app_context.getResources().getColor(R.color.blue_dark_v2))
+                .setTextColor(app_context.getResources().getColor(R.color.black))
+                .setMessage(strings.clear_bookmark_desc)
+                .addButton(strings.clear_bookmark_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                {
+                    event.invokeObserver(null, enums.eventType.clear_bookmark);
+                    dialog.dismiss();
+                })
+                .addButton(strings.clear_bookmark_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) -> dialog.dismiss());
     }
 
     private void reportURL()
@@ -182,7 +196,7 @@ public class messageManager
                 .addButton(strings.report_url_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
                     dialog.dismiss();
-                    createMessage(strings.emptyStr, enums.popup_type.reported_success);
+                    createMessage(app_context,strings.emptyStr, enums.popup_type.reported_success);
                 })
                 .addButton(strings.report_url_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                         dialog.dismiss());
@@ -206,7 +220,7 @@ public class messageManager
                 {
                     event.invokeObserver(null, enums.eventType.app_rated);
                     dialog.dismiss();
-                    createMessage(strings.emptyStr, enums.popup_type.rate_success);
+                    createMessage(app_context,strings.emptyStr, enums.popup_type.rate_success);
                 });
     }
 
@@ -277,8 +291,9 @@ public class messageManager
 
     /*External Helper Methods*/
 
-    void createMessage(String data, enums.popup_type type)
+    void createMessage(AppCompatActivity app_context,String data, enums.popup_type type)
     {
+        this.app_context = app_context;
         this.data = data;
         if (!is_popup_open)
         {
@@ -307,8 +322,12 @@ public class messageManager
                     bookmark();
                     break;
 
-                case clear_data:
-                    clearData();
+                case clear_history:
+                    clearHistory();
+                    break;
+
+                case clear_bookmark:
+                    clearBookmark();
                     break;
 
                 case report_url:

@@ -32,7 +32,7 @@ public class settingModel
     private boolean java_status = false;
     private boolean history_status = true;
 
-    public String getSearchStatus(){
+    String getSearchStatus(){
         return search_status;
     }
 

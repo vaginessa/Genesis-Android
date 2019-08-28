@@ -21,7 +21,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ShareCompat;
 import com.darkweb.genesissearchengine.constants.keys;
-import com.darkweb.genesissearchengine.dataManager.preferenceController;
+import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.example.myapplication.BuildConfig;
 
 import java.net.MalformedURLException;
@@ -59,7 +59,7 @@ public class helperMethod
     }
 
     public static void rateApp(AppCompatActivity context){
-        preferenceController.getInstance().setBool(keys.isAppRated,true);
+        dataController.getInstance().setBool(keys.isAppRated,true);
         context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.darkweb.genesissearchengine")));
     }
 

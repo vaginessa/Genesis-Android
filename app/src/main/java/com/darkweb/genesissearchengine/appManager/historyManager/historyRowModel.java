@@ -1,6 +1,6 @@
-package com.darkweb.genesissearchengine.appManager.list_manager;
+package com.darkweb.genesissearchengine.appManager.historyManager;
 
-public class list_row_model
+public class historyRowModel
 {
     /*Private Variables*/
 
@@ -10,7 +10,7 @@ public class list_row_model
 
     /*Initializations*/
 
-    public list_row_model(String header, String description,int id) {
+    public historyRowModel(String header, String description,int id) {
         this.id = id;
         this.header = header;
         this.description = description;

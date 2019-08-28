@@ -13,9 +13,9 @@ public class webviewClient
 {
     boolean isGeckoView = false;
 
-    public void saveCache(String url)
+    public void saveCache(String url,boolean isUrlSavable)
     {
-        if(url.contains("boogle"))
+        if(url.contains("boogle") && isUrlSavable)
         {
             homeModel.getInstance().addNavigation(url,enums.navigationType.base);
             homeModel.getInstance().addHistory(url);
@@ -53,7 +53,7 @@ public class webviewClient
                     }
                     else
                     {
-                        pluginController.getInstance().MessageManagerHandler(null,enums.popup_type.start_orbot);
+                        pluginController.getInstance().MessageManagerHandler(homeModel.getInstance().getHomeInstance(),null,enums.popup_type.start_orbot);
                     }
                     return true;
                 }

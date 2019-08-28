@@ -11,11 +11,12 @@ import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.darkweb.genesissearchengine.*;
+import com.darkweb.genesissearchengine.appManager.databaseManager.databaseController;
 import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.keys;
 import com.darkweb.genesissearchengine.constants.status;
-import com.darkweb.genesissearchengine.dataManager.preferenceController;
+import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.pluginManager.*;
 
 import com.example.myapplication.R;
@@ -56,8 +57,11 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         if(helperMethod.isBuildValid())
         {
             setContentView(R.layout.home_view);
-            initializeAppModel();
+            databaseController.getInstance().initialize(this);
+            dataController.getInstance().initialize(this);
             status.initStatus();
+            dataController.getInstance().initializeListData();
+            initializeAppModel();
             initializeConnections();
             initializeWebView();
             initializeLocalEventHandlers();
@@ -78,7 +82,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         {
             initializeAppModel();
             setContentView(R.layout.invalid_setup_view);
-            pluginController.getInstance().MessageManagerHandler(Build.SUPPORTED_ABIS[0],enums.popup_type.abi_error);
+            pluginController.getInstance().MessageManagerHandler(homeModel.getInstance().getHomeInstance(),Build.SUPPORTED_ABIS[0],enums.popup_type.abi_error);
         }
 
     }
@@ -99,7 +103,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         Log.i("CURRENT_LEVEL:" , level+"");
         if(isAppPaused && (level==80 || level==15))
         {
-           preferenceController.getInstance().setBool(keys.low_memory,true);
+           dataController.getInstance().setBool(keys.low_memory,true);
            finish();
         }
     }
@@ -266,7 +270,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         }
         else if(!homeModel.getInstance().isUrlRepeatable(url,webView.getUrl()) || isRepeatAllowed || webView.getVisibility() == View.GONE)
         {
-            webviewclient.saveCache(url);
+            webviewclient.saveCache(url,isUrlSavable);
             webView.loadUrl(url);
             onRequestTriggered(isHiddenWeb,url);
         }
@@ -406,6 +410,19 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     {
         return banner_ads;
     }
+
+    public void addNavigation(String url,enums.navigationType type) {
+        homeModel.getInstance().addNavigation(url,type);
+    }
+
+
+
+
+
+
+
+
+
 
 
 }
