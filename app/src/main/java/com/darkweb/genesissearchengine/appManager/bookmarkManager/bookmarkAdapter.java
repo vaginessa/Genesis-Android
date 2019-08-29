@@ -67,10 +67,12 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.listVi
     {
         clearButton.setOnClickListener(v ->
         {
-            event.invokeObserver(model_list.get(temp_model_list.get(index).getId()).getId(),enums.bookmark_eventType.remove_from_database);
-            event.invokeObserver(temp_model_list.get(index).getId(),enums.bookmark_eventType.url_clear);
-            invokeFilter(false);
-            event.invokeObserver(index,enums.bookmark_eventType.is_empty);
+            if(temp_model_list.size()>index){
+                event.invokeObserver(model_list.get(temp_model_list.get(index).getId()).getId(),enums.bookmark_eventType.remove_from_database);
+                event.invokeObserver(temp_model_list.get(index).getId(),enums.bookmark_eventType.url_clear);
+                invokeFilter(false);
+                event.invokeObserver(index,enums.bookmark_eventType.is_empty);
+            }
         });
     }
 

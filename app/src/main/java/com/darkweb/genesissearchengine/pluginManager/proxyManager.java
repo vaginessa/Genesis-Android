@@ -145,8 +145,8 @@ public class proxyManager
     /*External Helper Methods*/
 
     void startVPN() {
-        initHydraSdk();
-        connect();
+        //initHydraSdk();
+        //connect();
     }
 
     void disconnectConnection() {

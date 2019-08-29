@@ -195,7 +195,7 @@ public class home_ehandler
         }
         else
         {
-            if(pluginController.getInstance().OrbotManagerInit())
+            if(pluginController.getInstance().OrbotManagerInit(true))
             {
                 dataController.getInstance().setString(keys.search_engine,"Google");
                 status.search_status = "Google";

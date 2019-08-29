@@ -171,7 +171,7 @@ public class viewController
                     {
                         boolean isFirstInstall = dataController.getInstance().getBool(keys.hasOrbotInstalled,true);
                         boolean isHidden = (status.search_status.equals(enums.searchEngine.Google.toString()) || status.search_status.equals(enums.searchEngine.Bing.toString()));
-                        while (!status.isTorInitialized && (isFirstInstall || status.search_status.equals(enums.searchEngine.Google.toString()) || status.search_status.equals(enums.searchEngine.Bing.toString())))
+                        while (!pluginController.getInstance().OrbotManagerInit(false) && (isFirstInstall || status.search_status.equals(enums.searchEngine.Google.toString()) || status.search_status.equals(enums.searchEngine.Bing.toString())))
                         {
                             startPostTask(messages.UPDATE_LOADING_TEXT);
                             sleep(100);

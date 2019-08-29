@@ -8,10 +8,8 @@ public class status
 
     public static boolean isApplicationLoaded = false;
     public static boolean isPlayStoreInstalled = true;
-    public static boolean isTorInitialized = false;
     public static String version_code = "7.0";
     public static String current_ABI = "7.0";
-    public static int onionProxyPort = 0;
 
     /*Settings Status*/
 

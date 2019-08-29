@@ -44,7 +44,7 @@ class geckoClients
 
     void loadGeckoURL(String url,GeckoView geckoView,boolean isUrlSavable,boolean reinit)
     {
-        boolean init_status = pluginController.getInstance().OrbotManagerInit();
+        boolean init_status = pluginController.getInstance().OrbotManagerInit(true);
 
         if (init_status)
         {
@@ -67,7 +67,7 @@ class geckoClients
         }
         else
         {
-            pluginController.getInstance().MessageManagerHandler(homeModel.getInstance().getHomeInstance(),null,enums.popup_type.start_orbot);
+            pluginController.getInstance().MessageManagerHandler(homeModel.getInstance().getHomeInstance(),url,enums.popup_type.start_orbot);
         }
     }
 
@@ -119,6 +119,20 @@ class geckoClients
         @Override
         public void onPageStart(GeckoSession session, String url)
         {
+            if(url.contains(".onion"))
+            {
+                pluginController.getInstance().setProxy(true);
+                ///geckoclient.saveCache(url);
+                //geckoclient.loadGeckoURL(url,geckoView,isUrlSavable,webView.getVisibility()==View.VISIBLE || isInternetErrorOpened());
+            }
+            else
+            {
+                pluginController.getInstance().setProxy(false);
+                //webviewclient.saveCache(url,isUrlSavable);
+                //webView.loadUrl(url);
+                //onRequestTriggered(isHiddenWeb,url);
+            }
+
             wasURLSaved = false;
             wasBackPressed = false;
             isRunning = true;

@@ -69,6 +69,9 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             viewController.getInstance().initialization(webView,webviewContainer,loadingText,progressBar,searchbar,splashScreen,requestFailure,floatingButton, loadingIcon,splashlogo,banner_ads  );
             geckoclient.initialize(geckoView);
             homeModel.getInstance().initialization();
+
+            viewController.getInstance().disableSplashScreen();
+            /*
             if(!status.gateway)
             {
                 initBoogle();
@@ -76,7 +79,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             else if(!status.search_status.equals(enums.searchEngine.HiddenWeb.toString()))
             {
                 viewController.getInstance().disableSplashScreen();
-            }
+            }*/
         }
         else
         {
@@ -263,17 +266,22 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     /*-------------------------------------------------------Helper Method In UI Redirection----------------------------------------------------*/
 
     public void onloadURL(String url,boolean isHiddenWeb,boolean isUrlSavable,boolean isRepeatAllowed) {
-        if(isHiddenWeb)
+        if(url.endsWith(".onion"))
         {
-            geckoclient.saveCache(url);
-            geckoclient.loadGeckoURL(url,geckoView,isUrlSavable,webView.getVisibility()==View.VISIBLE || isInternetErrorOpened());
+            pluginController.getInstance().setProxy(false);
+            ///geckoclient.saveCache(url);
+            //geckoclient.loadGeckoURL(url,geckoView,isUrlSavable,webView.getVisibility()==View.VISIBLE || isInternetErrorOpened());
         }
-        else if(!homeModel.getInstance().isUrlRepeatable(url,webView.getUrl()) || isRepeatAllowed || webView.getVisibility() == View.GONE)
+        else
         {
-            webviewclient.saveCache(url,isUrlSavable);
-            webView.loadUrl(url);
-            onRequestTriggered(isHiddenWeb,url);
+            pluginController.getInstance().setProxy(false);
+            //webviewclient.saveCache(url,isUrlSavable);
+            //webView.loadUrl(url);
+            //onRequestTriggered(isHiddenWeb,url);
         }
+        geckoclient.saveCache(url);
+        geckoclient.loadGeckoURL(url,geckoView,isUrlSavable,webView.getVisibility()==View.VISIBLE || isInternetErrorOpened());
+
     }
 
     public void onRequestTriggered(boolean isHiddenWeb,String url) {

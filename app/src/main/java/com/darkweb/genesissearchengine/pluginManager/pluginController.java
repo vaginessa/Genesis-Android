@@ -100,8 +100,11 @@ public class pluginController
     }
 
     /*Onion Proxy Manager*/
-    public boolean OrbotManagerInit(){
-        return orbot_manager.isOrbotRunning();
+    public boolean OrbotManagerInit(boolean deepCheck){
+        return orbot_manager.isOrbotRunning(deepCheck);
+    }
+    public void setProxy(boolean status){
+        orbot_manager.setProxy(status);
     }
     public String orbotLogs(){
         return orbot_manager.getLogs();
@@ -178,7 +181,6 @@ public class pluginController
         @Override
         public void invokeObserver(Object data, enums.eventType e_type)
         {
-            home_model.setPort((int)data);
         }
     }
 
@@ -195,7 +197,13 @@ public class pluginController
                 dataController.getInstance().setBool(keys.first_time_loaded,true);
             }
             else if(e_type.equals(enums.eventType.reload)){
-                home_controller.onReload();
+                if(orbot_manager.isOrbotRunning(true))
+                {
+                    home_controller.onloadURL(data.toString(),false,true,true);
+                }
+                else {
+                    message_manager.createMessage(home_controller,data.toString(),enums.popup_type.start_orbot);
+                }
             }
             else if(e_type.equals(enums.eventType.clear_history)){
                 dataController.getInstance().clearHistory();
@@ -207,7 +215,9 @@ public class pluginController
             }
             else if(e_type.equals(enums.eventType.bookmark)){
                 String [] dataParser = data.toString().split("split");
-                home_model.addBookmark(dataParser[0],dataParser[1]);
+                if(dataParser.length>1){
+                    home_model.addBookmark(dataParser[0],dataParser[1]);
+                }
             }
             else if(e_type.equals(enums.eventType.app_rated)){
                 dataController.getInstance().setBool(keys.isAppRated,true);

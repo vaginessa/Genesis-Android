@@ -62,10 +62,13 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.listView
     {
         clearButton.setOnClickListener(v ->
         {
-            event.invokeObserver(model_list.get(temp_model_list.get(index).getId()).getId(),enums.history_eventType.remove_from_database);
-            event.invokeObserver(temp_model_list.get(index).getId(),enums.history_eventType.url_clear);
-            invokeFilter(false);
-            event.invokeObserver(index,enums.history_eventType.is_empty);
+            if(temp_model_list.size()>index){
+                int index_temp = temp_model_list.get(index).getId();
+                event.invokeObserver(model_list.get(index_temp).getId(),enums.history_eventType.remove_from_database);
+                event.invokeObserver(temp_model_list.get(index).getId(),enums.history_eventType.url_clear);
+                invokeFilter(false);
+                event.invokeObserver(index,enums.history_eventType.is_empty);
+            }
         });
     }
 

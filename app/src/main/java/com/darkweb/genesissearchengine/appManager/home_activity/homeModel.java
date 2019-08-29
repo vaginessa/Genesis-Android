@@ -43,7 +43,7 @@ public class homeModel
     /*Getters Setters*/
     public void setPort(int port)
     {
-        status.onionProxyPort = port;
+        //status.onionProxyPort = port;
     }
 
 

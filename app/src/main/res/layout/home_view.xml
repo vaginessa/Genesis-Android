@@ -27,15 +27,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <org.mozilla.geckoview.GeckoView
-                android:id="@+id/webLoader"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="58dp"
-                android:alpha="1"
-                tools:layout_editor_absoluteX="8dp"
-                tools:layout_editor_absoluteY="8dp"></org.mozilla.geckoview.GeckoView>
-
         <WebView
                 android:id="@+id/pageLoader1"
                 android:layout_width="match_parent"
@@ -45,6 +36,16 @@
                 android:background="@color/white"
                 tools:layout_editor_absoluteX="0dp"
                 tools:layout_editor_absoluteY="0dp"></WebView>
+
+        <org.mozilla.geckoview.GeckoView
+                android:id="@+id/webLoader"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="58dp"
+                android:alpha="1"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="8dp"></org.mozilla.geckoview.GeckoView>
+
 
     </FrameLayout>
 

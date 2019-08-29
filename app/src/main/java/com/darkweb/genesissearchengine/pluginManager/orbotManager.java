@@ -24,6 +24,8 @@ public class orbotManager
     private int threadCounter = 100;
     private static OnionProxyManager onionProxyManager = null;
     private Handler updateUIHandler = null;
+    private int onionProxyPort = 0;
+    private boolean isTorInitialized = false;
 
     private AppCompatActivity app_context;
     private eventObserver.eventListener event;
@@ -43,7 +45,7 @@ public class orbotManager
 
     /*Orbot Initialization*/
 
-    static private class getProxtStatus implements Callable<Boolean>
+    private class getProxtStatus implements Callable<Boolean>
     {
         @Override
         public Boolean call()
@@ -52,7 +54,7 @@ public class orbotManager
             {
                 if(!isLoading && !onionProxyManager.isNetworkEnabled())
                 {
-                    status.isTorInitialized = false;
+                    isTorInitialized = false;
                 }
             }
             catch (Exception ignored)
@@ -81,10 +83,10 @@ public class orbotManager
                             }
                             else
                             {
-                                status.isTorInitialized = false;
+                                isTorInitialized = false;
                             }
                         }
-                        if(!isLoading && !status.isTorInitialized)
+                        if(!isLoading && !isTorInitialized)
                         {
                             if(helperMethod.isNetworkAvailable(app_context))
                             {
@@ -93,7 +95,7 @@ public class orbotManager
                                     onionProxyManager = new AndroidOnionProxyManager(app_context, strings.torfolder);
                                 }
                                 isLoading = false;
-                                status.isTorInitialized = false;
+                                isTorInitialized = false;
                                 initializeTorClient();
                             }
                         }
@@ -114,7 +116,7 @@ public class orbotManager
 
     private void initializeTorClient()
     {
-        status.isTorInitialized = false;
+        isTorInitialized = false;
         if(!isLoading)
         {
             new Thread()
@@ -137,6 +139,7 @@ public class orbotManager
                                 continue;
                             }
 
+                            onionProxyPort = onionProxyManager.getIPv4LocalHostSocksPort();
                             startPostTask();
                             isLoading = false;
                             break;
@@ -161,23 +164,43 @@ public class orbotManager
 
     @SuppressLint("HandlerLeak")
     private void createUpdateUiHandler(){
-        updateUIHandler = new Handler()
-        {
-            @Override
-            public void handleMessage(@NonNull Message msg)
-            {
-                initializeProxy();
+        app_context.runOnUiThread(new Runnable() {
+            public void run() {
+                updateUIHandler = new Handler()
+                {
+                    @Override
+                    public void handleMessage(@NonNull Message msg)
+                    {
+                        initializeProxy();
+                    }
+                };
             }
-        };
+        });
+    }
+
+    void setProxy(boolean status){
+        if(status){
+            PrefsHelper.setPref(keys.proxy_type, 1);
+            PrefsHelper.setPref(keys.proxy_socks,constants.proxy_socks);
+            PrefsHelper.setPref(keys.proxy_socks_port, onionProxyPort);
+            PrefsHelper.setPref(keys.proxy_socks_version,constants.proxy_socks_version);
+            PrefsHelper.setPref(keys.proxy_socks_remote_dns,constants.proxy_socks_remote_dns);
+        }
+        else {
+            PrefsHelper.setPref(keys.proxy_type, 0);
+            PrefsHelper.setPref(keys.proxy_socks,null);
+            PrefsHelper.setPref(keys.proxy_socks_port, null);
+            PrefsHelper.setPref(keys.proxy_socks_version,null);
+            PrefsHelper.setPref(keys.proxy_socks_remote_dns,null);
+        }
     }
 
     private void initializeProxy()
     {
-        status.isTorInitialized = true;
-        event.invokeObserver(status.onionProxyPort,null);
-        PrefsHelper.setPref(keys.proxy_type, constants.proxy_type);
+        isTorInitialized = true;
+        event.invokeObserver(onionProxyPort,null);
         PrefsHelper.setPref(keys.proxy_socks,constants.proxy_socks);
-        PrefsHelper.setPref(keys.proxy_socks_port, status.onionProxyPort);
+        PrefsHelper.setPref(keys.proxy_socks_port, onionProxyPort);
         PrefsHelper.setPref(keys.proxy_socks_version,constants.proxy_socks_version);
         PrefsHelper.setPref(keys.proxy_socks_remote_dns,constants.proxy_socks_remote_dns);
         PrefsHelper.setPref(keys.proxy_cache,constants.proxy_cache);
@@ -204,20 +227,22 @@ public class orbotManager
         return "Loading Please Wait";
     }
 
-    boolean isOrbotRunning(){
-        try
-        {
-            ExecutorService executor = Executors.newFixedThreadPool(1);
-            getProxtStatus task = new getProxtStatus();
-            Future<Boolean> future = executor.submit(task);
-            future.get();
-        }
-        catch (Exception ex)
-        {
-            return false;
+    boolean isOrbotRunning(boolean deepCheck){
+        if(deepCheck){
+            try
+            {
+                ExecutorService executor = Executors.newFixedThreadPool(1);
+                getProxtStatus task = new getProxtStatus();
+                Future<Boolean> future = executor.submit(task);
+                future.get();
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
-        return status.isTorInitialized;
+        return isTorInitialized;
     }
 
 }

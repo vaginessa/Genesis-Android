@@ -243,8 +243,8 @@ public class messageManager
 
     private void startingOrbotInfo()
     {
-        if (!is_popup_open)
-        {
+        //if (!is_popup_open)
+        //{
             is_popup_open = true;
             popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                     .setTitle(strings.orbot_init_title)
@@ -260,18 +260,18 @@ public class messageManager
                 final Handler handler = new Handler();
                 handler.postDelayed(() ->
                 {
-                    if (!data.equals(strings.emptyStr))
-                    {
-                        event.invokeObserver(data, enums.eventType.welcome);
-                    } else
-                    {
-                        event.invokeObserver(null, enums.eventType.reload);
-                    }
+                    //if (!data.equals(strings.emptyStr))
+                    //{
+                    //    event.invokeObserver(data, enums.eventType.welcome);
+                    //} else
+                    //{
+                        event.invokeObserver(data, enums.eventType.reload);
+                    //}
                 }, 500);
 
             });
 
-        }
+        //}
     }
 
     private void versionWarning()
