@@ -7,11 +7,24 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.util.Preconditions;
+
 import com.darkweb.genesissearchengine.constants.*;
 import com.darkweb.genesissearchengine.helperMethod;
 import com.msopentech.thali.android.toronionproxy.AndroidOnionProxyManager;
+import com.msopentech.thali.toronionproxy.OnionProxyContext;
 import com.msopentech.thali.toronionproxy.OnionProxyManager;
+import com.msopentech.thali.toronionproxy.WriteObserver;
+
 import org.mozilla.gecko.PrefsHelper;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,10 +34,11 @@ class orbotManager
 {
 
     /*Private Variables*/
+    private static OnionProxyManager onionProxyManager = null;
+    private OnionProxyContext onionProxyContext;
 
     private static boolean isLoading = false;
     private int threadCounter = 100;
-    private static OnionProxyManager onionProxyManager = null;
     private Handler updateUIHandler = null;
     private int onionProxyPort = 0;
     private boolean isTorInitialized = false;
@@ -46,6 +60,28 @@ class orbotManager
         autoValidator();
     }
 
+    public void initContext(File workingDirectory){
+        onionProxyContext = new OnionProxyContext(workingDirectory)
+        {
+            @Override
+            public String getProcessId()
+            {
+                return null;
+            }
+
+            @Override
+            public WriteObserver generateWriteObserver(File file)
+            {
+                return null;
+            }
+
+            @Override
+            protected InputStream getAssetOrResourceByName(String fileName) throws IOException
+            {
+                return null;
+            }
+        };
+    }
     /*Orbot Initialization*/
 
     private class getProxtStatus implements Callable<Boolean>
@@ -141,6 +177,11 @@ class orbotManager
                             int totalSecondsPerTorStartup = 4 * 60;
                             int totalTriesPerTorStartup = 5;
 
+                            //if(onionProxyManager.isBootstrapped()){
+                                initContext(onionProxyManager.getWorkingDirectory());
+                                initBridgeGateway();
+                            //}
+
                             boolean ok = onionProxyManager.startWithRepeat(totalSecondsPerTorStartup, totalTriesPerTorStartup);
 
                             if (!ok)
@@ -224,6 +265,38 @@ class orbotManager
         PrefsHelper.setPref("browser.cache.memory.enable",true);
         PrefsHelper.setPref("browser.cache.disk.capacity",10000);
 
+
+    }
+
+    private synchronized void initBridgeGateway() throws IOException, InterruptedException {
+
+        //onionProxyContext.installFiles();
+
+        PrintWriter printWriter = null;
+        try {
+            printWriter = new PrintWriter(new BufferedWriter(new FileWriter(onionProxyContext.getTorrcFile(), true)));
+            printWriter.println("CookieAuthFile " + onionProxyContext.getCookieFile().getAbsolutePath());
+            // For some reason the GeoIP's location can only be given as a file
+            // name, not a path and it has
+            // to be in the data directory so we need to set both
+            printWriter.println("DataDirectory " + onionProxyContext.getWorkingDirectory().getAbsolutePath());
+            printWriter.println("GeoIPFile " + onionProxyContext.getGeoIpFile().getName());
+            printWriter.println("GeoIPv6File " + onionProxyContext.getGeoIpv6File().getName());
+
+            if (true) {
+                List<String> bridges = BridgeProvider.getBridges();
+                Preconditions.checkNotNull(bridges, "Bridges must not be null");
+                Preconditions.checkArgument(!bridges.isEmpty(), "Bridges must not be empty");
+
+                printWriter.println("UseBridges 1");
+                for (String bridgeLine : bridges)
+                    printWriter.println(bridgeLine);
+            }
+        } finally {
+            if (printWriter != null) {
+                printWriter.close();
+            }
+        }
 
     }
 

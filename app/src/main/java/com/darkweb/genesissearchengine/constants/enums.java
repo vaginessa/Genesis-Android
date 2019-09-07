@@ -9,8 +9,8 @@ public class enums
     public enum navigationType{onion, base}
 
     /*Message Manager*/
-    public enum popup_type{welcome,abi_error,rate_success,reported_success,bookmark, clear_history,clear_bookmark,report_url,rate_app,version_warning,start_orbot,download_file}
-    public enum eventType{welcome,cancel_welcome,reload, clear_history,clear_bookmark,bookmark, app_rated,download_file, update_searcn, update_javascript, update_history,close_view}
+    public enum popup_type{welcome,abi_error,rate_success,reported_success,bookmark, clear_history,clear_bookmark,report_url,rate_app,version_warning,start_orbot,download_file,tor_banned}
+    public enum eventType{welcome,cancel_welcome,reload,connect_vpn,start_home,disable_splash, clear_history,clear_bookmark,bookmark, app_rated,download_file, update_searcn, update_javascript, update_history,close_view}
 
 
     /*List Manager*/

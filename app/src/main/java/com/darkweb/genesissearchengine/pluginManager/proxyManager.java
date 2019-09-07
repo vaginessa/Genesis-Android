@@ -2,6 +2,7 @@ package com.darkweb.genesissearchengine.pluginManager;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Debug;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +20,7 @@ import com.anchorfree.hydrasdk.exceptions.HydraException;
 import com.anchorfree.hydrasdk.vpnservice.connectivity.NotificationConfig;
 import com.anchorfree.reporting.TrackingConstants;
 import com.darkweb.genesissearchengine.constants.constants;
+import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.status;
 import com.example.myapplication.BuildConfig;
 import com.example.myapplication.R;
@@ -44,7 +46,6 @@ public class proxyManager
     }
 
     private void initialize(){
-
     }
 
     /*Initialize Hydra*/
@@ -103,17 +104,20 @@ public class proxyManager
 
     private void startVPNConnection()
     {
+        Log.i("FUCK1","F1");
         HydraSdk.startVPN(createConnectionRequest(), new Callback<ServerCredentials>()
         {
             @Override
             public void success(@NonNull ServerCredentials serverCredentials)
             {
+                Log.i("FUCK1","F2");
                 loadBoogle();
             }
 
             @Override
             public void failure(@NonNull HydraException e)
             {
+                Log.i("FUCK1","F3");
                 loadBoogle();
             }
         });
@@ -124,6 +128,7 @@ public class proxyManager
     private void loadBoogle()
     {
         is_running = true;
+        event.invokeObserver(null, enums.eventType.disable_splash);
     }
 
     /*Helper Methods*/
@@ -145,8 +150,8 @@ public class proxyManager
     /*External Helper Methods*/
 
     void startVPN() {
-        //initHydraSdk();
-        //connect();
+        initHydraSdk();
+        connect();
     }
 
     void disconnectConnection() {

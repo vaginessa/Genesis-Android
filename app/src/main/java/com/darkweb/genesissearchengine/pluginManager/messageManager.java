@@ -289,6 +289,34 @@ public class messageManager
 
     }
 
+    boolean isDialogDismissed = true;
+    private void torBanned()
+    {
+        isDialogDismissed = true;
+        popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                .setTitle(strings.banned_title)
+                .setBackgroundColor(app_context.getResources().getColor(R.color.blue_dark_v2))
+                .setTextColor(app_context.getResources().getColor(R.color.black))
+                .setMessage(strings.banned_desc)
+                .onDismissListener(dialog -> startHome())
+                .addButton(strings.banned_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                {
+                    isDialogDismissed = false;
+                    dialog.dismiss();
+                    event.invokeObserver(null, enums.eventType.connect_vpn);
+                })
+                .addButton(strings.rate_success_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                {
+                    dialog.dismiss();
+                });
+    }
+
+    void startHome(){
+        if(isDialogDismissed){
+            event.invokeObserver(null, enums.eventType.start_home);
+        }
+    }
+
     /*External Helper Methods*/
 
     void createMessage(AppCompatActivity app_context,String data, enums.popup_type type)
@@ -348,6 +376,10 @@ public class messageManager
 
                 case version_warning:
                     versionWarning();
+                    break;
+
+                case tor_banned:
+                    torBanned();
                     break;
             }
 

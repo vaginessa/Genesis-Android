@@ -72,6 +72,10 @@ public class strings
     public static String download_positive = "Download";
     public static String download_negative = "Dismiss";
 
+    public static String banned_title = "Is Tor Bannned In Your Country?";
+    public static String banned_desc = "Enable free gateway to tunnel through banned configuration | Use it only if tor is banned in your country";
+    public static String banned_bt1 = "Enable Tor Gateway";
+
     /*Text Manager*/
 
     public static String darkweb = "Hidden Web";

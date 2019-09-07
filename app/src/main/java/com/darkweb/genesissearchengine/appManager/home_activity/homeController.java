@@ -121,9 +121,24 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             home_view_controller.updateLogs(pluginController.getInstance().orbotLogs());
             return strings.emptyStr;
         };
-        home_view_controller.disableSplashScreen(callable);
+
+
+        if(status.isBootstrapped){
+            if(status.gateway){
+                initializeProxy();
+            }
+            else {
+                home_view_controller.disableSplashScreen(callable);
+            }
+        }
+        else {
+            pluginController.getInstance().MessageManagerHandler(homeController.this,null,enums.popup_type.tor_banned);
+        }
     }
 
+    public void initializeProxy(){
+        pluginController.getInstance().proxyManager(true);
+    }
     /*Shared Controller Events*/
 
     public void reloadJavaScript(){
@@ -270,6 +285,21 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         return banner_ads;
     }
 
+    public void startGateway(){
+        home_view_controller.updateLogs("Loading | Starting Gateway");
+        pluginController.getInstance().proxyManager(true);
+    }
+
+    public void disableSplash(){
+
+        Callable<String> callable = () -> {
+            home_view_controller.updateLogs(pluginController.getInstance().orbotLogs());
+            return strings.emptyStr;
+        };
+
+        home_view_controller.disableSplashScreen(callable);
+    }
+
     public class homeViewCallback implements eventObserver.eventListener{
 
         @Override
@@ -281,7 +311,9 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                     helperMethod.openActivity(historyController.class, constants.list_history, homeController.this);
                 }
                 else if (menuId == R.id.menu2) {
-                    //switchGateway();
+                    pluginController.getInstance().proxyManager(!status.gateway);
+                    status.gateway = !status.gateway;
+                    //onHomeButton(null);
                 }
                 else if (menuId == R.id.menu9) {
                     loadURL("https://whatismycountry.com/");
@@ -344,9 +376,11 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                 dataController.getInstance().addHistory(data.get(0).toString());
             }
             else if(e_type.equals(enums.home_eventType.on_page_loaded)){
+                dataController.getInstance().setBool(keys.is_bootstrapped,true);
                 home_view_controller.onPageFinished();
             }
             else if(e_type.equals(enums.home_eventType.on_load_error)){
+                dataController.getInstance().setBool(keys.is_bootstrapped,true);
                 home_view_controller.onLoadError();
                 dataController.getInstance().addHistory(data.get(0).toString());
                 home_view_controller.updateSearchBar(data.get(0).toString());

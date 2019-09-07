@@ -1,5 +1,8 @@
 package com.darkweb.genesissearchengine.pluginManager;
 
+import android.content.Intent;
+import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.darkweb.genesissearchengine.appManager.activityContextManager;
@@ -54,7 +57,7 @@ public class pluginController
     {
         ad_manager = new adManager(getAppContext(),new admobCallback(),home_controller.getBannerAd());
         analytic_manager = new analyticManager(getAppContext(),new analyticCallback());
-        // exit_manager = new exitManager(getAppContext(),new exitCallback());
+        getAppContext().startService(new Intent(getAppContext(), exitManager.class));
         fabric_manager = new fabricManager(getAppContext(),new fabricCallback());
         firebase_manager = new firebaseManager(getAppContext(),new firebaseCallback());
         local_notification = new localNotification(getAppContext(),new notificationCallback());
@@ -86,6 +89,7 @@ public class pluginController
             proxy_manager.disconnectConnection();
         }
     }
+
     public boolean proxyStatus(){
         return proxy_manager.isProxyRunning();
     }
@@ -172,9 +176,10 @@ public class pluginController
         @Override
         public void invokeObserver(Object data, enums.eventType e_type)
         {
-            if(status.search_status.equals(strings.darkweb))
+            if(e_type.equals(enums.eventType.disable_splash))
             {
-                //home_controller.initBoogle();
+                dataController.getInstance().setBool(keys.gateway,true);
+                home_controller.disableSplash();
             }
         }
     }
@@ -230,6 +235,12 @@ public class pluginController
             }
             else if(e_type.equals(enums.eventType.download_file)){
                 home_controller.onDownloadFile();
+            }
+            else if(e_type.equals(enums.eventType.connect_vpn)){
+                home_controller.startGateway();
+            }
+            else if(e_type.equals(enums.eventType.start_home)){
+                home_controller.disableSplash();
             }
         }
     }

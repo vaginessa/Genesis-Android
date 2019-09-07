@@ -33,5 +33,6 @@ public class keys
     public static String java_script  = "java_script";
     public static String history_clear  = "history_clear";
     public static String gateway  = "gateway";
+    public static String is_bootstrapped  = "is_bootstrapped";
 
 }
