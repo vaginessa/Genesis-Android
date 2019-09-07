@@ -27,7 +27,7 @@ public class localNotification
     localNotification(AppCompatActivity app_context, eventObserver.eventListener event){
         this.app_context = app_context;
         this.event = event;
-        mContext = homeModel.getInstance().getAppContext();
+        //mContext = homeModel.getInstance().getAppContext();
     }
 
     private Context mContext;
@@ -39,11 +39,11 @@ public class localNotification
      */
     public void createNotification(String title, String message)
     {
-        Intent resultIntent = new Intent(mContext , homeModel.getInstance().getHomeInstance().getClass());
-        resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //Intent resultIntent = new Intent(mContext , homeModel.getInstance().getHomeInstance().getClass());
+        //resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        PendingIntent resultPendingIntent = PendingIntent.getActivity(mContext,
-                0 /* Request code */, resultIntent,
+        /*PendingIntent resultPendingIntent = PendingIntent.getActivity(mContext,
+                0 , resultIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
@@ -51,7 +51,7 @@ public class localNotification
         mBuilder.setContentTitle(title)
                 .setContentText(message)
                 .setAutoCancel(true)
-                .setContentIntent(resultPendingIntent);
+                .setContentIntent(resultPendingIntent);*/
 
         mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -60,15 +60,15 @@ public class localNotification
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "NOTIFICATION_CHANNEL_NAME", importance);
             assert mNotificationManager != null;
-            mBuilder.setChannelId(NOTIFICATION_CHANNEL_ID);
+            //mBuilder.setChannelId(NOTIFICATION_CHANNEL_ID);
             mNotificationManager.createNotificationChannel(notificationChannel);
         }
         assert mNotificationManager != null;
 
         int oneTimeID = (int) SystemClock.uptimeMillis();
-        mNotificationManager.notify(oneTimeID, mBuilder.build());
+        //mNotificationManager.notify(oneTimeID, mBuilder.build());
 
-        mNotificationManager.notify(oneTimeID /* Request Code */, mBuilder.build());
+        //mNotificationManager.notify(oneTimeID /* Request Code */, mBuilder.build());
 
         new Thread()
         {

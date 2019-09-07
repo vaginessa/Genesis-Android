@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,12 +15,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.darkweb.genesissearchengine.appManager.activityContextManager;
 import com.darkweb.genesissearchengine.appManager.databaseManager.databaseController;
 import com.darkweb.genesissearchengine.appManager.home_activity.homeController;
-import com.darkweb.genesissearchengine.appManager.home_activity.homeModel;
 import com.darkweb.genesissearchengine.constants.enums;
+import com.darkweb.genesissearchengine.constants.keys;
+import com.darkweb.genesissearchengine.constants.status;
 import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperMethod;
 import com.darkweb.genesissearchengine.pluginManager.pluginController;
 import com.example.myapplication.R;
+
+import java.util.ArrayList;
 
 public class historyController extends AppCompatActivity
 {
@@ -33,8 +37,9 @@ public class historyController extends AppCompatActivity
     private EditText searchBar;
     private RecyclerView listView;
     private Button clearButton;
+    private ImageButton moreButton;
 
-    private historyViewController viewController;
+    private historyViewController history_view_controller;
 
     /*Initializations*/
 
@@ -50,24 +55,27 @@ public class historyController extends AppCompatActivity
 
     public void initializeListModel(){
         list_model = new historyModel();
-        list_model.setList(dataController.getInstance().getHistory());
         contextManager = activityContextManager.getInstance();
-        home_controller = homeModel.getInstance().getHomeInstance();
+        home_controller = activityContextManager.getInstance().getHomeController();
         contextManager.setHistoryController(this);
+        activityContextManager.getInstance().setHistoryController(this);
     }
     public void initializeViews(){
         emptyListNotifier = findViewById(R.id.empty_list);
         searchBar = findViewById(R.id.search);
         listView = findViewById(R.id.listview);
         clearButton = findViewById(R.id.clearButton);
-        viewController = new historyViewController(emptyListNotifier,searchBar,listView,clearButton);
+        moreButton = findViewById(R.id.load_more);
+        history_view_controller = new historyViewController(emptyListNotifier,searchBar,listView,clearButton,moreButton);
     }
     public void initializeList(){
+        ArrayList<historyRowModel> model = dataController.getInstance().getHistory();
+        list_model.setList(model);
         historyAdapter adapter = new historyAdapter(list_model.getList(),new adapterCallback());
         adapter.invokeFilter(false);
         listView.setAdapter(adapter);
         listView.setLayoutManager(new LinearLayoutManager(this));
-        viewController.updateIfListEmpty(list_model.getList().size(),0);
+        history_view_controller.updateIfListEmpty(list_model.getList().size(),0);
     }
 
     /*View Handlers*/
@@ -113,10 +121,43 @@ public class historyController extends AppCompatActivity
     public void onclearData(){
         list_model.clearList();
         ((historyAdapter)listView.getAdapter()).invokeFilter(true );
-        viewController.clearList();
+        history_view_controller.clearList();
+        databaseController.getInstance().execSQL("delete from history where 1",null);
     }
 
+    public void onLoadMoreHostory(View view)
+    {
+        dataController.getInstance().loadMoreHistory();
+    }
 
+    public void updateHistory(){
+        initializeList();
+        history_view_controller.updateList();
+    }
+
+    @Override
+    public void onTrimMemory(int level)
+    {
+        if(status.isAppPaused && (level==80 || level==15))
+        {
+            dataController.getInstance().setBool(keys.low_memory,true);
+            finish();
+        }
+    }
+
+    @Override
+    public void onResume()
+    {
+        status.isAppPaused = false;
+        super.onResume();
+    }
+
+    @Override
+    public void onPause()
+    {
+        status.isAppPaused = true;
+        super.onPause();
+    }
 
     /*Event Observer*/
 
@@ -127,16 +168,18 @@ public class historyController extends AppCompatActivity
         {
             if(e_type.equals(enums.history_eventType.url_triggered)){
                 String url_temp = helperMethod.completeURL(data.toString());
-                home_controller.addNavigation(data.toString(), enums.navigationType.onion);
-                home_controller.onloadURL(url_temp,false,false,false);
+                home_controller.loadURL(url_temp);
                 finish();
             }
             else if(e_type.equals(enums.history_eventType.url_clear)){
                 list_model.onManualClear((int)data);
             }
+            else if(e_type.equals(enums.history_eventType.url_clear_at)){
+                dataController.getInstance().removeHistory(data.toString());
+            }
             else if(e_type.equals(enums.history_eventType.is_empty)){
-                viewController.removeFromList((int)data);
-                viewController.updateIfListEmpty(list_model.getList().size(),300);
+                history_view_controller.removeFromList((int)data);
+                history_view_controller.updateIfListEmpty(list_model.getList().size(),300);
             }
             else if(e_type.equals(enums.history_eventType.remove_from_database)){
                 databaseController.getInstance().deleteFromList((int)data,"history");

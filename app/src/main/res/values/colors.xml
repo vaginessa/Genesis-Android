@@ -6,7 +6,7 @@
     <color name="text_color_highlight_v1">#b3d1ff</color>
     <color name="blue_dark">#00264d</color>
     <color name="blue_dark_v1">#212d45</color>
-    <color name="blue_dark_v2">#CC212d45</color>
+    <color name="blue_dark_v2">#55212d45</color>
 
     <color name="black">#000000</color>
     <color name="headerblack">#212f45</color>
@@ -17,6 +17,7 @@
     <color name="holo_gray">#b3b3b3</color>
     <color name="float_white">#bfbfbf</color>
     <color name="button_gray">#d9d9d9</color>
+    <color name="holo_light">#e6e6e6</color>
     <color name="white_darker">#f8f8f8</color>
     <color name="white_dark">#f2f2f2</color>
     <color name="white">#ffffff</color>

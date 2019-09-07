@@ -37,8 +37,8 @@ public class databaseController
         try
         {
             database_instance = app_context.openOrCreateDatabase(constants.databae_name, MODE_PRIVATE, null);
-            database_instance.execSQL("CREATE TABLE IF NOT EXISTS " + "history" + " (id INT(4),date VARCHAR,url VARCHAR);");
-            database_instance.execSQL("CREATE TABLE IF NOT EXISTS " + "bookmark" + " (id INT(4),title VARCHAR,url VARCHAR);");
+            database_instance.execSQL("CREATE TABLE IF NOT EXISTS " + "history" + " (id  INT(4) PRIMARY KEY,date VARCHAR,url VARCHAR);");
+            database_instance.execSQL("CREATE TABLE IF NOT EXISTS " + "bookmark" + " (id INT(4) PRIMARY KEY,title VARCHAR,url VARCHAR);");
 
         }
         catch (Exception ex)
@@ -62,18 +62,53 @@ public class databaseController
         }
     }
 
-    public ArrayList<historyRowModel> selectHistory(){
+    public ArrayList<historyRowModel> selectHistory(int startIndex,int endIndex){
         ArrayList<historyRowModel> tempmodel = new ArrayList<>();
-        Cursor c = database_instance.rawQuery("SELECT * FROM history ORDER BY id DESC ", null);
+        Cursor c = database_instance.rawQuery("SELECT * FROM history ORDER BY date DESC LIMIT "+endIndex+" OFFSET "+startIndex, null);
         if (c.moveToFirst()){
             do {
                 tempmodel.add(new historyRowModel(c.getString(2), c.getString(1),Integer.parseInt(c.getString(0))));
-                homeModel.getInstance().initSuggestions(c.getString(2));
             } while(c.moveToNext());
         }
         c.close();
 
         return  tempmodel;
+    }
+
+    public int getLargestHistoryID(){
+        int id = 0;
+        Cursor c = database_instance.rawQuery("SELECT max(id) FROM history", null);
+
+        if (c.moveToFirst()){
+            do {
+                if(c.getString(0)==null){
+                    break;
+                }
+                id = Integer.parseInt(c.getString(0));
+                break;
+            } while(c.moveToNext());
+        }
+        c.close();
+
+        return  id;
+    }
+
+    public int getHistorySize(){
+        int id = 0;
+        Cursor c = database_instance.rawQuery("SELECT count(*) FROM history", null);
+
+        if (c.moveToFirst()){
+            do {
+                if(c.getString(0)==null){
+                    break;
+                }
+                id = Integer.parseInt(c.getString(0));
+                break;
+            } while(c.moveToNext());
+        }
+        c.close();
+
+        return  id;
     }
 
     public ArrayList<bookmarkRowModel> selectBookmark(){

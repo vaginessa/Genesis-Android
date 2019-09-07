@@ -13,10 +13,12 @@ public class status
 
     /*Settings Status*/
 
-    public static String search_status = strings.emptyStr;
-    public static boolean java_status = false;
+    public static String search_status = constants.backendGoogle;
+    public static boolean java_status = true;
     public static boolean history_status = true;
     public static boolean gateway = false;
+    public static boolean isAppPaused = false;
+    public static boolean isTorInitialized = false;
 
     /*Initializations*/
 
@@ -24,7 +26,7 @@ public class status
     {
         status.java_status = dataController.getInstance().getBool(keys.java_script,true);
         status.history_status = dataController.getInstance().getBool(keys.history_clear,true);
-        status.search_status = dataController.getInstance().getString(keys.search_engine,strings.darkweb);
+        status.search_status = dataController.getInstance().getString(keys.search_engine,constants.backendGoogle);
         status.gateway = dataController.getInstance().getBool(keys.gateway,false);
     }
 

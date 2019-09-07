@@ -18,6 +18,8 @@ import com.darkweb.genesissearchengine.appManager.databaseManager.databaseContro
 import com.darkweb.genesissearchengine.appManager.home_activity.homeController;
 import com.darkweb.genesissearchengine.appManager.home_activity.homeModel;
 import com.darkweb.genesissearchengine.constants.enums;
+import com.darkweb.genesissearchengine.constants.keys;
+import com.darkweb.genesissearchengine.constants.status;
 import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperMethod;
 import com.darkweb.genesissearchengine.pluginManager.pluginController;
@@ -43,7 +45,7 @@ public class bookmarkController extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.history_view);
+        setContentView(R.layout.bookmark_view);
         initializeListModel();
         initializeViews();
         initializeList();
@@ -54,7 +56,7 @@ public class bookmarkController extends AppCompatActivity
         list_model = new bookmarkModel();
         list_model.setList(dataController.getInstance().getBookmark());
         contextManager = activityContextManager.getInstance();
-        home_controller = homeModel.getInstance().getHomeInstance();
+        home_controller = activityContextManager.getInstance().getHomeController();
         contextManager.setBookmarkController(this);
     }
     public void initializeViews(){
@@ -117,9 +119,32 @@ public class bookmarkController extends AppCompatActivity
         list_model.clearList();
         ((bookmarkAdapter)listView.getAdapter()).invokeFilter(true );
         viewController.clearList();
+        databaseController.getInstance().execSQL("delete from bookmark where 1",null);
     }
 
+    @Override
+    public void onTrimMemory(int level)
+    {
+        if(status.isAppPaused && (level==80 || level==15))
+        {
+            dataController.getInstance().setBool(keys.low_memory,true);
+            finish();
+        }
+    }
 
+    @Override
+    public void onResume()
+    {
+        status.isAppPaused = false;
+        super.onResume();
+    }
+
+    @Override
+    public void onPause()
+    {
+        status.isAppPaused = true;
+        super.onPause();
+    }
 
     /*Event Observer*/
 
@@ -130,8 +155,7 @@ public class bookmarkController extends AppCompatActivity
         {
             if(e_type.equals(enums.bookmark_eventType.url_triggered)){
                 String url_temp = helperMethod.completeURL(data.toString());
-                home_controller.addNavigation(data.toString(), enums.navigationType.onion);
-                home_controller.onloadURL(url_temp,false,false,false);
+                home_controller.loadURL(url_temp);
                 finish();
             }
             else if(e_type.equals(enums.bookmark_eventType.url_clear)){

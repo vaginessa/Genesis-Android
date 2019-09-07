@@ -2,10 +2,12 @@ package com.darkweb.genesissearchengine.dataManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.darkweb.genesissearchengine.appManager.activityContextManager;
 import com.darkweb.genesissearchengine.appManager.bookmarkManager.bookmarkRowModel;
 import com.darkweb.genesissearchengine.appManager.databaseManager.databaseController;
+import com.darkweb.genesissearchengine.appManager.historyManager.historyController;
 import com.darkweb.genesissearchengine.appManager.historyManager.historyRowModel;
-import com.darkweb.genesissearchengine.appManager.home_activity.homeModel;
+import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.status;
 
 
@@ -16,6 +18,7 @@ public class dataController
     /*Private Variables*/
 
     private dataModel preferences_model;
+    private historyController history_controller;
 
     /*Private Declarations*/
 
@@ -35,13 +38,16 @@ public class dataController
     {
         preferences_model = new dataModel(app_context);
         preferences_model.initializeBookmarks();
+        preferences_model.setMaxHistoryID(databaseController.getInstance().getLargestHistoryID());
+        preferences_model.setHistorySize(databaseController.getInstance().getLargestHistoryID());
+        preferences_model.initSuggestions();
     }
 
     public void initializeListData()
     {
-        if(!status.history_status)
+        if(status.history_status)
         {
-            preferences_model.initializeHistory(databaseController.getInstance().selectHistory());
+            preferences_model.initializeHistory(databaseController.getInstance().selectHistory(0,constants.start_list_size));
         }
         else
         {
@@ -80,6 +86,20 @@ public class dataController
     }
     public void addHistory(String url) {
         preferences_model.addHistory(url);
+        activityContextManager.getInstance().getHomeController().onSuggestionUpdate();
+    }
+    public void removeHistory(String url){
+        preferences_model.removeHistory(url);
+    }
+    public void clearHistory(){
+        preferences_model.clearHistory();
+    }
+    public void loadMoreHistory(){
+        ArrayList<historyRowModel> history = databaseController.getInstance().selectHistory(preferences_model.getHistory().size()-1,constants.max_list_size);
+        if(history.size()>0){
+            preferences_model.loadMoreHistory(history);
+        }
+        activityContextManager.getInstance().getHistoryController().updateHistory();
     }
 
     public ArrayList<bookmarkRowModel> getBookmark(){
@@ -88,13 +108,11 @@ public class dataController
     public void addBookmark(String url,String title){
         preferences_model.addBookmark(url,title);
     }
-
-    public void clearHistory(){
-        preferences_model.clearHistory();
-    }
-
     public void clearBookmark(){
         preferences_model.clearBookmark();
     }
 
+    public ArrayList<String> getSuggestions(){
+        return preferences_model.getSuggestions();
+    }
 }

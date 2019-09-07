@@ -21,17 +21,17 @@
         <service android:name="com.darkweb.genesissearchengine.pluginManager.exitManager" android:stopWithTask="false" />
         <activity
                 android:name="com.darkweb.genesissearchengine.appManager.settingManager.settingController"
-                android:windowSoftInputMode="adjustNothing"
+                android:windowSoftInputMode="adjustResize"
                 android:screenOrientation="portrait"
                 android:label="@string/title_activity_setting_controller">
         </activity>
         <activity android:name="com.darkweb.genesissearchengine.appManager.historyManager.historyController"
                   android:screenOrientation="portrait"
-                  android:windowSoftInputMode="adjustNothing">
+                  android:windowSoftInputMode="adjustResize">
         </activity>
         <activity android:name="com.darkweb.genesissearchengine.appManager.bookmarkManager.bookmarkController"
                 android:screenOrientation="portrait"
-                android:windowSoftInputMode="adjustNothing">
+                android:windowSoftInputMode="adjustResize">
         </activity>
         <uses-library
                 android:name="org.apache.http.legacy"
@@ -39,7 +39,7 @@
 
         <activity
                 android:name="com.darkweb.genesissearchengine.appManager.home_activity.homeController"
-                android:windowSoftInputMode="adjustNothing"
+                android:windowSoftInputMode="adjustResize"
                 android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -57,7 +57,7 @@
                 android:value="ca-app-pub-5074525529134731~2926711128"/>
 
         <service
-                android:name="com.darkweb.genesissearchengine.appManager.home_activity.DownloadFileService"
+                android:name="com.darkweb.genesissearchengine.appManager.home_activity.downloadFileService"
                 android:enabled="true"
                 android:exported="false" />
 

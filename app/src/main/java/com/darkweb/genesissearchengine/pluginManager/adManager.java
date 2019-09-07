@@ -1,5 +1,7 @@
 package com.darkweb.genesissearchengine.pluginManager;
 
+import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.darkweb.genesissearchengine.constants.constants;
 import com.google.android.gms.ads.*;
@@ -33,11 +35,13 @@ class adManager
             banner_ads.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
+                Log.i("Success___","Success");
                 event.invokeObserver(null,null);
             }
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
+                Log.i("Failure___",""+errorCode);
             }
 
             @Override
@@ -61,7 +65,7 @@ class adManager
     /*External Helper Methods*/
 
     void initializeBannerAds(){
-        AdRequest request = new AdRequest.Builder().build();
+        AdRequest request = new AdRequest.Builder().addTestDevice("41B9A0495CE25FCA44B3186D6B8268F0").build();
         banner_ads.loadAd(request);
         admobListeners();
     }

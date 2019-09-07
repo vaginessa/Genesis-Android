@@ -89,51 +89,26 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_height="48dp"
-            android:orientation="horizontal">
-
+            android:layout_height="48dp">
         <Button
                 android:id="@+id/clearButton"
-                android:layout_width="456dp"
+                android:layout_width="match_parent"
                 android:layout_height="46dp"
-                android:layout_weight="90"
-                android:background="@xml/clear_button"
-                android:onClick="onclearDataTrigger"
+                android:textStyle="bold"
+                android:textSize="14sp"
                 android:layout_marginStart="2dp"
                 android:layout_marginEnd="2dp"
-
-                android:text="Clear History"
                 android:textAlignment="center"
-                android:textColor="@color/white"
-
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-        <ImageButton
-                android:id="@+id/load_more"
-                android:layout_width="wrap_content"
-                android:paddingRight="17dp"
-                android:paddingLeft="17dp"
-                android:tint="@color/white"
-                android:layout_weight="10"
-                android:layout_height="46dp"
-                android:layout_marginStart="0dp"
-                android:layout_marginEnd="2dp"
                 android:layout_marginBottom="2dp"
                 android:background="@xml/clear_button"
-                android:onClick="onLoadMoreHostory"
-                android:src="@xml/down_arrow"
-                android:textAlignment="center"
-                android:textColor="@color/holo_dark_gray"
-                android:textSize="14sp"
-                android:textStyle="bold"
+                android:onClick="onclearDataTrigger"
+                android:paddingStart="10dp"
+                android:paddingEnd="-10dp"
+                android:text="Clear History"
+                android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
-
-
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

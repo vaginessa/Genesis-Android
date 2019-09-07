@@ -17,7 +17,7 @@ public class strings
     public static String welcome_message_bt5 = "Don't Show Again";
 
     public static String base_error_title = "Dark Web URL | Invalid URL";
-    public static String base_error_desc = "This software can only be used to access hidden web such as \"Onion\" and \"I2P\" \n\nFor accessing Surface Web use Google or Bing\n";
+    public static String base_error_desc = "This software can only be used to access hidden web such as \"Onion\" and \"I2P\" \n\nFor accessing Surface Web use Google or backendDuckDuckGo\n";
     public static String base_error_bt1 = "Dismiss";
 
     public static String abi_error_title = "Invalid Setup File";
@@ -78,7 +78,7 @@ public class strings
     public static String emptyStr = "";
     public static String bookmark_text = "bookmark";
     public static String history_text = "history";
-    public static String bing_text = "Bing";
+    public static String duckDuckGo = "Duck Duck Go";
     public static String google_text = "Google";
 
 }

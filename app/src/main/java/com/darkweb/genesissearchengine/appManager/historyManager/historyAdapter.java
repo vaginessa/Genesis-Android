@@ -32,7 +32,7 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.listView
     @NonNull
     @Override
     public listViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.history_row_view, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_row_view, parent, false);
         return new listViewHolder(view);
     }
 
@@ -50,7 +50,7 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.listView
 
     /*Listeners*/
 
-    private void setItemViewOnClickListener(View itemView, String url)
+    private void setItemViewOnClickListener(View itemView,int id, String url)
     {
         itemView.setOnClickListener(v ->
         {
@@ -64,6 +64,7 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.listView
         {
             if(temp_model_list.size()>index){
                 int index_temp = temp_model_list.get(index).getId();
+                event.invokeObserver(temp_model_list.get(index).getHeader(),enums.history_eventType.url_clear_at);
                 event.invokeObserver(model_list.get(index_temp).getId(),enums.history_eventType.remove_from_database);
                 event.invokeObserver(temp_model_list.get(index).getId(),enums.history_eventType.url_clear);
                 invokeFilter(false);
@@ -99,7 +100,7 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.listView
             messageButton = itemView.findViewById(R.id.message_button);
             empty_message = itemView.findViewById(R.id.empty_list);
 
-            setItemViewOnClickListener(itemContainer,header);
+            setItemViewOnClickListener(itemContainer,model.getId(),header);
         }
     }
 

@@ -17,7 +17,7 @@ public class constants
     public static String frontEndUrlHost = "genesis.store";
     public static String frontEndUrlHost_v1 = "genesis.onion";
     public static String backendGoogle = "https://www.google.com/";
-    public static String backendBing = "https://www.bing.com/";
+    public static String backendDuckDuckGo = "https://duckduckgo.com/";
     public static String playstoreUrl = "https://play.google.com/store/apps/details?id=com.darkweb.genesissearchengine";
 
     /*BUILD CONSTANTS*/
@@ -30,8 +30,8 @@ public class constants
     public static String proxy_socks = "127.0.0.1";
     public static int proxy_socks_version  = 5;
     public static boolean proxy_socks_remote_dns  = true;
-    public static boolean proxy_cache  = false;
-    public static boolean proxy_memory  = false;
+    public static boolean proxy_cache  = true;
+    public static boolean proxy_memory  = true;
     public static String proxy_useragent_override  = "Mozilla/5.0 (Android 9; Mobile; rv:67.0) Gecko/67.0 Firefox/67.0";
     public static boolean proxy_donottrackheader_enabled  = false;
     public static int proxy_donottrackheader_value  = 1;
@@ -43,8 +43,9 @@ public class constants
 
     /*SETTINGS CONSTANTS*/
 
-    public static int max_history_size=500;
-    public static int max_bookmark_size=500;
+    public static int max_list_data_size =5000;
+    public static int max_list_size =5000;
+    public static int start_list_size =100;
     public static String databae_name="genesis_dbase";
 
     /*ADMOB CONSTANTS*/
@@ -62,5 +63,8 @@ public class constants
 
     public static String unique_key_id = "*PREF_UNIQUE_ID";
     public static String user_email = "user@fabric.io";
+
+    /*HOME CONSTANTS*/
+    public static int min_progress_bar_value = 5;
 
 }

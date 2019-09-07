@@ -1,34 +1,46 @@
 package com.darkweb.genesissearchengine.appManager.home_activity;
 
 import android.content.ComponentCallbacks2;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.*;
-import android.webkit.*;
+import android.util.Patterns;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.darkweb.genesissearchengine.*;
+import com.darkweb.genesissearchengine.appManager.activityContextManager;
+import com.darkweb.genesissearchengine.appManager.bookmarkManager.bookmarkController;
 import com.darkweb.genesissearchengine.appManager.databaseManager.databaseController;
+import com.darkweb.genesissearchengine.appManager.historyManager.historyController;
+import com.darkweb.genesissearchengine.appManager.settingManager.settingController;
 import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.keys;
 import com.darkweb.genesissearchengine.constants.status;
+import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.dataManager.dataController;
-import com.darkweb.genesissearchengine.pluginManager.*;
-
+import com.darkweb.genesissearchengine.pluginManager.pluginController;
 import com.example.myapplication.R;
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import org.mozilla.geckoview.GeckoView;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 
 public class homeController extends AppCompatActivity implements ComponentCallbacks2
 {
+    /*Model Declaration*/
+    private homeViewController home_view_controller;
+    private homeModel home_model;
+
     /*View Webviews*/
-    private WebView webView;
     private GeckoView geckoView = null;
     private FrameLayout webviewContainer;
 
@@ -45,8 +57,6 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
     /*Redirection Objects*/
     private geckoClients geckoclient = null;
-    private webviewClient webviewclient = null;
-    private home_ehandler eventhandler = null;
 
     /*-------------------------------------------------------INITIALIZATION-------------------------------------------------------*/
     @Override
@@ -57,135 +67,34 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         if(helperMethod.isBuildValid())
         {
             setContentView(R.layout.home_view);
+
             databaseController.getInstance().initialize(this);
             dataController.getInstance().initialize(this);
+            activityContextManager.getInstance().setHomeController(this);
+
             status.initStatus();
             dataController.getInstance().initializeListData();
+
             initializeAppModel();
             initializeConnections();
-            initializeWebView();
+            initializeGeckoView();
             initializeLocalEventHandlers();
-            initExitService();
-            viewController.getInstance().initialization(webView,webviewContainer,loadingText,progressBar,searchbar,splashScreen,requestFailure,floatingButton, loadingIcon,splashlogo,banner_ads  );
-            geckoclient.initialize(geckoView);
-            homeModel.getInstance().initialization();
-
-            viewController.getInstance().disableSplashScreen();
-            /*
-            if(!status.gateway)
-            {
-                initBoogle();
-            }
-            else if(!status.search_status.equals(enums.searchEngine.HiddenWeb.toString()))
-            {
-                viewController.getInstance().disableSplashScreen();
-            }*/
         }
         else
         {
             initializeAppModel();
             setContentView(R.layout.invalid_setup_view);
-            pluginController.getInstance().MessageManagerHandler(homeModel.getInstance().getHomeInstance(),Build.SUPPORTED_ABIS[0],enums.popup_type.abi_error);
-        }
-
-    }
-
-    public void initExitService()
-    {
-        startService(new Intent(getBaseContext(), exitManager.class));
-    }
-
-    public void lowMemoryError()
-    {
-        viewController.getInstance().lowMemoryError();
-    }
-
-    @Override
-    public void onTrimMemory(int level)
-    {
-        Log.i("CURRENT_LEVEL:" , level+"");
-        if(isAppPaused && (level==80 || level==15))
-        {
-           dataController.getInstance().setBool(keys.low_memory,true);
-           finish();
-        }
-    }
-
-    boolean isAppPaused = false;
-    @Override
-    public void onResume()
-    {
-        lowMemoryError();
-        isAppPaused = false;
-        super.onResume();
-    }
-
-    @Override
-    public void onPause()
-    {
-        isAppPaused = true;
-        super.onPause();
-    }
-
-    public void initBoogle()
-    {
-        onloadURL(constants.backendGenesis,false,false,false);
-    }
-
-    public Boolean initSearchEngine()
-    {
-        if(status.search_status.equals(enums.searchEngine.Bing.toString()))
-        {
-            webView.stopLoading();
-            onloadURL(constants.backendBing,true,false,true);
-            if(homeModel.getInstance().getNavigation().size()!=1)
-            {
-                homeModel.getInstance().addNavigation(constants.backendBing,enums.navigationType.onion);
-            }
-            if(homeModel.getInstance().getNavigation().size()>0)
-            {
-                homeModel.getInstance().getNavigation().set(0,new navigation_model(constants.backendBing,enums.navigationType.onion));
-            }
-            return false;
-        }
-        else if(status.search_status.equals(enums.searchEngine.Google.toString()))
-        {
-            webView.stopLoading();
-            onloadURL(constants.backendGoogle,true,false,true);
-            if(homeModel.getInstance().getNavigation().size()!=1)
-            {
-                homeModel.getInstance().addNavigation(constants.backendGoogle,enums.navigationType.onion);
-            }
-            if(homeModel.getInstance().getNavigation().size()>0)
-            {
-                homeModel.getInstance().getNavigation().set(0,new navigation_model(constants.backendGoogle,enums.navigationType.onion));
-            }
-            return false;
-        }
-        else
-        {
-            onloadURL(constants.backendGenesis,false,false,true);
-            if(homeModel.getInstance().getNavigation().size()!=1)
-            {
-                homeModel.getInstance().addNavigation(constants.backendGenesis,enums.navigationType.base);
-            }
-            if(homeModel.getInstance().getNavigation().size()>0)
-            {
-                homeModel.getInstance().getNavigation().set(0,new navigation_model(constants.backendGenesis,enums.navigationType.base));
-            }
-            return true;
         }
     }
 
     public void initializeAppModel()
     {
-        homeModel.getInstance().setAppContext(this);
-        homeModel.getInstance().setAppInstance(this);
+        home_view_controller = new homeViewController();
+        home_model = new homeModel();
     }
 
     public void initializeConnections()
     {
-        webView = findViewById(R.id.pageLoader1);
         geckoView = findViewById(R.id.webLoader);
 
         progressBar = findViewById(R.id.progressBar);
@@ -199,219 +108,161 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         webviewContainer = findViewById(R.id.webviewContainer);
         banner_ads = findViewById(R.id.adView);
 
-        webviewclient = new webviewClient();
         geckoclient = new geckoClients();
-        eventhandler = new home_ehandler();
+
+        home_view_controller.initialization(new homeViewCallback(),this,webviewContainer,loadingText,progressBar,searchbar,splashScreen,requestFailure,floatingButton, loadingIcon,splashlogo,banner_ads,dataController.getInstance().getSuggestions());
     }
 
-    public void initializeWebView()
-    {
-        setWebViewSettings(webView);
-        webviewclient.loadWebViewClient(webView);
+    public void initializeGeckoView(){
+        geckoclient.initialize(geckoView,this,new geckoViewCallback(),status.search_status,this);
+        pluginController.getInstance().setProxy(true);
+
+        Callable<String> callable = () -> {
+            home_view_controller.updateLogs(pluginController.getInstance().orbotLogs());
+            return strings.emptyStr;
+        };
+        home_view_controller.disableSplashScreen(callable);
     }
 
-    public void setWebViewSettings(WebView view)
-    {
-        view.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        view.getSettings().setJavaScriptEnabled(status.java_status);
-        view.getSettings().setUseWideViewPort(true);
+    /*Shared Controller Events*/
+
+    public void reloadJavaScript(){
+        geckoclient.onUpdateJavascript();
     }
 
-    /*------------------------------------------------------- Event Handler ----------------------------------------------------*/
+    public void loadURL(String url){
+        home_view_controller.clearSelections();
+        geckoclient.loadURL(url);
+    }
 
+    /*User Events*/
 
     private void initializeLocalEventHandlers() {
         searchbar.setOnEditorActionListener((v, actionId, event) ->
         {
-            return eventhandler.onEditorClicked(v,actionId,event);
+            if (actionId == EditorInfo.IME_ACTION_NEXT)
+            {
+                onSearchBarInvoked(v);
+            }
+            return true;
         });
     }
 
-    public void onReloadButtonPressed(View view)
+    void onSearchBarInvoked(View view)
     {
-       eventhandler.onReloadButtonPressed(view);
+        String url = ((EditText)view).getText().toString();
+        url = home_model.url_complete(url);
+        home_view_controller.updateSearchBar(url);
+        loadURL(url);
+    }
+
+    public void onSuggestionInvoked(View view){
+        String val = ((TextView)view).getText().toString();
+        val = home_model.url_complete(val);
+        home_view_controller.updateSearchBar(val);
+        searchbar.clearFocus();
+    }
+
+    public void onHomeButton(View view)
+    {
+        loadURL(home_model.getSearchEngine());
+    }
+
+    public void onOpenMenuItem(View view)
+    {
+        home_view_controller.clearSelections();
+        home_view_controller.openMenu(view);
     }
 
     @Override
     public void onBackPressed()
     {
-        eventhandler.onBackPressed();
-    }
-
-    public void enableGateway(View view)
-    {
-        eventhandler.switchGateway();
-    }
-
-    public void onFloatingButtonPressed(View view)
-    {
-        eventhandler.onFloatingButtonPressed();
-    }
-
-    public void onHomeButtonPressed(View view)
-    {
-        eventhandler.onHomeButtonPressed();
-    }
-
-    public void onMenuButtonPressed(View view)
-    {
-        eventhandler.onMenuButtonPressed(view);
+        geckoclient.onBackPressed();
+        home_view_controller.clearSelections();
     }
 
     public void onSwitchSearch(View view)
     {
-        eventhandler.switchSearchEngine(view);
-    }
-
-    /*-------------------------------------------------------Helper Method In UI Redirection----------------------------------------------------*/
-
-    public void onloadURL(String url,boolean isHiddenWeb,boolean isUrlSavable,boolean isRepeatAllowed) {
-        if(url.endsWith(".onion"))
+        if(status.search_status.equals(constants.backendGoogle))
         {
-            pluginController.getInstance().setProxy(false);
-            ///geckoclient.saveCache(url);
-            //geckoclient.loadGeckoURL(url,geckoView,isUrlSavable,webView.getVisibility()==View.VISIBLE || isInternetErrorOpened());
+            ((ImageButton) view).setImageResource(R.drawable.duck_logo);
+            status.search_status = constants.backendGenesis;
+            dataController.getInstance().setString(keys.search_engine,constants.backendGenesis);
+            onHomeButton(null);
+        }
+        else if(status.search_status.equals(constants.backendGenesis))
+        {
+            if(pluginController.getInstance().OrbotManagerInit(true))
+            {
+                ((ImageButton) view).setImageResource(R.drawable.google_logo);
+                status.search_status = constants.backendDuckDuckGo;
+                dataController.getInstance().setString(keys.search_engine,constants.backendDuckDuckGo);
+                onHomeButton(null);
+            }
+            else {
+                pluginController.getInstance().MessageManagerHandler(homeController.this,searchbar.getText().toString(),enums.popup_type.start_orbot);
+            }
         }
         else
         {
-            pluginController.getInstance().setProxy(false);
-            //webviewclient.saveCache(url,isUrlSavable);
-            //webView.loadUrl(url);
-            //onRequestTriggered(isHiddenWeb,url);
+            if(pluginController.getInstance().OrbotManagerInit(true))
+            {
+                ((ImageButton) view).setImageResource(R.drawable.genesis_logo);
+                status.search_status = constants.backendGoogle;
+                dataController.getInstance().setString(keys.search_engine,constants.backendGoogle);
+                onHomeButton(null);
+            }
+            else {
+                pluginController.getInstance().MessageManagerHandler(homeController.this,searchbar.getText().toString(),enums.popup_type.start_orbot);
+            }
         }
-        geckoclient.saveCache(url);
-        geckoclient.loadGeckoURL(url,geckoView,isUrlSavable,webView.getVisibility()==View.VISIBLE || isInternetErrorOpened());
-
     }
 
-    public void onRequestTriggered(boolean isHiddenWeb,String url) {
-        viewController.getInstance().onRequestTriggered(isHiddenWeb,url);
-    }
-
-    public void onClearSearchBarCursorView()
+    public void onReload(View view)
     {
-        viewController.getInstance().onClearSearchBarCursor();
+        geckoclient.loadURL(searchbar.getText().toString());
     }
 
-    public void onUpdateSearchBarView(String url)
+    @Override
+    public void onTrimMemory(int level)
     {
-        viewController.getInstance().onUpdateSearchBar(url);
-    }
-
-    public void onInternetErrorView() {
-        viewController.getInstance().onInternetError();
-        viewController.getInstance().disableFloatingView();
-    }
-
-    public boolean onDisableInternetError()
-    {
-       return viewController.getInstance().onDisableInternetError();
-    }
-
-    public void onProgressBarUpdateView(int progress) {
-        viewController.getInstance().onProgressBarUpdate(progress);
-    }
-
-    public void onBackPressedView()
-    {
-        viewController.getInstance().onBackPressed();
-    }
-
-    public void onPageFinished(boolean isHidden)
-    {
-        viewController.getInstance().onPageFinished(isHidden);
-    }
-
-    public void onUpdateView(boolean status)
-    {
-        viewController.getInstance().onUpdateView(status);
-    }
-
-    public void onReload()
-    {
-        viewController.getInstance().onReload();
-    }
-
-    public void onShowAd(enums.adID id)
-    {
-
-        //adManager.getInstance().showAd(id);
-    }
-
-    public void openMenu(View view) {
-
-        viewController.getInstance().openMenu(view);
-    }
-
-    public void reInitializeSuggestion()   {
-        viewController.getInstance().reInitializeSuggestion();
-    }
-
-    public void hideSplashScreen(){
-        viewController.getInstance().hideSplashScreen();
-    }
-
-    /*-------------------------------------------------------Helper Method Out UI Redirection----------------------------------------------------*/
-
-    public String getSearchBarUrl()
-    {
-         return viewController.getInstance().getSearchBarUrl();
-    }
-
-    public void onReInitGeckoView() {
-        geckoclient.initialize(geckoView);
-        if(webView.getVisibility() != View.VISIBLE)
+        if(status.isAppPaused && (level==80 || level==15))
         {
-            geckoclient.onReloadHiddenView(geckoView,searchbar.getText().toString());
+            dataController.getInstance().setBool(keys.low_memory,true);
+            finish();
         }
     }
 
-    public void onHiddenGoBack()
+    @Override
+    public void onResume()
     {
-        geckoclient.onHiddenGoBack(geckoView);
+        status.isAppPaused = false;
+        super.onResume();
     }
 
-    public void releaseSession()
+    @Override
+    public void onPause()
     {
-        geckoclient.releaseSession(geckoView);
+        status.isAppPaused = true;
+        super.onPause();
     }
 
-    public void stopHiddenView(boolean releaseView,boolean backPressed) {
-        geckoclient.stopHiddenView(geckoView,releaseView,backPressed);
-        //geckoclient.removeHistory();
+    public void onSuggestionUpdate(){
+        home_view_controller.initializeSuggestionView(dataController.getInstance().getSuggestions());
     }
 
-    public void onReloadHiddenView()
-    {
-        geckoclient.onReloadHiddenView(geckoView,searchbar.getText().toString());
-    }
-
-    public boolean isGeckoViewRunning()
-    {
-       return geckoclient.isGeckoViewRunning();
-    }
-
-    public boolean isInternetErrorOpened()
-    {
-        return requestFailure.getAlpha()==1;
-    }
-
-    public void downloadFile()
-    {
+    public void onDownloadFile(){
         geckoclient.downloadFile();
     }
 
-    public void onBannerAdLoaded()
-    {
-        viewController.getInstance().onBannerAdLoaded();
+    public void onBannerAdLoaded(){
+        home_view_controller.setBannerAdMargin();
     }
 
-    /*-------------------------------------------------------Menu Handler----------------------------------------------------*/
+    /*Callback Events*/
 
-    public boolean onMenuOptionSelected(MenuItem item) {
-
-        eventhandler.onMenuPressed(item.getItemId());
-        return super.onOptionsItemSelected(item);
+    public String orbotLogs(){
+        return pluginController.getInstance().orbotLogs();
     }
 
     public AdView getBannerAd()
@@ -419,19 +270,95 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         return banner_ads;
     }
 
-    public void addNavigation(String url,enums.navigationType type) {
-        homeModel.getInstance().addNavigation(url,type);
+    public class homeViewCallback implements eventObserver.eventListener{
+
+        @Override
+        public void invokeObserver(List<Object> data, enums.home_eventType e_type)
+        {
+                if(e_type.equals(enums.home_eventType.onMenuSelected)){
+                int menuId = (int)data.get(0);
+                if (menuId == R.id.menu1) {
+                    helperMethod.openActivity(historyController.class, constants.list_history, homeController.this);
+                }
+                else if (menuId == R.id.menu2) {
+                    //switchGateway();
+                }
+                else if (menuId == R.id.menu9) {
+                    loadURL("https://whatismycountry.com/");
+                }
+                else if (menuId == R.id.menu3) {
+                    helperMethod.openActivity(settingController.class,constants.list_history, homeController.this);
+                }
+                else if (menuId == R.id.menu4)
+                {
+                    pluginController.getInstance().MessageManagerHandler(homeController.this,searchbar.getText().toString(),enums.popup_type.bookmark);
+                }
+                else if (menuId == R.id.menu5)
+                {
+                    helperMethod.openActivity(bookmarkController.class,constants.list_bookmark, homeController.this);
+                }
+                else if (menuId == R.id.menu6)
+                {
+                    pluginController.getInstance().MessageManagerHandler(homeController.this,null,enums.popup_type.report_url);
+                }
+                else if (menuId == R.id.menu7)
+                {
+                    helperMethod.rateApp(homeController.this);
+                }
+                else if (menuId == R.id.menu8)
+                {
+                    helperMethod.shareApp(homeController.this);
+                }
+                else if (menuId == R.id.menu0)
+                {
+                    helperMethod.openDownloadFolder(homeController.this);
+                }
+           }
+           else if(e_type.equals(enums.home_eventType.on_init_ads))
+           {
+               pluginController.getInstance().initializeBannerAds();
+           }
+           else if(e_type.equals(enums.home_eventType.on_url_load)){
+               loadURL(data.get(0).toString());
+           }
+        }
     }
+    public class geckoViewCallback implements eventObserver.eventListener{
 
-
-
-
-
-
-
-
-
-
-
+        @Override
+        public void invokeObserver(List<Object> data, enums.home_eventType e_type)
+        {
+            if(e_type.equals(enums.home_eventType.progress_update)){
+                home_view_controller.onProgressBarUpdate((int)data.get(0),geckoclient.isSessionRunning());
+            }
+            else if(e_type.equals(enums.home_eventType.on_url_load)){
+                home_view_controller.onUrlLoad(data.get(0).toString());
+            }
+            else if(e_type.equals(enums.home_eventType.back_list_empty)){
+                helperMethod.onMinimizeApp(homeController.this);
+            }
+            else if(e_type.equals(enums.home_eventType.start_proxy)){
+                pluginController.getInstance().setProxy((Boolean)data.get(0));
+            }
+            else if(e_type.equals(enums.home_eventType.on_request_completed)){
+                dataController.getInstance().addHistory(data.get(0).toString());
+            }
+            else if(e_type.equals(enums.home_eventType.on_page_loaded)){
+                home_view_controller.onPageFinished();
+            }
+            else if(e_type.equals(enums.home_eventType.on_load_error)){
+                home_view_controller.onLoadError();
+                dataController.getInstance().addHistory(data.get(0).toString());
+                home_view_controller.updateSearchBar(data.get(0).toString());
+            }
+            else if(e_type.equals(enums.home_eventType.proxy_error)){
+                pluginController.getInstance().setProxy((Boolean)data.get(0));
+                pluginController.getInstance().MessageManagerHandler(homeController.this,data.get(0).toString(),enums.popup_type.start_orbot);
+            }
+            else if(e_type.equals(enums.home_eventType.download_file_popup)){
+                pluginController.getInstance().MessageManagerHandler(homeController.this,data.get(0).toString(),enums.popup_type.download_file);
+            }
+        }
+    }
 }
 

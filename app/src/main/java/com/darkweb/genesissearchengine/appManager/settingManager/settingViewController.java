@@ -3,6 +3,9 @@ package com.darkweb.genesissearchengine.appManager.settingManager;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.darkweb.genesissearchengine.constants.constants;
+import com.darkweb.genesissearchengine.constants.status;
+
 import static com.darkweb.genesissearchengine.constants.status.history_status;
 import static com.darkweb.genesissearchengine.constants.status.java_status;
 
@@ -28,7 +31,7 @@ class settingViewController
         initViews();
         initJavascript();
         initHistory();
-        initSearchEngine(currentSearchEngine);
+        initSearchEngine();
     }
 
     private void initViews()
@@ -66,14 +69,21 @@ class settingViewController
     }
 
     @SuppressWarnings("unchecked")
-    private void initSearchEngine(String position)
+    private void initSearchEngine()
     {
-        ArrayAdapter myAdap = (ArrayAdapter) search.getAdapter();
-        int spinnerPosition = myAdap.getPosition(position);
-        search.setSelection(spinnerPosition);
+        search.setSelection(getEngineIndex());
     }
 
     /*External Helper Methods*/
 
-
+    private int getEngineIndex(){
+        if(status.search_status.equals(constants.backendGenesis)){
+            return 0;
+        }
+        else if(status.search_status.equals(constants.backendGoogle)){
+            return 1;
+        }
+        else
+            return 2;
+    }
 }

@@ -4,18 +4,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.TextView;
 
-public class AutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
+import com.darkweb.genesissearchengine.helperMethod;
+import com.example.myapplication.R;
+
+public class autoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
 
     private ArrayList<String> fullList;
     private ArrayList<String> mOriginalValues;
     private ArrayFilter mFilter;
     private int getResultCount=0;
+    private LayoutInflater inflater;
 
     public int getResultCount()
     {
@@ -25,11 +34,12 @@ public class AutoCompleteAdapter extends ArrayAdapter<String> implements Filtera
             return getResultCount;
     }
 
-    public AutoCompleteAdapter(Context context, int resource, int textViewResourceId, List<String> objects) {
+    autoCompleteAdapter(Context context, int resource, int textViewResourceId, List<String> objects) {
 
         super(context, resource, textViewResourceId, objects);
         fullList = (ArrayList<String>) objects;
         mOriginalValues = new ArrayList<String>(fullList);
+        inflater = LayoutInflater.from(context);
     }
 
     @Override
@@ -44,7 +54,21 @@ public class AutoCompleteAdapter extends ArrayAdapter<String> implements Filtera
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return super.getView(position, convertView, parent);
+
+        View view = convertView;
+        String item = getItem(position);
+        if (convertView == null) {
+            convertView = view = inflater.inflate(
+                    R.layout.hint_view, null);
+        }
+        TextView myTv = convertView.findViewById(R.id.hintCompletionHeader);
+
+        myTv.setText(helperMethod.urlDesigner(fullList.get(position)));
+
+        String val = fullList.get(position);
+        fullList.remove(position);
+        fullList.add(0,val);
+        return convertView;
     }
 
     @Override

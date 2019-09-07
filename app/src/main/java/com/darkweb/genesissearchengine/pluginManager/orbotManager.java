@@ -3,6 +3,8 @@ package com.darkweb.genesissearchengine.pluginManager;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.darkweb.genesissearchengine.constants.*;
@@ -15,7 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class orbotManager
+class orbotManager
 {
 
     /*Private Variables*/
@@ -26,6 +28,7 @@ public class orbotManager
     private Handler updateUIHandler = null;
     private int onionProxyPort = 0;
     private boolean isTorInitialized = false;
+    private boolean network_Error = false;
 
     private AppCompatActivity app_context;
     private eventObserver.eventListener event;
@@ -90,6 +93,7 @@ public class orbotManager
                         {
                             if(helperMethod.isNetworkAvailable(app_context))
                             {
+                                network_Error = false;
                                 if(onionProxyManager == null)
                                 {
                                     onionProxyManager = new AndroidOnionProxyManager(app_context, strings.torfolder);
@@ -97,6 +101,8 @@ public class orbotManager
                                 isLoading = false;
                                 isTorInitialized = false;
                                 initializeTorClient();
+                            }else {
+                                network_Error = true;
                             }
                         }
                         else
@@ -119,6 +125,7 @@ public class orbotManager
         isTorInitialized = false;
         if(!isLoading)
         {
+            isLoading = true;
             new Thread()
             {
                 public void run()
@@ -127,7 +134,9 @@ public class orbotManager
                     {
                         try
                         {
-                            isLoading = true;
+                            // if (installAndStartTorOp(useBridges) == false) {
+                            //     return;
+                            // }
 
                             int totalSecondsPerTorStartup = 4 * 60;
                             int totalTriesPerTorStartup = 5;
@@ -145,6 +154,7 @@ public class orbotManager
                             break;
 
                         } catch (Exception ex) {
+                            Log.i("SuperFuck:",ex.getMessage());
                             ex.printStackTrace();
                         }
                     }
@@ -198,6 +208,7 @@ public class orbotManager
     private void initializeProxy()
     {
         isTorInitialized = true;
+        status.isTorInitialized = true;
         event.invokeObserver(onionProxyPort,null);
         PrefsHelper.setPref(keys.proxy_socks,constants.proxy_socks);
         PrefsHelper.setPref(keys.proxy_socks_port, onionProxyPort);
@@ -208,23 +219,34 @@ public class orbotManager
         PrefsHelper.setPref(keys.proxy_useragent_override, constants.proxy_useragent_override);
         PrefsHelper.setPref(keys.proxy_donottrackheader_enabled,constants.proxy_donottrackheader_enabled);
         PrefsHelper.setPref(keys.proxy_donottrackheader_value,constants.proxy_donottrackheader_value);
+
+        PrefsHelper.setPref("browser.cache.disk.enable",true);
+        PrefsHelper.setPref("browser.cache.memory.enable",true);
+        PrefsHelper.setPref("browser.cache.disk.capacity",10000);
+
+
     }
 
     /*External Helper Methods*/
 
     String getLogs()
     {
-        if(onionProxyManager!=null)
-        {
-            String Logs = onionProxyManager.getLastLog();
-            if(Logs.equals(""))
-            {
-                return "Loading Please Wait";
-            }
-            Logs=Logs.replace("FAILED","Securing");
-            return Logs;
+        if(network_Error){
+            return "Internet Error | Failed To Connect";
         }
-        return "Loading Please Wait";
+        else {
+            if(onionProxyManager!=null)
+            {
+                String Logs = onionProxyManager.getLastLog();
+                if(Logs.equals(""))
+                {
+                    return "Installing | Setting Configurations";
+                }
+                Logs="Installing | " + Logs.replace("FAILED","Securing");
+                return Logs;
+            }
+            return "Loading Please Wait";
+        }
     }
 
     boolean isOrbotRunning(boolean deepCheck){

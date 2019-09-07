@@ -37,7 +37,7 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.listVi
     @NonNull
     @Override
     public listViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.history_row_view, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_row_view, parent, false);
         return new listViewHolder(view);
     }
 
@@ -98,8 +98,8 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.listVi
 
             String header = model.getHeader();
 
-            descriptionText.setText(model.getDescription());
-            heaaderText.setText(model.getHeader());
+            descriptionText.setText(model.getHeader());
+            heaaderText.setText(model.getDescription());
             messageButton = itemView.findViewById(R.id.message_button);
             empty_message = itemView.findViewById(R.id.empty_list);
 

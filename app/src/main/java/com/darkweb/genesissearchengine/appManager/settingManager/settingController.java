@@ -5,14 +5,17 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.darkweb.genesissearchengine.appManager.activityContextManager;
 import com.darkweb.genesissearchengine.appManager.home_activity.homeController;
+import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.keys;
 import com.darkweb.genesissearchengine.constants.status;
 import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.example.myapplication.R;
-import com.darkweb.genesissearchengine.appManager.home_activity.homeModel;
+
 import static com.darkweb.genesissearchengine.constants.status.history_status;
 import static com.darkweb.genesissearchengine.constants.status.java_status;
 
@@ -33,7 +36,7 @@ public class settingController extends AppCompatActivity
     /*Initializations*/
 
     public settingController(){
-        home_controller = homeModel.getInstance().getHomeInstance();
+        home_controller = activityContextManager.getInstance().getHomeController();
         setting_model = new settingModel(new settingModelCallback());
     }
 
@@ -74,6 +77,30 @@ public class settingController extends AppCompatActivity
     /*Event Handlers*/
 
     @Override
+    public void onTrimMemory(int level)
+    {
+        if(status.isAppPaused && (level==80 || level==15))
+        {
+            dataController.getInstance().setBool(keys.low_memory,true);
+            finish();
+        }
+    }
+
+    @Override
+    public void onResume()
+    {
+        status.isAppPaused = false;
+        super.onResume();
+    }
+
+    @Override
+    public void onPause()
+    {
+        finish();
+        super.onPause();
+    }
+
+    @Override
     public void onBackPressed(){
         setting_model.onCloseView();
     }
@@ -84,7 +111,7 @@ public class settingController extends AppCompatActivity
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 if(parentView.getId()== R.id.search_manager)
                 {
-                    setting_model.setSearchStatus(parentView.getItemAtPosition(position).toString());
+                    setting_model.setSearchStatus(getEngineURL(position));
                 }
                 else if(parentView.getId()== R.id.javascript_manager)
                 {
@@ -123,12 +150,12 @@ public class settingController extends AppCompatActivity
         {
             if(e_type == enums.eventType.update_searcn){
                 status.search_status = (String)data;
-                home_controller.initSearchEngine();
+                home_controller.onHomeButton(null);
                 dataController.getInstance().setString(keys.search_engine, setting_model.getSearchStatus());
             }
             else if(e_type == enums.eventType.update_javascript){
                 status.java_status = (boolean)data;
-                home_controller.onReInitGeckoView();
+                home_controller.reloadJavaScript();
                 dataController.getInstance().setBool(keys.java_script, status.java_status);
             }
             else if(e_type == enums.eventType.update_history){
@@ -138,6 +165,24 @@ public class settingController extends AppCompatActivity
             else if(e_type == enums.eventType.close_view){
                 finish();
             }
+        }
+    }
+
+    /*Helper Methods*/
+
+    public String getEngineURL(int index){
+
+        if (index == 0)
+        {
+            return constants.backendGenesis;
+        }
+        else if (index == 1)
+        {
+            return constants.backendGoogle;
+        }
+        else
+        {
+            return constants.backendDuckDuckGo;
         }
     }
 

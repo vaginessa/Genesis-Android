@@ -33,7 +33,6 @@ public class pluginController
     private static final pluginController ourInstance = new pluginController();
     private homeController home_controller;
     private historyController history_controller;
-    private homeModel home_model;
 
     /*Initializations*/
 
@@ -43,10 +42,12 @@ public class pluginController
     }
     private pluginController()
     {
-        home_controller = homeModel.getInstance().getHomeInstance();
-        home_model = homeModel.getInstance();
+        home_controller = activityContextManager.getInstance().getHomeController();
         contextManager = activityContextManager.getInstance();
         instanceObjectInitialization();
+    }
+
+    public void initialize(){
     }
 
     private void instanceObjectInitialization()
@@ -95,7 +96,9 @@ public class pluginController
     }
 
     /*Ad Manager*/
-    public void initializeBannerAds(){
+    public void
+
+    initializeBannerAds(){
         ad_manager.initializeBannerAds();
     }
 
@@ -171,7 +174,7 @@ public class pluginController
         {
             if(status.search_status.equals(strings.darkweb))
             {
-                home_controller.initBoogle();
+                //home_controller.initBoogle();
             }
         }
     }
@@ -181,6 +184,7 @@ public class pluginController
         @Override
         public void invokeObserver(Object data, enums.eventType e_type)
         {
+
         }
     }
 
@@ -191,7 +195,7 @@ public class pluginController
         {
             if(e_type.equals(enums.eventType.welcome))
             {
-                home_controller.onloadURL(data.toString(),false,true,false);
+                home_controller.loadURL(data.toString());
             }
             else if(e_type.equals(enums.eventType.cancel_welcome)){
                 dataController.getInstance().setBool(keys.first_time_loaded,true);
@@ -199,7 +203,7 @@ public class pluginController
             else if(e_type.equals(enums.eventType.reload)){
                 if(orbot_manager.isOrbotRunning(true))
                 {
-                    home_controller.onloadURL(data.toString(),false,true,true);
+                    home_controller.loadURL(data.toString());
                 }
                 else {
                     message_manager.createMessage(home_controller,data.toString(),enums.popup_type.start_orbot);
@@ -216,14 +220,16 @@ public class pluginController
             else if(e_type.equals(enums.eventType.bookmark)){
                 String [] dataParser = data.toString().split("split");
                 if(dataParser.length>1){
-                    home_model.addBookmark(dataParser[0],dataParser[1]);
+                    dataController.getInstance().addBookmark(dataParser[0],dataParser[1]);
+                }else {
+                    dataController.getInstance().addBookmark(dataParser[0],"");
                 }
             }
             else if(e_type.equals(enums.eventType.app_rated)){
                 dataController.getInstance().setBool(keys.isAppRated,true);
             }
             else if(e_type.equals(enums.eventType.download_file)){
-                homeModel.getInstance().getHomeInstance().downloadFile();
+                home_controller.onDownloadFile();
             }
         }
     }

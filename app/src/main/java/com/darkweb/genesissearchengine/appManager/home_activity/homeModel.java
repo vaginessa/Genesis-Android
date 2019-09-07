@@ -2,134 +2,62 @@ package com.darkweb.genesissearchengine.appManager.home_activity;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Patterns;
 
 import com.darkweb.genesissearchengine.appManager.bookmarkManager.bookmarkController;
 import com.darkweb.genesissearchengine.appManager.bookmarkManager.bookmarkRowModel;
 import com.darkweb.genesissearchengine.appManager.databaseManager.databaseController;
 import com.darkweb.genesissearchengine.appManager.historyManager.historyRowModel;
 import com.darkweb.genesissearchengine.appManager.historyManager.historyRowModel;
+import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.status;
+import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.dataManager.dataController;
+import com.darkweb.genesissearchengine.helperMethod;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 
 public class homeModel
 {
-    /*Data Objects*/
-    private ArrayList<historyRowModel> history = new ArrayList<>();
-    private ArrayList<bookmarkRowModel> bookmarks = new ArrayList<>();
-    private ArrayList<navigation_model> navigation = new ArrayList<navigation_model>();
-    private HashSet<String> suggestions = new HashSet<String>();
-    private static int port = 9150;
+    private String search_engine;
 
-    private Context appContext;
-    private homeController appInstance;
-
-    /*Initializations*/
-    public void initialization(){
-        initializeHistory();
-        initializeBookmarks();
+    homeModel(){
+        search_engine = constants.backendGoogle;
     }
 
-    /*Setter Getter Initializations*/
-    private static final homeModel ourInstance = new homeModel();
-    public static homeModel getInstance()
-    {
-        return ourInstance;
+    String getSearchEngine(){
+        return status.search_status;
     }
 
-
-    /*Getters Setters*/
-    public void setPort(int port)
-    {
-        //status.onionProxyPort = port;
-    }
-
-
-    public void setAppContext(Context appContext)
-    {
-        this.appContext = appContext;
-    }
-    public Context getAppContext()
-    {
-        return appContext;
-    }
-
-
-    public homeController getHomeInstance()
-    {
-        return appInstance;
-    }
-    public void setAppInstance(homeController appInstance)
-    {
-        this.appInstance = appInstance;
-    }
-
-
-    public void initializeHistory(){
-        if(!status.history_status)
+    String url_complete(String url){
+        try
         {
-            history = databaseController.getInstance().selectHistory();
+            String updateUrl = helperMethod.completeURL(url);
+            URL host = new URL(updateUrl);
+            boolean isUrlValid = Patterns.WEB_URL.matcher(updateUrl).matches();
+            if(isUrlValid && host.getHost().replace("www.","").contains("."))
+            {
+                return updateUrl;
+            }
         }
-        else
-        {
-            databaseController.getInstance().execSQL("delete from history where 1",null);
+
+        catch (Exception ex){
+            ex.printStackTrace();
         }
-        homeModel.getInstance().getHomeInstance().reInitializeSuggestion();
-    }
-    public void addHistory(String url) {
-        dataController.getInstance().addHistory(url);
-    }
-    public ArrayList<historyRowModel> getHistory() {
-        return history;
-    }
 
-
-    private void initializeBookmarks(){
-        bookmarks = databaseController.getInstance().selectBookmark();
-    }
-    public void addBookmark(String url,String title){
-        dataController.getInstance().addBookmark(url,title);
-    }
-    public ArrayList<bookmarkRowModel> getBookmark(){
-        return bookmarks;
-    }
-
-
-    public void initSuggestions(String url) {
-        suggestions.add(url.replace("https://","").replace("http://",""));
-    }
-    public void addSuggestions(String url) {
-        if(url.contains("boogle.store"))
-        {
-            Uri uri = Uri.parse(url);
-            String actual_url = uri.getQueryParameter("q");
-            suggestions.add(actual_url);
+        if(status.search_status.equals(constants.backendGoogle)){
+            return getSearchEngine()+"search?q="+url.replaceAll(" ","+");
         }
-        suggestions.add(url.replace("https://","").replace("http://",""));
-        homeModel.getInstance().getHomeInstance().reInitializeSuggestion();
-    }
-    public ArrayList<String> getSuggestions() {
-        return new ArrayList<String>(suggestions);
-    }
-
-    /*Navigation*/
-
-    public void addNavigation(String url,enums.navigationType type) {
-        if(navigation.size()==0 || !navigation.get(navigation.size()-1).getURL().equals(url))
-        {
-            navigation.add(new navigation_model(url,type));
+        else if(status.search_status.equals(constants.backendGenesis)){
+            return getSearchEngine()+"search?s_type=all&p_num=1&q="+url.replaceAll(" ","+");
+        }
+        else{
+            return getSearchEngine()+"?q="+url.replaceAll(" ","+");
         }
     }
-    public ArrayList<navigation_model> getNavigation() {
-        return navigation;
-    }
 
-    /*Helper Method*/
-    public boolean isUrlRepeatable(String url,String viewUrl){
-        return url.equals(viewUrl) && !homeModel.getInstance().getHomeInstance().isInternetErrorOpened() || url.contains("https://boogle.store/search?q=&");
-
-    }
 
 }

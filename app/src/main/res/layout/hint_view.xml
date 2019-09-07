@@ -4,7 +4,7 @@
               android:layout_height="wrap_content"
               android:paddingRight="15dp"
               android:paddingLeft="15dp"
-              android:paddingBottom="-35dp"
+              android:paddingBottom="0dp"
               android:background="@color/white"
               android:elevation="0dp"
               android:orientation="vertical">
@@ -13,19 +13,20 @@
             android:id="@+id/hintCompletionHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:paddingBottom="10dp"
+            android:paddingBottom="0dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:paddingTop="0dp"
+            android:paddingTop="7.5dp"
             android:singleLine="true"
             android:ellipsize="end"
+            android:onClick="onSuggestionInvoked"
             android:textColor="@color/text_color_v1"
             android:textSize="15.5sp"/>
 
     <View
             android:layout_width="match_parent"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="15dp"
             android:layout_height="1dp"
             android:background="@color/white_dark" />
 
