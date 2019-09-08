@@ -125,6 +125,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
         if(status.isBootstrapped){
             if(status.gateway){
+                home_view_controller.updateLogs("Loading | Starting Gateway");
                 initializeProxy();
             }
             else {
@@ -192,8 +193,14 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     @Override
     public void onBackPressed()
     {
-        geckoclient.onBackPressed();
-        home_view_controller.clearSelections();
+        geckoView.clearFocus();
+        if(requestFailure.getVisibility()==View.VISIBLE){
+            home_view_controller.onDisableInternetError();
+        }
+        else {
+            geckoclient.onBackPressed();
+            home_view_controller.clearSelections();
+        }
     }
 
     public void onSwitchSearch(View view)
@@ -313,7 +320,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                 else if (menuId == R.id.menu2) {
                     pluginController.getInstance().proxyManager(!status.gateway);
                     status.gateway = !status.gateway;
-                    //onHomeButton(null);
+                    dataController.getInstance().setBool(keys.gateway,status.gateway);
                 }
                 else if (menuId == R.id.menu9) {
                     loadURL("https://whatismycountry.com/");

@@ -150,7 +150,6 @@ class geckoClients
         public GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession var2, @NonNull GeckoSession.NavigationDelegate.LoadRequest var1) {
 
             if (!helperMethod.getHost(var1.uri).contains("boogle.store")) {
-
                 if(!status.isTorInitialized){
                     event.invokeObserver(Collections.singletonList(true), enums.home_eventType.proxy_error);
                     return GeckoResult.fromValue(AllowOrDeny.DENY);
@@ -160,6 +159,12 @@ class geckoClients
                 }
             }
             else {
+                if(var1.uri.startsWith("https://boogle.store/advert__"))
+                {
+                    String uri = var1.uri;
+                    helperMethod.openPlayStore(uri.split("__")[1],context);
+                    return GeckoResult.fromValue(AllowOrDeny.DENY);
+                }
                 event.invokeObserver(Collections.singletonList(false), enums.home_eventType.start_proxy);
             }
             return GeckoResult.fromValue(AllowOrDeny.ALLOW);

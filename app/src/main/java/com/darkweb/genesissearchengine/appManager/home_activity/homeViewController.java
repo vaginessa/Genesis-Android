@@ -115,11 +115,15 @@ class homeViewController
 
     void onPageFinished(){
         searchbar.setEnabled(true);
-        requestFailure.animate().alpha(0f).setDuration(150).withEndAction((() -> requestFailure.setVisibility(View.GONE)));
         progressBar.bringToFront();
         request_failed = false;
         Log.i("FUCKNO","FUCK");
         splashScreen.animate().setDuration(200).alpha(0f).withEndAction((() -> applicationStarted()));
+        onDisableInternetError();
+    }
+
+    public void onDisableInternetError(){
+        requestFailure.animate().alpha(0f).setDuration(150).withEndAction((() -> requestFailure.setVisibility(View.GONE)));
     }
 
     void onLoadError(){
@@ -261,7 +265,7 @@ class homeViewController
         }
         else
         {
-            item.setTitle("Disable Gateway");
+            item.setTitle("Disable Gateway | Improve Speed");
         }
 
         popup.show();

@@ -45,7 +45,7 @@ public class dataController
 
     public void initializeListData()
     {
-        if(status.history_status)
+        if(!status.history_status)
         {
             preferences_model.initializeHistory(databaseController.getInstance().selectHistory(0,constants.start_list_size));
         }

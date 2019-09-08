@@ -156,16 +156,18 @@ public class proxyManager
 
     void disconnectConnection() {
 
-        HydraSdk.stopVPN(TrackingConstants.GprReasons.M_UI, new CompletableCallback() {
-            @Override
-            public void complete() {
+        if(is_running){
+            HydraSdk.stopVPN(TrackingConstants.GprReasons.M_UI, new CompletableCallback() {
+                @Override
+                public void complete() {
 
-            }
+                }
 
-            @Override
-            public void error(@NonNull HydraException e) {
-            }
-        });
+                @Override
+                public void error(@NonNull HydraException e) {
+                }
+            });
+        }
     }
 
     boolean isProxyRunning(){
