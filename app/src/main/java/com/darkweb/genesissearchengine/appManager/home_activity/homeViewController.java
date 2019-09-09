@@ -55,13 +55,14 @@ class homeViewController
     private boolean request_failed = false;
     private Handler updateUIHandler = null;
     private boolean has_application_started = false;
-
+    private ImageView engineLogo;
+    private ImageButton gateway_splash;
 
     homeViewController()
     {
     }
 
-    void initialization(eventObserver.eventListener event,AppCompatActivity context, FrameLayout webviewContainer, TextView loadingText, ProgressBar progressBar, AutoCompleteTextView searchbar, ConstraintLayout splashScreen, ConstraintLayout requestFailure, FloatingActionButton floatingButton, ImageView loading, ImageView splashlogo, AdView banner_ads,ArrayList<String> suggestions){
+    void initialization(eventObserver.eventListener event,AppCompatActivity context, FrameLayout webviewContainer, TextView loadingText, ProgressBar progressBar, AutoCompleteTextView searchbar, ConstraintLayout splashScreen, ConstraintLayout requestFailure, FloatingActionButton floatingButton, ImageView loading, ImageView splashlogo, AdView banner_ads,ArrayList<String> suggestions,ImageView engineLogo,ImageButton gateway_splash){
         this.context = context;
         this.progressBar = progressBar;
         this.searchbar = searchbar;
@@ -74,11 +75,38 @@ class homeViewController
         this.webviewContainer = webviewContainer;
         this.banner_ads = banner_ads;
         this.event = event;
+        this.engineLogo = engineLogo;
+        this.gateway_splash = gateway_splash;
+
         initSplashScreen();
         initializeSuggestionView(suggestions);
+        initLock();
+        initSearchImage();
     }
 
-    public void initializeSuggestionView(ArrayList<String> suggestions)
+    private void initSearchImage(){
+        if(status.search_status.equals(constants.backendGenesis))
+        {
+            engineLogo.setImageResource(R.drawable.duck_logo);
+        }
+        else if(status.search_status.equals(constants.backendDuckDuckGo))
+        {
+            engineLogo.setImageResource(R.drawable.google_logo);
+        }
+        else
+        {
+            engineLogo.setImageResource(R.drawable.genesis_logo);
+        }
+    }
+
+    private void initLock(){
+        Drawable img = context .getResources().getDrawable( R.drawable.icon_lock);
+        searchbar.measure(0, 0);
+        img.setBounds( 0, (int)(searchbar.getMeasuredHeight()*0.00), (int)(searchbar.getMeasuredHeight()*1.10), (int)(searchbar.getMeasuredHeight()*0.69) );
+        searchbar.setCompoundDrawables( img, null, null, null );
+    }
+
+    void initializeSuggestionView(ArrayList<String> suggestions)
     {
         autoCompleteAdapter suggestionAdapter = new autoCompleteAdapter(context, R.layout.hint_view, R.id.hintCompletionHeader, suggestions);
 
@@ -109,6 +137,10 @@ class homeViewController
         searchbar.setEnabled(false);
         View root = searchbar.getRootView();
         root.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
+
+        //if(status.gateway || !status.isBootstrapped){
+        //    gateway_splash.setAlpha(0f);
+        //}
     }
 
     /*Helper UI Methods*/
@@ -145,7 +177,7 @@ class homeViewController
         if(splashScreen.getAlpha()==1){
             new Thread(){
                 public void run(){
-                    while (!status.isTorInitialized && !status.search_status.equals(constants.backendGenesis)){
+                    while (!status.isTorInitialized && (!status.search_status.equals(constants.backendGenesis) || !status.isBootstrapped)){
                         try
                         {
                             sleep(1000);

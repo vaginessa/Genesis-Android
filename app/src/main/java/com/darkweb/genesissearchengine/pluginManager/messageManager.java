@@ -49,11 +49,13 @@ public class messageManager
     /*Helper Methods*/
     private void welcomeMessage()
     {
+
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.ALERT)
                 .setTitle(strings.welcome_message_title)
-                .setBackgroundColor(app_context.getResources().getColor(R.color.blue_dark_v2))
+                .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.blue_dark))
                 .setMessage(strings.welcome_message_desc)
+                .onDismissListener(dialog -> is_popup_open = false)
                 .addButton(strings.welcome_message_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
                     dialog.dismiss();
@@ -85,9 +87,10 @@ public class messageManager
 
     private void abiError()
     {
+        is_popup_open = false;
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(strings.abi_error_title)
-                .setBackgroundColor(app_context.getResources().getColor(R.color.blue_dark_v2))
+                .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .onDismissListener(dialog -> abiError())
                 .setMessage(strings.abi_error_desc)
@@ -107,7 +110,8 @@ public class messageManager
     {
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(strings.rate_success_title)
-                .setBackgroundColor(app_context.getResources().getColor(R.color.blue_dark_v2))
+                .onDismissListener(dialog -> is_popup_open = false)
+                .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .setMessage(strings.rate_success_desc)
                 .addButton(strings.rate_success_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
@@ -119,7 +123,8 @@ public class messageManager
     {
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(strings.report_success_title)
-                .setBackgroundColor(app_context.getResources().getColor(R.color.blue_dark_v2))
+                .onDismissListener(dialog -> is_popup_open = false)
+                .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .setMessage(strings.report_success_desc)
                 .addButton(strings.report_success_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
@@ -141,9 +146,10 @@ public class messageManager
         input.setHint("Enter Bookmark Title");
 
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.ALERT)
-                .setBackgroundColor(app_context.getResources().getColor(R.color.blue_dark_v2))
+                .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .setHeaderView(input)
+                .onDismissListener(dialog -> is_popup_open = false)
                 .setMessage("Bookmark URL | " + data + "\n")
                 .addButton(strings.bookmark_url_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
@@ -160,8 +166,9 @@ public class messageManager
     {
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(strings.clear_history_title)
-                .setBackgroundColor(app_context.getResources().getColor(R.color.blue_dark_v2))
+                .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
+                .onDismissListener(dialog -> is_popup_open = false)
                 .setMessage(strings.clear_history_desc)
                 .addButton(strings.clear_history_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
@@ -175,8 +182,9 @@ public class messageManager
     {
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(strings.clear_bookmark_title)
-                .setBackgroundColor(app_context.getResources().getColor(R.color.blue_dark_v2))
+                .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
+                .onDismissListener(dialog -> is_popup_open = false)
                 .setMessage(strings.clear_bookmark_desc)
                 .addButton(strings.clear_bookmark_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
@@ -190,8 +198,9 @@ public class messageManager
     {
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(strings.report_url_title)
-                .setBackgroundColor(app_context.getResources().getColor(R.color.blue_dark_v2))
+                .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
+                .onDismissListener(dialog -> is_popup_open = false)
                 .setMessage(strings.report_url_desc)
                 .addButton(strings.report_url_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
@@ -207,8 +216,9 @@ public class messageManager
     {
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.ALERT)
                 .setTitle(strings.rate_title)
-                .setBackgroundColor(app_context.getResources().getColor(R.color.blue_dark_v2))
+                .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
+                .onDismissListener(dialog -> is_popup_open = false)
                 .setMessage(strings.rate_message)
                 .addButton(strings.rate_positive, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
@@ -228,7 +238,8 @@ public class messageManager
     {
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(strings.download_title)
-                .setBackgroundColor(app_context.getResources().getColor(R.color.blue_dark_v2))
+                .onDismissListener(dialog -> is_popup_open = false)
+                .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .setMessage(strings.download_message + data)
                 .addButton(strings.download_positive, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
@@ -248,7 +259,7 @@ public class messageManager
             is_popup_open = true;
             popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                     .setTitle(strings.orbot_init_title)
-                    .setBackgroundColor(app_context.getResources().getColor(R.color.blue_dark_v2))
+                    .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                     .setTextColor(app_context.getResources().getColor(R.color.black))
                     .setMessage(strings.orbot_init_desc)
                     .onDismissListener(dialog -> is_popup_open = false)
@@ -277,8 +288,9 @@ public class messageManager
     private void versionWarning()
     {
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                .onDismissListener(dialog -> is_popup_open = false)
                 .setTitle(strings.version_title)
-                .setBackgroundColor(app_context.getResources().getColor(R.color.blue_dark_v2))
+                .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .setMessage(strings.version_desc)
                 .addButton(strings.version_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.END, (dialog, which) ->
@@ -295,7 +307,7 @@ public class messageManager
         isDialogDismissed = true;
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(strings.banned_title)
-                .setBackgroundColor(app_context.getResources().getColor(R.color.blue_dark_v2))
+                .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .setMessage(strings.banned_desc)
                 .onDismissListener(dialog -> startHome())
@@ -303,18 +315,21 @@ public class messageManager
                 {
                     isDialogDismissed = false;
                     dialog.dismiss();
-                    event.invokeObserver(null, enums.eventType.connect_vpn);
+                    event.invokeObserver(true, enums.eventType.connect_vpn);
                 })
-                .addButton(strings.rate_success_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                .addButton(strings.banned_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
+                    isDialogDismissed = false;
                     dialog.dismiss();
+                    event.invokeObserver(false, enums.eventType.connect_vpn);
                 });
     }
 
-    void startHome(){
-        if(isDialogDismissed){
+    private void startHome(){
+        if(!isDialogDismissed && data==null){
             event.invokeObserver(null, enums.eventType.start_home);
         }
+        is_popup_open = false;
     }
 
     /*External Helper Methods*/

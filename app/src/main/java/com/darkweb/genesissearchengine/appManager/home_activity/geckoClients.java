@@ -26,13 +26,13 @@ import java.util.Collections;
 import java.util.LinkedList;
 import static com.google.ads.AdRequest.LOGTAG;
 
-class geckoClients
+public class geckoClients
 {
     /*Gecko Variables*/
 
     private GeckoSession session1 = null;
     private GeckoRuntime runtime1 = null;
-    eventObserver.eventListener event;
+    private eventObserver.eventListener event;
     private AppCompatActivity context;
 
     /*Private Variables*/
@@ -41,6 +41,8 @@ class geckoClients
     private boolean onGoBack = false;
     private boolean on_page_loaded = false;
     private boolean on_page_error = false;
+    private String current_url = strings.emptyStr;
+    private String prev_url = strings.emptyStr;
 
     private Uri downloadURL;
     private String downloadFile = "";
@@ -67,6 +69,14 @@ class geckoClients
 
     boolean isSessionRunning(){
         return !on_page_loaded;
+    }
+
+    String currentURLState()
+    {
+        return prev_url;
+    }
+
+    public void onSwitch(){
     }
 
     void onReload()
@@ -149,9 +159,11 @@ class geckoClients
     {
         public GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession var2, @NonNull GeckoSession.NavigationDelegate.LoadRequest var1) {
 
+            prev_url = current_url;
+            current_url = var1.uri;
             if (!helperMethod.getHost(var1.uri).contains("boogle.store")) {
                 if(!status.isTorInitialized){
-                    event.invokeObserver(Collections.singletonList(true), enums.home_eventType.proxy_error);
+                    event.invokeObserver(Collections.singletonList(current_url), enums.home_eventType.proxy_error);
                     return GeckoResult.fromValue(AllowOrDeny.DENY);
                 }
                 else {

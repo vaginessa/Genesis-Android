@@ -1,7 +1,9 @@
 package com.darkweb.genesissearchengine.appManager.home_activity;
 
 import android.content.ComponentCallbacks2;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Patterns;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -54,6 +56,8 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     private ImageView splashlogo;
     private TextView loadingText;
     private AdView banner_ads = null;
+    private ImageView engineLogo;
+    private ImageButton gateway_splash;
 
     /*Redirection Objects*/
     private geckoClients geckoclient = null;
@@ -107,10 +111,12 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         loadingText = findViewById(R.id.loadingText);
         webviewContainer = findViewById(R.id.webviewContainer);
         banner_ads = findViewById(R.id.adView);
+        engineLogo = findViewById(R.id.switchEngine);
+        gateway_splash = findViewById(R.id.gateway_splash);
 
         geckoclient = new geckoClients();
 
-        home_view_controller.initialization(new homeViewCallback(),this,webviewContainer,loadingText,progressBar,searchbar,splashScreen,requestFailure,floatingButton, loadingIcon,splashlogo,banner_ads,dataController.getInstance().getSuggestions());
+        home_view_controller.initialization(new homeViewCallback(),this,webviewContainer,loadingText,progressBar,searchbar,splashScreen,requestFailure,floatingButton, loadingIcon,splashlogo,banner_ads,dataController.getInstance().getSuggestions(),engineLogo,gateway_splash);
     }
 
     public void initializeGeckoView(){
@@ -123,18 +129,17 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         };
 
 
-        if(status.isBootstrapped){
-            if(status.gateway){
-                home_view_controller.updateLogs("Loading | Starting Gateway");
-                initializeProxy();
-            }
-            else {
-                home_view_controller.disableSplashScreen(callable);
-            }
+        if(status.gateway){
+            home_view_controller.updateLogs("Loading | Starting Gateway");
+            initializeProxy();
         }
         else {
-            pluginController.getInstance().MessageManagerHandler(homeController.this,null,enums.popup_type.tor_banned);
+            home_view_controller.disableSplashScreen(callable);
         }
+    }
+
+    public void onProxyEnabled(View view){
+        pluginController.getInstance().MessageManagerHandler(homeController.this,"-1",enums.popup_type.tor_banned);
     }
 
     public void initializeProxy(){
@@ -159,6 +164,8 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             if (actionId == EditorInfo.IME_ACTION_NEXT)
             {
                 onSearchBarInvoked(v);
+                geckoView.clearFocus();
+                helperMethod.hideKeyboard(homeController.this);
             }
             return true;
         });
@@ -196,6 +203,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         geckoView.clearFocus();
         if(requestFailure.getVisibility()==View.VISIBLE){
             home_view_controller.onDisableInternetError();
+            home_view_controller.updateSearchBar(geckoclient.currentURLState());
         }
         else {
             geckoclient.onBackPressed();
@@ -205,6 +213,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
     public void onSwitchSearch(View view)
     {
+        geckoclient.onSwitch();
         if(status.search_status.equals(constants.backendGoogle))
         {
             ((ImageButton) view).setImageResource(R.drawable.duck_logo);
@@ -292,9 +301,14 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         return banner_ads;
     }
 
-    public void startGateway(){
+    public void startGateway(boolean cur_status){
+
         home_view_controller.updateLogs("Loading | Starting Gateway");
-        pluginController.getInstance().proxyManager(true);
+        pluginController.getInstance().proxyManager(cur_status);
+        status.gateway = cur_status;
+        dataController.getInstance().setBool(keys.gateway,status.gateway);
+
+        helperMethod.triggerRebirth(this);
     }
 
     public void disableSplash(){
@@ -385,6 +399,14 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             else if(e_type.equals(enums.home_eventType.on_page_loaded)){
                 dataController.getInstance().setBool(keys.is_bootstrapped,true);
                 home_view_controller.onPageFinished();
+                if(status.isWelcomeEnabled && !status.isAppStarted){
+
+                    final Handler handler = new Handler();
+                    helperMethod.hideKeyboard(homeController.this);
+                    Runnable runnable = () -> pluginController.getInstance().MessageManagerHandler(homeController.this,strings.emptyStr,enums.popup_type.welcome);
+                    handler.postDelayed(runnable, 1300);
+                    status.isAppStarted = true;
+                }
             }
             else if(e_type.equals(enums.home_eventType.on_load_error)){
                 dataController.getInstance().setBool(keys.is_bootstrapped,true);
@@ -393,7 +415,6 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                 home_view_controller.updateSearchBar(data.get(0).toString());
             }
             else if(e_type.equals(enums.home_eventType.proxy_error)){
-                pluginController.getInstance().setProxy((Boolean)data.get(0));
                 pluginController.getInstance().MessageManagerHandler(homeController.this,data.get(0).toString(),enums.popup_type.start_orbot);
             }
             else if(e_type.equals(enums.home_eventType.download_file_popup)){

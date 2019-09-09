@@ -39,13 +39,13 @@ class orbotManager
 
     private static boolean isLoading = false;
     private int threadCounter = 100;
-    private Handler updateUIHandler = null;
-    private int onionProxyPort = 0;
-    private boolean isTorInitialized = false;
+    private static Handler updateUIHandler = null;
+    private static int onionProxyPort = 0;
+    private static boolean isTorInitialized = false;
     private boolean network_Error = false;
 
-    private AppCompatActivity app_context;
-    private eventObserver.eventListener event;
+    private static AppCompatActivity app_context;
+    private static eventObserver.eventListener event;
 
     /*Initialization*/
 
@@ -213,8 +213,7 @@ class orbotManager
         updateUIHandler.sendMessage(message);
     }
 
-    @SuppressLint("HandlerLeak")
-    private void createUpdateUiHandler(){
+    private static void createUpdateUiHandler(){
         app_context.runOnUiThread(new Runnable() {
             public void run() {
                 updateUIHandler = new Handler()
@@ -246,7 +245,7 @@ class orbotManager
         }
     }
 
-    private void initializeProxy()
+    private static void initializeProxy()
     {
         isTorInitialized = true;
         status.isTorInitialized = true;

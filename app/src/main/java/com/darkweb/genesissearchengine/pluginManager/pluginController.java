@@ -203,7 +203,7 @@ public class pluginController
                 home_controller.loadURL(data.toString());
             }
             else if(e_type.equals(enums.eventType.cancel_welcome)){
-                dataController.getInstance().setBool(keys.first_time_loaded,true);
+                dataController.getInstance().setBool(keys.is_welcome_enabled,false);
             }
             else if(e_type.equals(enums.eventType.reload)){
                 if(orbot_manager.isOrbotRunning(true))
@@ -237,7 +237,8 @@ public class pluginController
                 home_controller.onDownloadFile();
             }
             else if(e_type.equals(enums.eventType.connect_vpn)){
-                home_controller.startGateway();
+                boolean status = (boolean)data;
+                home_controller.startGateway(status);
             }
             else if(e_type.equals(enums.eventType.start_home)){
                 home_controller.disableSplash();

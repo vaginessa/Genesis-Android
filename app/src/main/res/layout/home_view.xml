@@ -247,21 +247,9 @@
                 android:id="@+id/splashScreen"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/ease_blue">
-            <!--<TextView
-                    android:text="@string/gateway_info"
-                    android:layout_width="match_parent"
-                    android:gravity="left"
-                    android:textColor="@color/white"
-                    android:textFontWeight="5"
-                    android:textAlignment="center"
-                    android:singleLine="true"
-                    android:ellipsize="end"
-                    android:layout_height="wrap_content" android:id="@+id/gatewaay_info"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginTop="230dp" android:layout_marginLeft="30dp"
-                    app:layout_constraintStart_toStartOf="parent"/>-->
-
+                android:clickable="true"
+                android:background="@color/ease_blue"
+                android:focusable="true">
 
             <ImageView
                     android:id="@+id/backsplash"
@@ -272,7 +260,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"/>
 
             <TextView
                     android:id="@+id/loadingText"
@@ -302,6 +290,22 @@
                     app:layout_constraintEnd_toStartOf="@+id/backsplash"
                     app:layout_constraintStart_toEndOf="@+id/backsplash"
                     app:srcCompat="@drawable/icon_loading" />
+
+            <ImageButton
+                    android:id="@+id/gateway_splash"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginEnd="14dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/todo"
+                    android:onClick="onProxyEnabled"
+                    android:scaleType="fitCenter"
+                    android:src="@xml/gateway_splash"
+                    android:padding="5dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 

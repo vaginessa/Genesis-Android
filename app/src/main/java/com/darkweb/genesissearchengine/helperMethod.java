@@ -1,8 +1,13 @@
 package com.darkweb.genesissearchengine;
 
+import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.DownloadManager;
+import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
@@ -13,6 +18,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +31,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ShareCompat;
+
+import com.darkweb.genesissearchengine.appManager.home_activity.homeController;
 import com.darkweb.genesissearchengine.constants.keys;
 import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.example.myapplication.BuildConfig;
@@ -32,6 +40,9 @@ import com.example.myapplication.BuildConfig;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static com.crashlytics.android.answers.Answers.TAG;
 
 public class helperMethod
 {
@@ -129,7 +140,7 @@ public class helperMethod
     public static void onMinimizeApp(AppCompatActivity context){
         Intent startMain = new Intent(Intent.ACTION_MAIN);
         startMain.addCategory(Intent.CATEGORY_HOME);
-        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startMain.setFlags(FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(startMain);
     }
 
@@ -208,4 +219,53 @@ public class helperMethod
         intent.setData(Uri.parse("market://details?id="+packageName));
         context.startActivity(intent);
     }
+
+    public static void triggerRebirth(Context context) {
+        PackageManager packageManager = context.getPackageManager();
+        Intent intent = packageManager.getLaunchIntentForPackage(context.getPackageName());
+        ComponentName componentName = intent.getComponent();
+        Intent mainIntent = Intent.makeRestartActivityTask(componentName);
+        context.startActivity(mainIntent);
+        Runtime.getRuntime().exit(0);
+    }
+
+    public static void doRestart(Context c) {
+        try {
+            //check if the context is given
+            if (c != null) {
+                //fetch the packagemanager so we can get the default launch activity
+                // (you can replace this intent with any other activity if you want
+                PackageManager pm = c.getPackageManager();
+                //check if we got the PackageManager
+                if (pm != null) {
+                    //create the intent with the default start activity for your application
+                    Intent mStartActivity = pm.getLaunchIntentForPackage(
+                            c.getPackageName()
+                    );
+                    if (mStartActivity != null) {
+                        mStartActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        //create a pending intent so the application is restarted after System.exit(0) was called.
+                        // We use an AlarmManager to call this intent in 100ms
+                        int mPendingIntentId = 223344;
+                        PendingIntent mPendingIntent = PendingIntent
+                                .getActivity(c, mPendingIntentId, mStartActivity,
+                                        PendingIntent.FLAG_CANCEL_CURRENT);
+                        AlarmManager mgr = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
+                        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+                        //kill the application
+                        System.exit(0);
+                    } else {
+                        Log.e(TAG, "Was not able to restart application, mStartActivity null");
+                    }
+                } else {
+                    Log.e(TAG, "Was not able to restart application, PM null");
+                }
+            } else {
+                Log.e(TAG, "Was not able to restart application, Context null");
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, "Was not able to restart application");
+        }
+    }
+
 }

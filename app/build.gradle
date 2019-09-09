@@ -142,8 +142,6 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
     implementation 'org.jetbrains:annotations:15.0'
 
-
-
 }
 
 apply plugin: 'com.android.application'

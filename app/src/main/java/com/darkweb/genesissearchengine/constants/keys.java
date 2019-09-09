@@ -34,5 +34,6 @@ public class keys
     public static String history_clear  = "history_clear";
     public static String gateway  = "gateway";
     public static String is_bootstrapped  = "is_bootstrapped";
+    public static String is_welcome_enabled  = "is_welcome_enabled";
 
 }
