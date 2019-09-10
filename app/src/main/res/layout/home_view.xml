@@ -21,6 +21,7 @@
             ads:layout_constraintEnd_toEndOf="parent"
             ads:layout_constraintHorizontal_bias="0.5"
             ads:layout_constraintStart_toStartOf="parent"
+            app:elevation="10dp"
             ads:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout

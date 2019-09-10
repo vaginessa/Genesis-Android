@@ -138,9 +138,7 @@ class homeViewController
         View root = searchbar.getRootView();
         root.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
 
-        //if(status.gateway || !status.isBootstrapped){
-        //    gateway_splash.setAlpha(0f);
-        //}
+
     }
 
     /*Helper UI Methods*/

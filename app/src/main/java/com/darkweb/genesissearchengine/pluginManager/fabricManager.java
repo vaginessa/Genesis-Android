@@ -2,6 +2,10 @@ package com.darkweb.genesissearchengine.pluginManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.crashlytics.android.Crashlytics;
+
+import io.fabric.sdk.android.Fabric;
+
 class fabricManager
 {
     /*Private Variables*/
@@ -18,8 +22,7 @@ class fabricManager
     }
 
     private void initialize(){
-        // Fabric.with(app_context, new Crashlytics());
-        // plugin_controller.initializeAnalyticsManager();
+        Fabric.with(app_context, new Crashlytics());
         event.invokeObserver(null,null);
     }
 }

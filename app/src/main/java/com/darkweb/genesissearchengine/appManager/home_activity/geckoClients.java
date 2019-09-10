@@ -76,7 +76,7 @@ public class geckoClients
         return prev_url;
     }
 
-    public void onSwitch(){
+    void onSwitch(){
     }
 
     void onReload()

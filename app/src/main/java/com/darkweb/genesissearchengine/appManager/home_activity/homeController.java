@@ -58,6 +58,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     private AdView banner_ads = null;
     private ImageView engineLogo;
     private ImageButton gateway_splash;
+    
 
     /*Redirection Objects*/
     private geckoClients geckoclient = null;
@@ -152,6 +153,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     }
 
     public void loadURL(String url){
+        status.isAppStarted = true;
         home_view_controller.clearSelections();
         geckoclient.loadURL(url);
     }
@@ -193,6 +195,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
     public void onOpenMenuItem(View view)
     {
+        status.isAppStarted = true;
         home_view_controller.clearSelections();
         home_view_controller.openMenu(view);
     }

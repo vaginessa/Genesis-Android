@@ -3,10 +3,11 @@
 
     <item android:id="@android:id/background">
         <shape>
-            <corners android:radius="3dp"/>
-            <solid android:color="#fff"/>
+            <corners android:radius="0dp"/>
+            <solid android:color="@color/clear_alpha"/>
         </shape>
     </item>
+
 
     <item android:id="@android:id/progress">
         <clip>
