@@ -142,9 +142,6 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
     implementation 'org.jetbrains:annotations:15.0'
 
-    /*Download Manager*/
-    implementation 'com.github.jakebonk:NotifyMe:1.0.1'
-
 }
 
 apply plugin: 'com.android.application'

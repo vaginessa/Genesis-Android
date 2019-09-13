@@ -37,7 +37,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
-import com.allyants.notifyme.NotifyMe;
 import com.darkweb.genesissearchengine.constants.*;
 import com.darkweb.genesissearchengine.helperMethod;
 import com.darkweb.genesissearchengine.pluginManager.PathUtil;
