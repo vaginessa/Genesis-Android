@@ -11,6 +11,7 @@ import android.os.SystemClock;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
+import com.darkweb.genesissearchengine.appManager.activityContextManager;
 import com.darkweb.genesissearchengine.appManager.home_activity.homeModel;
 import com.example.myapplication.R;
 
@@ -24,9 +25,10 @@ public class localNotification
 
     /*Initializations*/
 
-    localNotification(AppCompatActivity app_context, eventObserver.eventListener event){
+    public localNotification(AppCompatActivity app_context, eventObserver.eventListener event){
         this.app_context = app_context;
         this.event = event;
+        mContext = activityContextManager.getInstance().getHomeController();
         //mContext = homeModel.getInstance().getAppContext();
     }
 
@@ -39,10 +41,13 @@ public class localNotification
      */
     public void createNotification(String title, String message)
     {
-        //Intent resultIntent = new Intent(mContext , homeModel.getInstance().getHomeInstance().getClass());
-        //resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        /*PendingIntent resultPendingIntent = PendingIntent.getActivity(mContext,
+
+
+        Intent resultIntent = new Intent(mContext , mContext.getClass());
+        resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(mContext,
                 0 , resultIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -51,7 +56,7 @@ public class localNotification
         mBuilder.setContentTitle(title)
                 .setContentText(message)
                 .setAutoCancel(true)
-                .setContentIntent(resultPendingIntent);*/
+                .setContentIntent(resultPendingIntent);
 
         mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 

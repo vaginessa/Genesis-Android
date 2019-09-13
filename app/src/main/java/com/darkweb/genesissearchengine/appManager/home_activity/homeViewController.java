@@ -58,6 +58,8 @@ class homeViewController
     private ImageView engineLogo;
     private ImageButton gateway_splash;
 
+    private Handler progress_handler = null;
+
     homeViewController()
     {
     }
@@ -82,6 +84,7 @@ class homeViewController
         initializeSuggestionView(suggestions);
         initLock();
         initSearchImage();
+        createUpdateUiHandler();
     }
 
     private void initSearchImage(){
@@ -147,12 +150,13 @@ class homeViewController
         searchbar.setEnabled(true);
         progressBar.bringToFront();
         request_failed = false;
-        Log.i("FUCKNO","FUCK");
-        splashScreen.animate().setDuration(200).alpha(0f).withEndAction((() -> applicationStarted()));
+        Log.i("myfiz","fiz-5");
+        splashScreen.animate().setDuration(0).alpha(0f).withEndAction((() -> applicationStarted()));
+        Log.i("myfiz","fiz-6");
         onDisableInternetError();
     }
 
-    public void onDisableInternetError(){
+    void onDisableInternetError(){
         requestFailure.animate().alpha(0f).setDuration(150).withEndAction((() -> requestFailure.setVisibility(View.GONE)));
     }
 
@@ -170,16 +174,31 @@ class homeViewController
         splashScreen.animate().setDuration(200).alpha(0f).withEndAction((() -> applicationStarted()));
     }
 
+    boolean is_loading = false;
+    Callable<String> logs = null;
+
     void disableSplashScreen(Callable<String> logs){
+
+        if(is_loading)
+            return;
+
+        is_loading = true;
+        this.logs = logs;
 
         if(splashScreen.getAlpha()==1){
             new Thread(){
                 public void run(){
+
+                    AppCompatActivity temp_context = context;
                     while (!status.isTorInitialized && (!status.search_status.equals(constants.backendGenesis) || !status.isBootstrapped)){
                         try
                         {
+                            Log.i("THREAD:ID:",this.getId()+"");
                             sleep(1000);
-                            logs.call();
+                            if(temp_context.isDestroyed()){
+                                return;
+                            }
+                            startPostTask(messages.UPDATE_LOADING_TEXT);
                         }
                         catch (Exception e)
                         {
@@ -187,8 +206,7 @@ class homeViewController
                         }
                     }
 
-                    updateLogs("Starting | Genesis Search");
-                    event.invokeObserver(Collections.singletonList(status.search_status), enums.home_eventType.on_url_load);
+                    startPostTask(messages.ON_URL_LOAD);
                 }
             }.start();
         }
@@ -201,9 +219,41 @@ class homeViewController
         updateUIHandler.sendMessage(message);
     }
 
+    @SuppressLint("HandlerLeak")
+    private void createUpdateUiHandler()
+    {
+        updateUIHandler = new Handler()
+        {
+            @Override
+            public void handleMessage(Message msg)
+            {
+                if(msg.what == messages.ON_URL_LOAD)
+                {
+                    event.invokeObserver(Collections.singletonList(status.search_status), enums.home_eventType.on_url_load);
+                }
+                if(msg.what == messages.UPDATE_LOADING_TEXT)
+                {
+                    if(logs!=null)
+                    {
+                        try
+                        {
+                            logs.call();
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        };
+    }
+
     private void applicationStarted(){
+        Log.i("myfiz","fiz5");
         if(!has_application_started)
         {
+            Log.i("myfiz","fiz6");
             splashScreen.setVisibility(View.GONE);
             event.invokeObserver(null, enums.home_eventType.on_init_ads);
             has_application_started = true;
@@ -228,7 +278,6 @@ class homeViewController
 
     void onProgressBarUpdate(int value,boolean loading_status){
 
-        Log.i("Progress___",value+"");
         if(value==0)
         {
             progressReVerify(value,loading_status);
@@ -256,16 +305,19 @@ class homeViewController
     }
 
     private void progressReVerify(int value,boolean loading_status){
-        final Handler handler = new Handler();
-        handler.postDelayed(() ->
+        Log.i("Progress___1",value+""+loading_status);
+        if(progress_handler!=null){
+            progress_handler.removeCallbacksAndMessages(null);
+        }
+        progress_handler = new Handler();
+        progress_handler.postDelayed(() ->
         {
-            if(!loading_status){
-                if(value==0 || value==100){
-                    progressBar.setProgress(100);
-                    progressBar.animate().alpha(0).withEndAction((() -> progressBar.setVisibility(View.GONE)));
-                }
+            Log.i("Progress___2",value+":"+loading_status);
+            if(!loading_status || value==100){
+                progressBar.setProgress(100);
+                progressBar.animate().alpha(0).withEndAction((() -> progressBar.setVisibility(View.GONE)));
             }
-        }, 100);
+        }, 1000);
     }
 
     void onUrlLoad(String url){

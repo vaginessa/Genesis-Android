@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="com.example.myapplication">
+        xmlns:tools="http://schemas.android.com/tools"
+        package="com.example.myapplication">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
             android:allowBackup="true"
@@ -18,49 +18,58 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
-        <service android:name="com.darkweb.genesissearchengine.pluginManager.exitManager" android:stopWithTask="false" />
+        <activity android:name="com.darkweb.genesissearchengine.appManager.home_activity.launcherActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+                android:name="com.darkweb.genesissearchengine.pluginManager.exitManager"
+                android:stopWithTask="false" />
+
         <activity
                 android:name="com.darkweb.genesissearchengine.appManager.settingManager.settingController"
-                android:windowSoftInputMode="adjustNothing"
+                android:label="@string/title_activity_setting_controller"
                 android:screenOrientation="portrait"
-                android:label="@string/title_activity_setting_controller">
-        </activity>
-        <activity android:name="com.darkweb.genesissearchengine.appManager.historyManager.historyController"
-                  android:screenOrientation="portrait"
-                  android:windowSoftInputMode="adjustNothing">
-        </activity>
-        <activity android:name="com.darkweb.genesissearchengine.appManager.bookmarkManager.bookmarkController"
+                android:windowSoftInputMode="adjustNothing"></activity>
+        <activity
+                android:name="com.darkweb.genesissearchengine.appManager.historyManager.historyController"
                 android:screenOrientation="portrait"
-                android:windowSoftInputMode="adjustNothing">
-        </activity>
+                android:windowSoftInputMode="adjustNothing"></activity>
+        <activity
+                android:name="com.darkweb.genesissearchengine.appManager.bookmarkManager.bookmarkController"
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="adjustNothing"></activity>
+
         <uses-library
                 android:name="org.apache.http.legacy"
-                android:required="false"/>
+                android:required="false" />
 
         <activity
                 android:name="com.darkweb.genesissearchengine.appManager.home_activity.homeController"
-                android:windowSoftInputMode="adjustResize"
-                android:screenOrientation="portrait">
+                android:screenOrientation="portrait"
+                android:excludeFromRecents="true"
+                android:windowSoftInputMode="adjustResize">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <action android:name="android.intent.action.VIEW"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
 
         <meta-data
                 android:name="io.fabric.ApiKey"
-                android:value="be76c64dae2519d4ab8daaed88298da14c7c294f"/>
+                android:value="be76c64dae2519d4ab8daaed88298da14c7c294f" />
         <meta-data
                 android:name="com.google.android.gms.ads.APPLICATION_ID"
-                android:value="ca-app-pub-5074525529134731~2926711128"/>
+                android:value="ca-app-pub-5074525529134731~2926711128" />
 
         <service
                 android:name="com.darkweb.genesissearchengine.appManager.home_activity.downloadFileService"
                 android:enabled="true"
                 android:exported="false" />
-
     </application>
 
 </manifest>

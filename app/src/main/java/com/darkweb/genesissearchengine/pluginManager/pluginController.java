@@ -33,7 +33,7 @@ public class pluginController
 
     /*Private Variables*/
 
-    private static final pluginController ourInstance = new pluginController();
+    private static pluginController ourInstance = new pluginController();
     private homeController home_controller;
     private historyController history_controller;
 
@@ -45,16 +45,26 @@ public class pluginController
     }
     private pluginController()
     {
-        home_controller = activityContextManager.getInstance().getHomeController();
-        contextManager = activityContextManager.getInstance();
-        instanceObjectInitialization();
+    }
+
+    public void reset(){
+        ourInstance = null;
+        ourInstance = new pluginController();
+    }
+
+    public void finished(){
+        home_controller.finish();
     }
 
     public void initialize(){
+        instanceObjectInitialization();
     }
 
     private void instanceObjectInitialization()
     {
+        home_controller = activityContextManager.getInstance().getHomeController();
+        contextManager = activityContextManager.getInstance();
+
         ad_manager = new adManager(getAppContext(),new admobCallback(),home_controller.getBannerAd());
         analytic_manager = new analyticManager(getAppContext(),new analyticCallback());
         getAppContext().startService(new Intent(getAppContext(), exitManager.class));
@@ -62,7 +72,8 @@ public class pluginController
         firebase_manager = new firebaseManager(getAppContext(),new firebaseCallback());
         local_notification = new localNotification(getAppContext(),new notificationCallback());
         message_manager = new messageManager(new messageCallback());
-        orbot_manager = new orbotManager(getAppContext(),new orbotCallback());
+        orbot_manager = orbotManager.getInstance();
+        orbot_manager.initialize(getAppContext(),new orbotCallback());
         proxy_manager = new proxyManager(getAppContext(),new proxyCallback());
     }
 
@@ -82,6 +93,7 @@ public class pluginController
 
     /*Proxy Manager*/
     public void proxyManager(boolean status){
+        Log.i("SUPFUCK","SUP2");
         if(status){
             proxy_manager.startVPN();
         }
@@ -178,7 +190,6 @@ public class pluginController
         {
             if(e_type.equals(enums.eventType.disable_splash))
             {
-                dataController.getInstance().setBool(keys.gateway,true);
                 home_controller.disableSplash();
             }
         }

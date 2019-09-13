@@ -301,7 +301,7 @@ public class messageManager
 
     }
 
-    boolean isDialogDismissed = true;
+    private boolean isDialogDismissed = true;
     private void torBanned()
     {
         isDialogDismissed = true;
@@ -310,18 +310,23 @@ public class messageManager
                 .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .setMessage(strings.banned_desc)
-                .onDismissListener(dialog -> startHome())
-                .addButton(strings.banned_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                .onDismissListener(dialog -> is_popup_open = false)
+                .onDismissListener(dialog -> startHome());
+
+                String btn_text = "Enable Tor Gateway";
+
+                if(status.gateway){
+                    btn_text = "Disable Tor Gateway";
+                }
+                else {
+                    btn_text = "Enable Tor Gateway";
+                }
+
+                popup_instance.addButton(btn_text, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
                     isDialogDismissed = false;
                     dialog.dismiss();
-                    event.invokeObserver(true, enums.eventType.connect_vpn);
-                })
-                .addButton(strings.banned_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
-                {
-                    isDialogDismissed = false;
-                    dialog.dismiss();
-                    event.invokeObserver(false, enums.eventType.connect_vpn);
+                    event.invokeObserver(!status.gateway, enums.eventType.connect_vpn);
                 });
     }
 

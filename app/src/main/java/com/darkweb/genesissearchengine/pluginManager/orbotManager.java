@@ -34,33 +34,45 @@ class orbotManager
 {
 
     /*Private Variables*/
-    private static OnionProxyManager onionProxyManager = null;
+    private OnionProxyManager onionProxyManager = null;
     private OnionProxyContext onionProxyContext;
 
-    private static boolean isLoading = false;
+    private boolean isLoading = false;
     private int threadCounter = 100;
-    private static Handler updateUIHandler = null;
-    private static int onionProxyPort = 0;
-    private static boolean isTorInitialized = false;
+    private Handler updateUIHandler = null;
+    private int onionProxyPort = 0;
+    private boolean isTorInitialized = false;
     private boolean network_Error = false;
+    private boolean proxy_started = false;
 
-    private static AppCompatActivity app_context;
-    private static eventObserver.eventListener event;
+    private AppCompatActivity app_context;
+    private eventObserver.eventListener event;
 
     /*Initialization*/
+    private static orbotManager ourInstance = new orbotManager();
+    public static orbotManager getInstance()
+    {
+        return ourInstance;
+    }
+    private orbotManager()
+    {
+    }
 
-    orbotManager(AppCompatActivity app_context, eventObserver.eventListener event){
+    public void initialize(AppCompatActivity app_context, eventObserver.eventListener event){
         this.app_context = app_context;
         this.event = event;
         initialize();
     }
 
     private void initialize(){
-        createUpdateUiHandler();
-        autoValidator();
+        if(!proxy_started){
+            proxy_started = true;
+            createUpdateUiHandler();
+            autoValidator();
+        }
     }
 
-    public void initContext(File workingDirectory){
+    private void initContext(File workingDirectory){
         onionProxyContext = new OnionProxyContext(workingDirectory)
         {
             @Override
@@ -213,7 +225,7 @@ class orbotManager
         updateUIHandler.sendMessage(message);
     }
 
-    private static void createUpdateUiHandler(){
+    private void createUpdateUiHandler(){
         app_context.runOnUiThread(new Runnable() {
             public void run() {
                 updateUIHandler = new Handler()
@@ -245,7 +257,7 @@ class orbotManager
         }
     }
 
-    private static void initializeProxy()
+    private void initializeProxy()
     {
         isTorInitialized = true;
         status.isTorInitialized = true;

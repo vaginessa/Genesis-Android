@@ -2,18 +2,23 @@ package com.darkweb.genesissearchengine;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.MediaStore;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -27,6 +32,9 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,9 +45,16 @@ import com.darkweb.genesissearchengine.constants.keys;
 import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.example.myapplication.BuildConfig;
 
+import org.mozilla.geckoview.GeckoResult;
+import org.mozilla.geckoview.GeckoSession;
+
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static com.crashlytics.android.answers.Answers.TAG;
@@ -229,43 +244,100 @@ public class helperMethod
         Runtime.getRuntime().exit(0);
     }
 
-    public static void doRestart(Context c) {
+    public static String getRealPathFromURI(Context context, Uri contentUri) {
+        Cursor cursor = null;
         try {
-            //check if the context is given
-            if (c != null) {
-                //fetch the packagemanager so we can get the default launch activity
-                // (you can replace this intent with any other activity if you want
-                PackageManager pm = c.getPackageManager();
-                //check if we got the PackageManager
-                if (pm != null) {
-                    //create the intent with the default start activity for your application
-                    Intent mStartActivity = pm.getLaunchIntentForPackage(
-                            c.getPackageName()
-                    );
-                    if (mStartActivity != null) {
-                        mStartActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        //create a pending intent so the application is restarted after System.exit(0) was called.
-                        // We use an AlarmManager to call this intent in 100ms
-                        int mPendingIntentId = 223344;
-                        PendingIntent mPendingIntent = PendingIntent
-                                .getActivity(c, mPendingIntentId, mStartActivity,
-                                        PendingIntent.FLAG_CANCEL_CURRENT);
-                        AlarmManager mgr = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
-                        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-                        //kill the application
-                        System.exit(0);
-                    } else {
-                        Log.e(TAG, "Was not able to restart application, mStartActivity null");
-                    }
-                } else {
-                    Log.e(TAG, "Was not able to restart application, PM null");
-                }
-            } else {
-                Log.e(TAG, "Was not able to restart application, Context null");
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } catch (Exception e) {
+            Log.e(TAG, "getRealPathFromURI Exception : " + e.toString());
+            return "";
+        } finally {
+            if (cursor != null) {
+                cursor.close();
             }
-        } catch (Exception ex) {
-            Log.e(TAG, "Was not able to restart application");
         }
     }
 
+    public static void setTimePickerTime(final TimePicker picker, final Calendar cal) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            picker.setHour(cal.get(Calendar.HOUR_OF_DAY));
+            picker.setMinute(cal.get(Calendar.MINUTE));
+        } else {
+            picker.setCurrentHour(cal.get(Calendar.HOUR_OF_DAY));
+            picker.setCurrentMinute(cal.get(Calendar.MINUTE));
+        }
+    }
+
+    public static Date parseDate(final SimpleDateFormat formatter,
+                                  final String value,
+                                  final boolean defaultToNow) {
+        try {
+            if (value != null && !value.isEmpty()) {
+                return formatter.parse(value);
+            }
+        } catch (final ParseException e) {
+        }
+        return defaultToNow ? new Date() : null;
+    }
+
+    public static AlertDialog createStandardDialog(final AlertDialog.Builder builder,
+                                             final GeckoSession.PromptDelegate.BasePrompt prompt,
+                                             final GeckoResult<GeckoSession.PromptDelegate.PromptResponse> response) {
+        final AlertDialog dialog = builder.create();
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(final DialogInterface dialog) {
+                if (!prompt.isComplete()) {
+                    response.complete(prompt.dismiss());
+                }
+            }
+        });
+        return dialog;
+    }
+
+    public static void setCalendarTime(final Calendar cal, final TimePicker picker) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            cal.set(Calendar.HOUR_OF_DAY, picker.getHour());
+            cal.set(Calendar.MINUTE, picker.getMinute());
+        } else {
+            cal.set(Calendar.HOUR_OF_DAY, picker.getCurrentHour());
+            cal.set(Calendar.MINUTE, picker.getCurrentMinute());
+        }
+    }
+
+    public static LinearLayout addStandardLayout(final AlertDialog.Builder builder,
+                                           final String title, final String msg) {
+        final ScrollView scrollView = new ScrollView(builder.getContext());
+        final LinearLayout container = new LinearLayout(builder.getContext());
+        final int horizontalPadding = getViewPadding(builder);
+        final int verticalPadding = (msg == null || msg.isEmpty()) ? horizontalPadding : 0;
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setPadding(/* left */ horizontalPadding, /* top */ verticalPadding,
+                /* right */ horizontalPadding, /* bottom */ verticalPadding);
+        scrollView.addView(container);
+        builder.setTitle(title)
+                .setMessage(msg)
+                .setView(scrollView);
+        return container;
+    }
+
+    public static int parseColor(final String value, final int def) {
+        try {
+            return Color.parseColor(value);
+        } catch (final IllegalArgumentException e) {
+            return def;
+        }
+    }
+
+    private static int getViewPadding(final AlertDialog.Builder builder) {
+        final TypedArray attr = builder.getContext().obtainStyledAttributes(
+                new int[] { android.R.attr.listPreferredItemPaddingLeft });
+        final int padding = attr.getDimensionPixelSize(0, 1);
+        attr.recycle();
+        return padding;
+    }
 }

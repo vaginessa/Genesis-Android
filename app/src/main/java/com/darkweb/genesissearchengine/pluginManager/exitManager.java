@@ -38,12 +38,14 @@ public class exitManager extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.i("SUPFUCK","SUP6");
         pluginController.getInstance().proxyManager(false);
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         stopSelf();
+        Log.i("SUPFUCK","SUP5");
         pluginController.getInstance().proxyManager(false);
     }
 }

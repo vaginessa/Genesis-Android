@@ -1,29 +1,66 @@
 package com.darkweb.genesissearchengine.appManager.home_activity;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.MediaStore;
+import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.InflateException;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TimePicker;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
+import com.allyants.notifyme.NotifyMe;
 import com.darkweb.genesissearchengine.constants.*;
 import com.darkweb.genesissearchengine.helperMethod;
+import com.darkweb.genesissearchengine.pluginManager.PathUtil;
+import com.darkweb.genesissearchengine.pluginManager.localNotification;
 
 import org.mozilla.geckoview.*;
 
+import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.Locale;
+
+import static com.darkweb.genesissearchengine.helperMethod.addStandardLayout;
+import static com.darkweb.genesissearchengine.helperMethod.createStandardDialog;
+import static com.darkweb.genesissearchengine.helperMethod.parseDate;
+import static com.darkweb.genesissearchengine.helperMethod.setCalendarTime;
+import static com.darkweb.genesissearchengine.helperMethod.setTimePickerTime;
 import static com.google.ads.AdRequest.LOGTAG;
 
 public class geckoClients
@@ -46,12 +83,14 @@ public class geckoClients
 
     private Uri downloadURL;
     private String downloadFile = "";
+    private BasicGeckoViewPrompt prompt;
 
 
     void initialize(GeckoView geckoView, AppCompatActivity Context,eventObserver.eventListener event,String searchEngine,AppCompatActivity context)
     {
         this.context = context;
         this.event = event;
+        prompt = new BasicGeckoViewPrompt(context);
         session1 = new GeckoSession();
         runtime1 = GeckoRuntime.getDefault(Context);
         runtime1.getSettings().setJavaScriptEnabled(status.java_status);
@@ -61,6 +100,7 @@ public class geckoClients
         session1.setNavigationDelegate(new navigationDelegate());
         session1.setHistoryDelegate(new historyDelegate());
         session1.setContentDelegate(new ContentDelegate());
+        session1.setPromptDelegate(prompt);
     }
 
     void loadURL(String url){
@@ -74,14 +114,6 @@ public class geckoClients
     String currentURLState()
     {
         return prev_url;
-    }
-
-    void onSwitch(){
-    }
-
-    void onReload()
-    {
-        session1.reload();
     }
 
     void onBackPressed(){
@@ -98,6 +130,8 @@ public class geckoClients
         runtime1.getSettings().setJavaScriptEnabled(status.java_status);
         session1.reload();
     }
+
+    /*Delegate Handler*/
 
     class progressDelegate implements GeckoSession.ProgressDelegate
     {
@@ -121,6 +155,7 @@ public class geckoClients
             if(on_page_loaded){
                 if(!on_page_error){
                     event.invokeObserver(null, enums.home_eventType.on_page_loaded);
+                    event.invokeObserver(Collections.singletonList(0), enums.home_eventType.progress_update);
                 }
                 if(success){
                     event.invokeObserver(Collections.singletonList(0), enums.home_eventType.progress_update);
@@ -159,6 +194,12 @@ public class geckoClients
     {
         public GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession var2, @NonNull GeckoSession.NavigationDelegate.LoadRequest var1) {
 
+
+            if(var1.target==2){
+                loadURL(var1.uri);
+                return GeckoResult.fromValue(AllowOrDeny.DENY);
+            }
+
             prev_url = current_url;
             current_url = var1.uri;
             if (!helperMethod.getHost(var1.uri).contains("boogle.store")) {
@@ -195,6 +236,9 @@ public class geckoClients
             return null;
         }
     }
+
+    private GeckoResult<GeckoSession.PromptDelegate.PromptResponse> mFileResponse;
+    private GeckoSession.PromptDelegate.FilePrompt mFilePrompt;
 
     private class ContentDelegate implements GeckoSession.ContentDelegate {
 
@@ -241,10 +285,33 @@ public class geckoClients
 
     void downloadFile()
     {
-        //if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //pluginController.getInstance().createNotification("Downloading | " + downloadFile,"Starting Download");
-        //}
-
+        showProgressNotification(1123,"Download In Progress","Downloading | " + downloadFile);
+        event.invokeObserver(Collections.singletonList(0), enums.home_eventType.progress_update);
         context.startService(downloadFileService.getDownloadService(context, downloadURL+"__"+downloadFile, Environment.DIRECTORY_DOWNLOADS));
     }
+
+    private static void showProgressNotification(int notificationId, String title, String message)
+    {
+        //localNotification notification = new localNotification(context,null);
+    }
+
+    private String getRealPathFromURI(Uri contentURI) {
+        String result;
+        Cursor cursor = context.getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            result = contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            result = cursor.getString(idx);
+            cursor.close();
+        }
+        return result;
+    }
+
+    void onFileCallbackResult(final int resultCode, final Intent data) {
+        prompt.onFileCallbackResult(resultCode,data);
+    }
+
+
 }

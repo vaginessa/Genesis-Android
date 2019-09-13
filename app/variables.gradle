@@ -1,24 +1,24 @@
 /*arm versions*/
-    project.ext.arm_vname = '241'
-    project.ext.arm_vcode = 241
+    project.ext.arm_vname = '245'
+    project.ext.arm_vcode = 245
 
 /*aarch versions*/
-    project.ext.aarch_vname = '242'
-    project.ext.aarch_vcode = 242
+    project.ext.aarch_vname = '246'
+    project.ext.aarch_vcode = 246
 
 /*x86 versions*/
-    project.ext.x86_vname = '243'
-    project.ext.x86_vcode = 243
+    project.ext.x86_vname = '247'
+    project.ext.x86_vcode = 247
 
 /*x64 versions*/
-    project.ext.x64_vname = '244'
-    project.ext.x64_vcode = 244
+    project.ext.x64_vname = '248'
+    project.ext.x64_vcode = 248
 
 /*dimension*/
     project.ext.dimen = 'abi'
 
 /*firefox version*/
-    project.ext.firefox_version = "70.0.20190822095439"
+    project.ext.firefox_version = "71.0.20190912094122"
     project.ext.firefox_channel = "nightly"
 
 /*Application Preferences*/
