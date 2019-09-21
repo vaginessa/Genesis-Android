@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -61,10 +62,13 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     private AdView banner_ads = null;
     private ImageView engineLogo;
     private ImageButton gateway_splash;
-    
+    private LinearLayout top_bar;
+    private ImageView backsplash;
 
     /*Redirection Objects*/
     private geckoClients geckoclient = null;
+
+    private boolean page_closed = false;
 
     /*-------------------------------------------------------INITIALIZATION-------------------------------------------------------*/
     @Override
@@ -91,7 +95,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             pluginController.getInstance().initialize();
             initializeGeckoView();
             initializeLocalEventHandlers();
-            initializePermission();
+            //initializePermission();
         }
         else
         {
@@ -118,16 +122,17 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         searchbar = findViewById(R.id.search);
         floatingButton = findViewById(R.id.floatingActionButton3);
         loadingIcon = findViewById(R.id.imageView_loading_back);
-        splashlogo = findViewById(R.id.backsplash);
         loadingText = findViewById(R.id.loadingText);
         webviewContainer = findViewById(R.id.webviewContainer);
         banner_ads = findViewById(R.id.adView);
         engineLogo = findViewById(R.id.switchEngine);
         gateway_splash = findViewById(R.id.gateway_splash);
+        top_bar = findViewById(R.id.topbar);
+        backsplash = findViewById(R.id.backsplash);
 
         geckoclient = new geckoClients();
 
-        home_view_controller.initialization(new homeViewCallback(),this,webviewContainer,loadingText,progressBar,searchbar,splashScreen,requestFailure,floatingButton, loadingIcon,splashlogo,banner_ads,dataController.getInstance().getSuggestions(),engineLogo,gateway_splash);
+        home_view_controller.initialization(new homeViewCallback(),this,webviewContainer,loadingText,progressBar,searchbar,splashScreen,requestFailure,floatingButton, loadingIcon,banner_ads,dataController.getInstance().getSuggestions(),engineLogo,gateway_splash,top_bar,geckoView,backsplash);
     }
 
     public void initializePermission(){
@@ -162,7 +167,6 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
         Callable<String> callable = () -> {
             String log = pluginController.getInstance().orbotLogs();
-            Log.i("SHIT:",pluginController.getInstance().orbotLogs());
 
             home_view_controller.updateLogs(pluginController.getInstance().orbotLogs());
             return strings.emptyStr;
@@ -179,11 +183,13 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     }
 
     public void onProxyEnabled(View view){
-        pluginController.getInstance().MessageManagerHandler(homeController.this,"-1",enums.popup_type.tor_banned);
+        if(pluginController.getInstance().isInitialized()){
+            pluginController.getInstance().MessageManagerHandler(homeController.this,"-1",enums.popup_type.tor_banned);
+        }
     }
 
     public void initializeProxy(){
-        pluginController.getInstance().proxyManager(true);
+        pluginController.getInstance().proxyManagerInvoke(true);
     }
     /*Shared Controller Events*/
 
@@ -192,7 +198,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     }
 
     public void loadURL(String url){
-        status.isAppStarted = true;
+
         home_view_controller.clearSelections();
         geckoclient.loadURL(url);
     }
@@ -346,16 +352,16 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
     public void startGateway(boolean cur_status){
 
-        status.gateway = cur_status;
-        dataController.getInstance().setBool(keys.gateway,cur_status);
-        pluginController.getInstance().reset();
-
         new Thread(){
             public void run(){
                 try
                 {
                     sleep(1000);
-                    homeController.this.finish();
+                    status.gateway = cur_status;
+                    dataController.getInstance().setBool(keys.gateway,cur_status);
+                    pluginController.getInstance().reset();
+                    finish();
+                    overridePendingTransition(0, 0);
                 }
                 catch (InterruptedException e)
                 {
@@ -367,10 +373,9 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
     public void disableSplash(){
 
-        Callable<String> callable = () -> {
+         Callable<String> callable = () -> {
 
             String log = pluginController.getInstance().orbotLogs();
-            Log.i("SHIT:",pluginController.getInstance().orbotLogs());
 
             home_view_controller.updateLogs(pluginController.getInstance().orbotLogs());
             return strings.emptyStr;
@@ -387,10 +392,10 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                 if(e_type.equals(enums.home_eventType.onMenuSelected)){
                 int menuId = (int)data.get(0);
                 if (menuId == R.id.menu1) {
-                    helperMethod.openActivity(historyController.class, constants.list_history, homeController.this);
+                    helperMethod.openActivity(historyController.class, constants.list_history, homeController.this,true);
                 }
                 else if (menuId == R.id.menu2) {
-                    pluginController.getInstance().proxyManager(!status.gateway);
+                    pluginController.getInstance().proxyManagerInvoke(!status.gateway);
                     status.gateway = !status.gateway;
                     dataController.getInstance().setBool(keys.gateway,status.gateway);
                 }
@@ -398,7 +403,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                     loadURL("https://whatismycountry.com/");
                 }
                 else if (menuId == R.id.menu3) {
-                    helperMethod.openActivity(settingController.class,constants.list_history, homeController.this);
+                    helperMethod.openActivity(settingController.class,constants.list_history, homeController.this,true);
                 }
                 else if (menuId == R.id.menu4)
                 {
@@ -406,7 +411,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                 }
                 else if (menuId == R.id.menu5)
                 {
-                    helperMethod.openActivity(bookmarkController.class,constants.list_bookmark, homeController.this);
+                    helperMethod.openActivity(bookmarkController.class,constants.list_bookmark, homeController.this,true);
                 }
                 else if (menuId == R.id.menu6)
                 {
@@ -433,6 +438,10 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                home_view_controller.updateLogs("Starting | Genesis Search");
                loadURL(data.get(0).toString());
            }
+           else if(e_type.equals(enums.home_eventType.recheck_orbot)){
+               pluginController.getInstance().OrbotManagerInit(false);
+           }
+
         }
     }
     public class geckoViewCallback implements eventObserver.eventListener{
@@ -444,7 +453,6 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                 home_view_controller.onProgressBarUpdate((int)data.get(0),geckoclient.isSessionRunning());
             }
             else if(e_type.equals(enums.home_eventType.on_url_load)){
-                Log.i("myfiz","fiz3");
                 home_view_controller.onUrlLoad(data.get(0).toString());
             }
             else if(e_type.equals(enums.home_eventType.back_list_empty)){
@@ -459,15 +467,18 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             else if(e_type.equals(enums.home_eventType.on_page_loaded)){
                 dataController.getInstance().setBool(keys.is_bootstrapped,true);
                 home_view_controller.onPageFinished();
-                Log.i("myfiz","fiz-24");
                 if(status.isWelcomeEnabled && !status.isAppStarted){
 
-                    Log.i("myfiz","fiz-25");
                     final Handler handler = new Handler();
                     helperMethod.hideKeyboard(homeController.this);
-                    Runnable runnable = () -> pluginController.getInstance().MessageManagerHandler(homeController.this,strings.emptyStr,enums.popup_type.welcome);
+                    Runnable runnable = () ->
+                    {
+                        if(!status.isAppStarted){
+                            pluginController.getInstance().MessageManagerHandler(homeController.this, strings.emptyStr, enums.popup_type.welcome);
+                        }
+                        status.isAppStarted = true;
+                    };
                     handler.postDelayed(runnable, 1300);
-                    status.isAppStarted = true;
                 }
             }
             else if(e_type.equals(enums.home_eventType.on_load_error)){

@@ -41,6 +41,7 @@
     <!-- Splash -->
     <string name="gateway_info">Enable Gateway</string>
     <string name="gateway_button">Enable Gateway</string>
+    <string name="loading_please_wait">Loading Please Wait</string>
 
     <string-array name="search_engines">
         <item>Hidden Web</item>

@@ -62,7 +62,7 @@ import static com.darkweb.genesissearchengine.helperMethod.setCalendarTime;
 import static com.darkweb.genesissearchengine.helperMethod.setTimePickerTime;
 import static com.google.ads.AdRequest.LOGTAG;
 
-public class geckoClients
+class geckoClients
 {
     /*Gecko Variables*/
 
@@ -141,6 +141,7 @@ public class geckoClients
                 event.invokeObserver(Collections.singletonList(url), enums.home_eventType.on_url_load);
             }
 
+            Log.i("NEWSTART","START:"+url);
             on_page_loaded = false;
             onGoBack = false;
             on_page_error = false;
@@ -157,6 +158,7 @@ public class geckoClients
                     event.invokeObserver(Collections.singletonList(0), enums.home_eventType.progress_update);
                 }
                 if(success){
+                    event.invokeObserver(Collections.singletonList(0), enums.home_eventType.progress_update);
                     event.invokeObserver(Collections.singletonList(0), enums.home_eventType.progress_update);
                 }
             }
@@ -181,6 +183,8 @@ public class geckoClients
             if(var4==3 || var4==5 || var4==1){
                 event.invokeObserver(Collections.singletonList(var2), enums.home_eventType.on_request_completed);
                 event.invokeObserver(Collections.singletonList(var2), enums.home_eventType.on_url_load);
+                current_url = var2;
+                prev_url = var3;
             }
             return null;
         }
@@ -199,7 +203,6 @@ public class geckoClients
                 return GeckoResult.fromValue(AllowOrDeny.DENY);
             }
 
-            prev_url = current_url;
             current_url = var1.uri;
             if (!helperMethod.getHost(var1.uri).contains("boogle.store")) {
                 if(!status.isTorInitialized){

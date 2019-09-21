@@ -347,6 +347,7 @@ public class messageManager
         {
             is_popup_open = true;
             popup_instance = new CFAlertDialog.Builder(app_context);
+
             onDismissListener();
             switch (type)
             {

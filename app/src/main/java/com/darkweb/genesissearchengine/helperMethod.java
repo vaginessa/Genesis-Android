@@ -57,6 +57,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION;
 import static com.crashlytics.android.answers.Answers.TAG;
 
 public class helperMethod
@@ -146,9 +147,12 @@ public class helperMethod
 
     }
 
-    public static void openActivity( Class<?> cls,int type,AppCompatActivity context){
+    public static void openActivity( Class<?> cls,int type,AppCompatActivity context,boolean animation){
         Intent myIntent = new Intent(context, cls);
         myIntent.putExtra(keys.list_type, type);
+        if(!animation){
+            myIntent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
+        }
         context.startActivity(myIntent);
     }
 

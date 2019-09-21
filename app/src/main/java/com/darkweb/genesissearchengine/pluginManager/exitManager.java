@@ -7,9 +7,6 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.darkweb.genesissearchengine.appManager.activityContextManager;
-import com.darkweb.genesissearchengine.constants.keys;
-
 public class exitManager extends Service {
 
     private AppCompatActivity app_context;
@@ -39,13 +36,13 @@ public class exitManager extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.i("SUPFUCK","SUP6");
-        pluginController.getInstance().proxyManager(false);
+        pluginController.getInstance().proxyManagerInvoke(false);
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         stopSelf();
         Log.i("SUPFUCK","SUP5");
-        pluginController.getInstance().proxyManager(false);
+        pluginController.getInstance().proxyManagerInvoke(false);
     }
 }

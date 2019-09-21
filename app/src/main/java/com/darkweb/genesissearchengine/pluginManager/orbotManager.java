@@ -45,6 +45,9 @@ class orbotManager
     private boolean network_Error = false;
     private boolean proxy_started = false;
 
+    private Thread validator_thread = null;
+    private Thread init_thread = null;
+
     private AppCompatActivity app_context;
     private eventObserver.eventListener event;
 
@@ -65,11 +68,24 @@ class orbotManager
     }
 
     private void initialize(){
-        if(!proxy_started){
-            proxy_started = true;
+            if(validator_thread!=null){
+                try
+                {
+                    validator_thread.sleep(1000);
+                    validator_thread.interrupt();
+
+                    init_thread.sleep(1000);
+                    init_thread.interrupt();
+                }
+                catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            proxy_started = false;
             createUpdateUiHandler();
             autoValidator();
-        }
     }
 
     private void initContext(File workingDirectory){
@@ -117,7 +133,7 @@ class orbotManager
 
     private void autoValidator()
     {
-        new Thread()
+        validator_thread = new Thread()
         {
             @SuppressWarnings("InfiniteLoopStatement")
             public void run()
@@ -165,7 +181,8 @@ class orbotManager
                 }
 
             }
-        }.start();
+        };
+        validator_thread.start();
     }
 
     private void initializeTorClient()
@@ -174,7 +191,7 @@ class orbotManager
         if(!isLoading)
         {
             isLoading = true;
-            new Thread()
+            init_thread = new Thread()
             {
                 public void run()
                 {
@@ -203,17 +220,19 @@ class orbotManager
 
                             onionProxyPort = onionProxyManager.getIPv4LocalHostSocksPort();
                             startPostTask();
+                            Log.i("TEST1","TEST2");
                             isLoading = false;
                             break;
 
                         } catch (Exception ex) {
-                            Log.i("SuperFuck:",ex.getMessage());
+                            //Log.i("SuperFuck:",ex.getMessage());
                             ex.printStackTrace();
                         }
                     }
                 }
 
-            }.start();
+            };
+            init_thread.start();
         }
     }
 
@@ -348,7 +367,23 @@ class orbotManager
             }
         }
 
-        return isTorInitialized;
+        /*
+        try
+        {
+            if(onionProxyManager.isRunning()){
+                status.isTorInitialized = true;
+                isTorInitialized = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            status.isTorInitialized = false;
+            isTorInitialized = false;
+        }
+        */
+
+        Log.i("TEST1","TEST1:"+status.isTorInitialized);
+        return status.isTorInitialized;
     }
 
 }

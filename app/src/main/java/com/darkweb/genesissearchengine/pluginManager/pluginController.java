@@ -1,5 +1,6 @@
 package com.darkweb.genesissearchengine.pluginManager;
 
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
@@ -30,6 +31,7 @@ public class pluginController
     private orbotManager orbot_manager;
     private proxyManager proxy_manager;
     private activityContextManager contextManager;
+    private boolean is_initialized = false;
 
     /*Private Variables*/
 
@@ -48,8 +50,7 @@ public class pluginController
     }
 
     public void reset(){
-        ourInstance = null;
-        ourInstance = new pluginController();
+        proxyManager.getInstance().disconnectConnection();
     }
 
     public void finished(){
@@ -58,6 +59,7 @@ public class pluginController
 
     public void initialize(){
         instanceObjectInitialization();
+        is_initialized = true;
     }
 
     private void instanceObjectInitialization()
@@ -72,9 +74,13 @@ public class pluginController
         firebase_manager = new firebaseManager(getAppContext(),new firebaseCallback());
         local_notification = new localNotification(getAppContext(),new notificationCallback());
         message_manager = new messageManager(new messageCallback());
+    }
+
+    public void initializeAllProxies(AppCompatActivity context){
         orbot_manager = orbotManager.getInstance();
-        orbot_manager.initialize(getAppContext(),new orbotCallback());
-        proxy_manager = new proxyManager(getAppContext(),new proxyCallback());
+        proxy_manager = proxyManager.getInstance();
+        orbot_manager.initialize(context,new orbotCallback());
+        proxy_manager.initialize(context,new proxyCallback());
     }
 
     /*Helper Methods*/
@@ -82,6 +88,10 @@ public class pluginController
     AppCompatActivity getAppContext()
     {
         return home_controller;
+    }
+
+    public boolean isInitialized(){
+        return is_initialized;
     }
 
     /*---------------------------------------------- EXTERNAL REQUEST LISTENER-------------------------------------------------------*/
@@ -92,7 +102,7 @@ public class pluginController
     }
 
     /*Proxy Manager*/
-    public void proxyManager(boolean status){
+    public void proxyManagerInvoke(boolean status){
         Log.i("SUPFUCK","SUP2");
         if(status){
             proxy_manager.startVPN();
@@ -115,7 +125,9 @@ public class pluginController
     public void
 
     initializeBannerAds(){
-        ad_manager.initializeBannerAds();
+        if(ad_manager!=null){
+            ad_manager.initializeBannerAds();
+        }
     }
 
     /*Onion Proxy Manager*/
@@ -190,7 +202,9 @@ public class pluginController
         {
             if(e_type.equals(enums.eventType.disable_splash))
             {
-                home_controller.disableSplash();
+                if(home_controller!=null){
+                    activityContextManager.getInstance().getHomeController().disableSplash();
+                }
             }
         }
     }

@@ -27,7 +27,7 @@ import com.example.myapplication.R;
 import java.util.LinkedList;
 import java.util.List;
 
-public class proxyManager
+class proxyManager
 {
     /*Private Variables*/
 
@@ -36,21 +36,29 @@ public class proxyManager
 
     private boolean is_running = false;
     private static final String channel_id = constants.channel_id;
+    private static boolean proxy_started = false;
+    private boolean is_loading = false;
 
     /*Initializations*/
 
-    proxyManager(AppCompatActivity app_context, eventObserver.eventListener event){
-        this.app_context = app_context;
-        this.event = event;
-        initialize();
+    private static proxyManager ourInstance = new proxyManager();
+    public static proxyManager getInstance()
+    {
+        return ourInstance;
     }
 
-    private void initialize(){
+    private proxyManager(){
+    }
+
+    public void initialize(AppCompatActivity app_context, eventObserver.eventListener event){
+        this.app_context = app_context;
+        this.event = event;
     }
 
     /*Initialize Hydra*/
 
     private void initHydraSdk() {
+
 
         SharedPreferences prefs = getPrefs();
         ClientInfo clientInfo = ClientInfo.newBuilder()
@@ -72,6 +80,7 @@ public class proxyManager
                 .build();
 
         HydraSdk.init(app_context, clientInfo, notificationConfig, config);
+        proxy_started = true;
     }
 
     private SharedPreferences getPrefs() {
@@ -104,20 +113,18 @@ public class proxyManager
 
     private void startVPNConnection()
     {
-        Log.i("FUCK1","F1");
         HydraSdk.startVPN(createConnectionRequest(), new Callback<ServerCredentials>()
         {
             @Override
             public void success(@NonNull ServerCredentials serverCredentials)
             {
-                Log.i("FUCK1","F2");
+                is_running = true;
                 loadBoogle();
             }
 
             @Override
             public void failure(@NonNull HydraException e)
             {
-                Log.i("FUCK1","F3");
                 loadBoogle();
             }
         });
@@ -128,6 +135,7 @@ public class proxyManager
     private void loadBoogle()
     {
         is_running = true;
+        //is_loading = false;
         event.invokeObserver(null, enums.eventType.disable_splash);
     }
 
@@ -150,8 +158,25 @@ public class proxyManager
     /*External Helper Methods*/
 
     void startVPN() {
-        initHydraSdk();
+        if(!is_loading){
+            is_loading = true;
+            initHydraSdk();
+        }
         connect();
+    }
+    void reset()
+    {
+        if(proxy_started){
+            HydraSdk.stopVPN(TrackingConstants.GprReasons.M_UI, new CompletableCallback() {
+                @Override
+                public void complete() {
+                }
+
+                @Override
+                public void error(@NonNull HydraException e) {
+                }
+            });
+        }
     }
 
     void disconnectConnection() {
@@ -160,7 +185,6 @@ public class proxyManager
             HydraSdk.stopVPN(TrackingConstants.GprReasons.M_UI, new CompletableCallback() {
                 @Override
                 public void complete() {
-
                 }
 
                 @Override
