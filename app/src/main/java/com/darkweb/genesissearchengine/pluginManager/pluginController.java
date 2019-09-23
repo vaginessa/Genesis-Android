@@ -1,6 +1,5 @@
 package com.darkweb.genesissearchengine.pluginManager;
 
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
@@ -9,14 +8,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.darkweb.genesissearchengine.appManager.activityContextManager;
 import com.darkweb.genesissearchengine.appManager.historyManager.historyController;
 import com.darkweb.genesissearchengine.appManager.home_activity.homeController;
-import com.darkweb.genesissearchengine.appManager.home_activity.homeModel;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.keys;
-import com.darkweb.genesissearchengine.constants.status;
-import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.dataManager.dataController;
 
-@SuppressWarnings("ALL")
 public class pluginController
 {
     /*Plugin Instance*/
@@ -28,8 +23,8 @@ public class pluginController
     private firebaseManager firebase_manager;
     private localNotification local_notification;
     private messageManager message_manager;
-    private orbotManager orbot_manager;
-    private proxyManager proxy_manager;
+    //private orbotManager orbot_manager;
+    //private proxyManager proxy_manager;
     private activityContextManager contextManager;
     private boolean is_initialized = false;
 
@@ -50,11 +45,8 @@ public class pluginController
     }
 
     public void reset(){
+        //orbotManager.getInstance().onReset();
         proxyManager.getInstance().disconnectConnection();
-    }
-
-    public void finished(){
-        home_controller.finish();
     }
 
     public void initialize(){
@@ -77,15 +69,15 @@ public class pluginController
     }
 
     public void initializeAllProxies(AppCompatActivity context){
-        orbot_manager = orbotManager.getInstance();
-        proxy_manager = proxyManager.getInstance();
-        orbot_manager.initialize(context,new orbotCallback());
-        proxy_manager.initialize(context,new proxyCallback());
+        //orbot_manager = orbotManager.getInstance();
+        //proxy_manager = proxyManager.getInstance();
+        orbotManager.getInstance().initialize(context,new orbotCallback());
+        proxyManager.getInstance().initialize(context,new proxyCallback());
     }
 
     /*Helper Methods*/
 
-    AppCompatActivity getAppContext()
+    private AppCompatActivity getAppContext()
     {
         return home_controller;
     }
@@ -105,15 +97,24 @@ public class pluginController
     public void proxyManagerInvoke(boolean status){
         Log.i("SUPFUCK","SUP2");
         if(status){
-            proxy_manager.startVPN();
+            proxyManager.getInstance().startVPN();
         }
         else{
-            proxy_manager.disconnectConnection();
+            proxyManager.getInstance().disconnectConnection();
         }
     }
 
+    public void onPause(){
+        message_manager.onReset();
+    }
+
+    void proxyManagerExitInvoke(){
+        proxyManager.getInstance().disconnectConnection();
+        //orbotManager.getInstance().onReset();
+    }
+
     public boolean proxyStatus(){
-        return proxy_manager.isProxyRunning();
+        return proxyManager.getInstance().isProxyRunning();
     }
 
     /*Notification Manager*/
@@ -131,14 +132,14 @@ public class pluginController
     }
 
     /*Onion Proxy Manager*/
-    public boolean OrbotManagerInit(boolean deepCheck){
-        return orbot_manager.isOrbotRunning(deepCheck);
+    public boolean OrbotManagerInit(){
+        return orbotManager.getInstance().isOrbotRunning(false);
     }
     public void setProxy(boolean status){
-        orbot_manager.setProxy(status);
+        orbotManager.getInstance().setProxy(status);
     }
     public String orbotLogs(){
-        return orbot_manager.getLogs();
+        return orbotManager.getInstance().getLogs();
     }
 
     /*------------------------------------------------ CALLBACK LISTENERS------------------------------------------------------------*/
@@ -149,16 +150,6 @@ public class pluginController
         public void invokeObserver(Object data, enums.eventType e_type)
         {
             home_controller.onBannerAdLoaded();
-        }
-    }
-
-    /*Exit Manager*/
-    private class exitCallback implements eventObserver.eventListener{
-        @Override
-        public void invokeObserver(Object data, enums.eventType e_type)
-        {
-            dataController.getInstance().setBool(keys.low_memory,false);
-            proxy_manager.disconnectConnection();
         }
     }
 
@@ -231,7 +222,7 @@ public class pluginController
                 dataController.getInstance().setBool(keys.is_welcome_enabled,false);
             }
             else if(e_type.equals(enums.eventType.reload)){
-                if(orbot_manager.isOrbotRunning(true))
+                if(orbotManager.getInstance().isOrbotRunning(false))
                 {
                     home_controller.loadURL(data.toString());
                 }

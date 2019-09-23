@@ -3,6 +3,7 @@ package com.darkweb.genesissearchengine.appManager.home_activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -36,6 +37,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuCompat;
 
 import com.darkweb.genesissearchengine.constants.*;
+import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperMethod;
 import com.example.myapplication.R;
 import com.google.android.gms.ads.AdView;
@@ -73,6 +75,7 @@ class homeViewController
     private LinearLayout top_bar;
     private GeckoView gecko_view;
     private ImageView backsplash;
+    private ObjectAnimator engine_animator = null;
 
     private Handler progress_handler = null;
 
@@ -80,7 +83,7 @@ class homeViewController
     {
     }
 
-    void initialization(eventObserver.eventListener event,AppCompatActivity context, FrameLayout webviewContainer, TextView loadingText, ProgressBar progressBar, AutoCompleteTextView searchbar, ConstraintLayout splashScreen, ConstraintLayout requestFailure, FloatingActionButton floatingButton, ImageView loading, AdView banner_ads,ArrayList<String> suggestions,ImageView engineLogo,ImageButton gateway_splash,LinearLayout top_bar,GeckoView gecko_view,ImageView backsplash){
+    void initialization(eventObserver.eventListener event,AppCompatActivity context, FrameLayout webviewContainer, TextView loadingText, ProgressBar progressBar, AutoCompleteTextView searchbar, ConstraintLayout splashScreen, ConstraintLayout requestFailure, FloatingActionButton floatingButton, ImageView loading, AdView banner_ads,ArrayList<String> suggestions,ImageView engineLogo,ImageButton gateway_splash,LinearLayout top_bar,GeckoView gecko_view,ImageView backsplash,boolean is_triggered){
         this.context = context;
         this.progressBar = progressBar;
         this.searchbar = searchbar;
@@ -103,6 +106,7 @@ class homeViewController
         initLock();
         initSearchImage();
         createUpdateUiHandler();
+        searchButtonPulseAnimation(is_triggered);
     }
 
     private void initSearchImage(){
@@ -117,6 +121,27 @@ class homeViewController
         else
         {
             engineLogo.setImageResource(R.drawable.genesis_logo);
+        }
+    }
+
+    private void searchButtonPulseAnimation(boolean is_triggered){
+        if(!is_triggered){
+            engine_animator = ObjectAnimator.ofPropertyValuesHolder(
+                    engineLogo,
+                    PropertyValuesHolder.ofFloat("scaleX", 1.135f),
+                    PropertyValuesHolder.ofFloat("scaleY", 1.135f));
+            engine_animator.setDuration(650);
+
+            engine_animator.setRepeatCount(ObjectAnimator.INFINITE);
+            engine_animator.setRepeatMode(ObjectAnimator.REVERSE);
+
+            engine_animator.start();
+        }
+    }
+
+    void stopEngineAnimation(){
+        if(engine_animator!=null){
+            engine_animator.end();
         }
     }
 

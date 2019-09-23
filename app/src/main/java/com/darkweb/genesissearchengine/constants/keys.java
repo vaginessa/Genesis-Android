@@ -35,5 +35,6 @@ public class keys
     public static String gateway  = "gateway";
     public static String is_bootstrapped  = "is_bootstrapped";
     public static String is_welcome_enabled  = "is_welcome_enabled";
+    public static String engine_switched  = "engine_switched";
 
 }

@@ -1,12 +1,15 @@
 package com.darkweb.genesissearchengine.pluginManager;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.text.InputType;
+import android.util.Log;
 import android.widget.EditText;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -17,7 +20,7 @@ import com.darkweb.genesissearchengine.constants.status;
 import com.darkweb.genesissearchengine.constants.strings;
 import com.example.myapplication.R;
 
-public class messageManager
+class messageManager
 {
     /*Private Variables*/
 
@@ -27,6 +30,7 @@ public class messageManager
 
     private AppCompatActivity app_context;
     private eventObserver.eventListener event;
+    private CFAlertDialog dialog_main = null;
 
     /*Initializations*/
 
@@ -56,30 +60,30 @@ public class messageManager
                 .setTextColor(app_context.getResources().getColor(R.color.blue_dark))
                 .setMessage(strings.welcome_message_desc)
                 .onDismissListener(dialog -> is_popup_open = false)
-                .addButton(strings.welcome_message_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                .addButton(strings.welcome_message_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (DialogInterface tempDialog, int which) ->
                 {
-                    dialog.dismiss();
+                    tempDialog.dismiss();
                     event.invokeObserver(constants.blackMarket, enums.eventType.welcome);
                 })
-                .addButton(strings.welcome_message_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                .addButton(strings.welcome_message_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
                 {
-                    dialog.dismiss();
+                    tempDialog.dismiss();
                     event.invokeObserver(constants.leakedDocument, enums.eventType.welcome);
                 })
-                .addButton(strings.welcome_message_bt3, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                .addButton(strings.welcome_message_bt3, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
                 {
-                    dialog.dismiss();
+                    tempDialog.dismiss();
                     event.invokeObserver(constants.news, enums.eventType.welcome);
                 })
-                .addButton(strings.welcome_message_bt4, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                .addButton(strings.welcome_message_bt4, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
                 {
-                    dialog.dismiss();
+                    tempDialog.dismiss();
                     event.invokeObserver(constants.softwares, enums.eventType.welcome);
                 })
-                .addButton(strings.welcome_message_bt5, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                .addButton(strings.welcome_message_bt5, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
                 {
                     event.invokeObserver(null, enums.eventType.cancel_welcome);
-                    dialog.dismiss();
+                    tempDialog.dismiss();
                 });
 
     }
@@ -94,12 +98,12 @@ public class messageManager
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .onDismissListener(dialog -> abiError())
                 .setMessage(strings.abi_error_desc)
-                .addButton(strings.abi_error_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                .addButton(strings.abi_error_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
                 {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(constants.updateUrl + status.current_ABI));
                     app_context.startActivity(browserIntent);
                 })
-                .addButton(strings.abi_error_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                .addButton(strings.abi_error_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
                 {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(constants.playstoreUrl));
                     app_context.startActivity(browserIntent);
@@ -114,8 +118,8 @@ public class messageManager
                 .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .setMessage(strings.rate_success_desc)
-                .addButton(strings.rate_success_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
-                        dialog.dismiss());
+                .addButton(strings.rate_success_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
+                        tempDialog.dismiss());
 
     }
 
@@ -127,8 +131,8 @@ public class messageManager
                 .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .setMessage(strings.report_success_desc)
-                .addButton(strings.report_success_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
-                        dialog.dismiss());
+                .addButton(strings.report_success_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
+                        tempDialog.dismiss());
 
     }
 
@@ -151,14 +155,14 @@ public class messageManager
                 .setHeaderView(input)
                 .onDismissListener(dialog -> is_popup_open = false)
                 .setMessage("Bookmark URL | " + data + "\n")
-                .addButton(strings.bookmark_url_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                .addButton(strings.bookmark_url_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
                 {
                     event.invokeObserver(data.replace("genesis.onion","boogle.store")+"split"+input.getText().toString(),enums.eventType.bookmark);
-                    dialog.dismiss();
-                })
-                .addButton(strings.bookmark_url_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
-                        dialog.dismiss());
 
+                    tempDialog.dismiss();
+                })
+                .addButton(strings.bookmark_url_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
+                        tempDialog.dismiss());
 
     }
 
@@ -170,12 +174,12 @@ public class messageManager
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .onDismissListener(dialog -> is_popup_open = false)
                 .setMessage(strings.clear_history_desc)
-                .addButton(strings.clear_history_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                .addButton(strings.clear_history_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
                 {
                     event.invokeObserver(null, enums.eventType.clear_history);
-                    dialog.dismiss();
+                    tempDialog.dismiss();
                 })
-                .addButton(strings.clear_history_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) -> dialog.dismiss());
+                .addButton(strings.clear_history_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) -> tempDialog.dismiss());
     }
 
     private void clearBookmark()
@@ -186,12 +190,12 @@ public class messageManager
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .onDismissListener(dialog -> is_popup_open = false)
                 .setMessage(strings.clear_bookmark_desc)
-                .addButton(strings.clear_bookmark_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                .addButton(strings.clear_bookmark_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
                 {
                     event.invokeObserver(null, enums.eventType.clear_bookmark);
-                    dialog.dismiss();
+                    tempDialog.dismiss();
                 })
-                .addButton(strings.clear_bookmark_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) -> dialog.dismiss());
+                .addButton(strings.clear_bookmark_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) -> tempDialog.dismiss());
     }
 
     private void reportURL()
@@ -202,13 +206,13 @@ public class messageManager
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .onDismissListener(dialog -> is_popup_open = false)
                 .setMessage(strings.report_url_desc)
-                .addButton(strings.report_url_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                .addButton(strings.report_url_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
                 {
-                    dialog.dismiss();
+                    tempDialog.dismiss();
                     createMessage(app_context,strings.emptyStr, enums.popup_type.reported_success);
                 })
-                .addButton(strings.report_url_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
-                        dialog.dismiss());
+                .addButton(strings.report_url_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
+                        tempDialog.dismiss());
 
     }
 
@@ -220,16 +224,16 @@ public class messageManager
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .onDismissListener(dialog -> is_popup_open = false)
                 .setMessage(strings.rate_message)
-                .addButton(strings.rate_positive, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                .addButton(strings.rate_positive, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
                 {
                     event.invokeObserver(null, enums.eventType.app_rated);
                     app_context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.darkweb.genesissearchengine")));
-                    dialog.dismiss();
+                    tempDialog.dismiss();
                 })
-                .addButton(strings.rate_negative, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                .addButton(strings.rate_negative, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
                 {
                     event.invokeObserver(null, enums.eventType.app_rated);
-                    dialog.dismiss();
+                    tempDialog.dismiss();
                     createMessage(app_context,strings.emptyStr, enums.popup_type.rate_success);
                 });
     }
@@ -263,8 +267,8 @@ public class messageManager
                     .setTextColor(app_context.getResources().getColor(R.color.black))
                     .setMessage(strings.orbot_init_desc)
                     .onDismissListener(dialog -> is_popup_open = false)
-                    .addButton(strings.orbot_init_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
-                            dialog.dismiss()).addButton(strings.orbot_init_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                    .addButton(strings.orbot_init_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
+                            tempDialog.dismiss()).addButton(strings.orbot_init_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
             {
                 dialog.dismiss();
 
@@ -293,7 +297,7 @@ public class messageManager
                 .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .setMessage(strings.version_desc)
-                .addButton(strings.version_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.END, (dialog, which) ->
+                .addButton(strings.version_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.END, (tempDialog, which) ->
                 {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(constants.updateUrl + data));
                     app_context.startActivity(browserIntent);
@@ -305,6 +309,7 @@ public class messageManager
     private void torBanned()
     {
         isDialogDismissed = true;
+
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(strings.banned_title)
                 .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
@@ -322,10 +327,10 @@ public class messageManager
                     btn_text = "Enable Tor Gateway";
                 }
 
-                popup_instance.addButton(btn_text, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                popup_instance.addButton(btn_text, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
                 {
                     isDialogDismissed = false;
-                    dialog.dismiss();
+                    tempDialog.dismiss();
                     event.invokeObserver(!status.gateway, enums.eventType.connect_vpn);
                 });
     }
@@ -335,6 +340,13 @@ public class messageManager
             event.invokeObserver(null, enums.eventType.start_home);
         }
         is_popup_open = false;
+    }
+
+    void onReset(){
+        if(dialog_main!=null && dialog_main.isShowing()){
+            dialog_main.dismiss();
+            dialog_main.cancel();
+        }
     }
 
     /*External Helper Methods*/
@@ -404,7 +416,7 @@ public class messageManager
                     break;
             }
 
-            popup_instance.show();
+            dialog_main = popup_instance.show();
         }
     }
 }

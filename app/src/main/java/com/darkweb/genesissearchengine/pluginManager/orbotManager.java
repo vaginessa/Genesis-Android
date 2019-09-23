@@ -43,10 +43,6 @@ class orbotManager
     private int onionProxyPort = 0;
     private boolean isTorInitialized = false;
     private boolean network_Error = false;
-    private boolean proxy_started = false;
-
-    private Thread validator_thread = null;
-    private Thread init_thread = null;
 
     private AppCompatActivity app_context;
     private eventObserver.eventListener event;
@@ -68,24 +64,8 @@ class orbotManager
     }
 
     private void initialize(){
-            if(validator_thread!=null){
-                try
-                {
-                    validator_thread.sleep(1000);
-                    validator_thread.interrupt();
-
-                    init_thread.sleep(1000);
-                    init_thread.interrupt();
-                }
-                catch (InterruptedException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-
-            proxy_started = false;
-            createUpdateUiHandler();
-            autoValidator();
+        createUpdateUiHandler();
+        autoValidator();
     }
 
     private void initContext(File workingDirectory){
@@ -133,49 +113,34 @@ class orbotManager
 
     private void autoValidator()
     {
-        validator_thread = new Thread()
-        {
+        Thread validator_thread = new Thread() {
             @SuppressWarnings("InfiniteLoopStatement")
-            public void run()
-            {
-                while (true)
-                {
-                    try
-                    {
-                        if(onionProxyManager!=null)
-                        {
-                            if(onionProxyManager.isRunning() && onionProxyManager.isNetworkEnabled())
-                            {
+            public void run() {
+                while (true) {
+                    try {
+                        if (onionProxyManager != null) {
+                            if (onionProxyManager.isRunning() && onionProxyManager.isNetworkEnabled()) {
                                 threadCounter = 5000;
-                            }
-                            else
-                            {
+                            } else {
                                 isTorInitialized = false;
                             }
                         }
-                        if(!isLoading && !isTorInitialized)
-                        {
-                            if(helperMethod.isNetworkAvailable(app_context))
-                            {
+                        if (!isLoading && !isTorInitialized) {
+                            if (helperMethod.isNetworkAvailable(app_context)) {
                                 network_Error = false;
-                                if(onionProxyManager == null)
-                                {
+                                if (onionProxyManager == null) {
                                     onionProxyManager = new AndroidOnionProxyManager(app_context, strings.torfolder);
                                 }
                                 isLoading = false;
                                 isTorInitialized = false;
                                 initializeTorClient();
-                            }else {
+                            } else {
                                 network_Error = true;
                             }
-                        }
-                        else
-                        {
+                        } else {
                             sleep(threadCounter);
                         }
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -191,14 +156,16 @@ class orbotManager
         if(!isLoading)
         {
             isLoading = true;
-            init_thread = new Thread()
-            {
-                public void run()
-                {
-                    while (true)
-                    {
-                        try
-                        {
+            // if (installAndStartTorOp(useBridges) == false) {
+            //     return;
+            // }
+            //if(onionProxyManager.isBootstrapped()){
+            //}
+            //Log.i("SuperFuck:",ex.getMessage());
+            Thread init_thread = new Thread() {
+                public void run() {
+                    while (true) {
+                        try {
                             // if (installAndStartTorOp(useBridges) == false) {
                             //     return;
                             // }
@@ -207,20 +174,19 @@ class orbotManager
                             int totalTriesPerTorStartup = 5;
 
                             //if(onionProxyManager.isBootstrapped()){
-                                initContext(onionProxyManager.getWorkingDirectory());
-                                initBridgeGateway();
+                            initContext(onionProxyManager.getWorkingDirectory());
+                            initBridgeGateway();
                             //}
 
                             boolean ok = onionProxyManager.startWithRepeat(totalSecondsPerTorStartup, totalTriesPerTorStartup);
 
-                            if (!ok)
-                            {
+                            if (!ok) {
                                 continue;
                             }
 
                             onionProxyPort = onionProxyManager.getIPv4LocalHostSocksPort();
                             startPostTask();
-                            Log.i("TEST1","TEST2");
+                            Log.i("TEST1", "TEST2");
                             isLoading = false;
                             break;
 
@@ -245,18 +211,7 @@ class orbotManager
     }
 
     private void createUpdateUiHandler(){
-        app_context.runOnUiThread(new Runnable() {
-            public void run() {
-                updateUIHandler = new Handler()
-                {
-                    @Override
-                    public void handleMessage(@NonNull Message msg)
-                    {
-                        initializeProxy();
-                    }
-                };
-            }
-        });
+        initializeProxy();
     }
 
     void setProxy(boolean status){
@@ -280,7 +235,6 @@ class orbotManager
     {
         isTorInitialized = true;
         status.isTorInitialized = true;
-        event.invokeObserver(onionProxyPort,null);
         PrefsHelper.setPref(keys.proxy_socks,constants.proxy_socks);
         PrefsHelper.setPref(keys.proxy_socks_port, onionProxyPort);
         PrefsHelper.setPref(keys.proxy_socks_version,constants.proxy_socks_version);
@@ -302,9 +256,7 @@ class orbotManager
 
         //onionProxyContext.installFiles();
 
-        PrintWriter printWriter = null;
-        try {
-            printWriter = new PrintWriter(new BufferedWriter(new FileWriter(onionProxyContext.getTorrcFile(), true)));
+        try (PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter(onionProxyContext.getTorrcFile(), true)))) {
             printWriter.println("CookieAuthFile " + onionProxyContext.getCookieFile().getAbsolutePath());
             // For some reason the GeoIP's location can only be given as a file
             // name, not a path and it has
@@ -321,10 +273,6 @@ class orbotManager
                 printWriter.println("UseBridges 1");
                 for (String bridgeLine : bridges)
                     printWriter.println(bridgeLine);
-            }
-        } finally {
-            if (printWriter != null) {
-                printWriter.close();
             }
         }
 
@@ -352,36 +300,7 @@ class orbotManager
         }
     }
 
-    boolean isOrbotRunning(boolean deepCheck){
-        if(deepCheck){
-            try
-            {
-                ExecutorService executor = Executors.newFixedThreadPool(1);
-                getProxtStatus task = new getProxtStatus();
-                Future<Boolean> future = executor.submit(task);
-                future.get();
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-
-        /*
-        try
-        {
-            if(onionProxyManager.isRunning()){
-                status.isTorInitialized = true;
-                isTorInitialized = true;
-            }
-        }
-        catch (Exception ex)
-        {
-            status.isTorInitialized = false;
-            isTorInitialized = false;
-        }
-        */
-
+    boolean isOrbotRunning(){
         Log.i("TEST1","TEST1:"+status.isTorInitialized);
         return status.isTorInitialized;
     }

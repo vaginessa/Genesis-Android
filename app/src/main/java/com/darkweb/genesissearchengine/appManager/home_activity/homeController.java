@@ -6,9 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -132,7 +130,9 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
         geckoclient = new geckoClients();
 
-        home_view_controller.initialization(new homeViewCallback(),this,webviewContainer,loadingText,progressBar,searchbar,splashScreen,requestFailure,floatingButton, loadingIcon,banner_ads,dataController.getInstance().getSuggestions(),engineLogo,gateway_splash,top_bar,geckoView,backsplash);
+        boolean is_engine_switched = dataController.getInstance().getBool(keys.engine_switched,false);
+
+        home_view_controller.initialization(new homeViewCallback(),this,webviewContainer,loadingText,progressBar,searchbar,splashScreen,requestFailure,floatingButton, loadingIcon,banner_ads,dataController.getInstance().getSuggestions(),engineLogo,gateway_splash,top_bar,geckoView,backsplash,is_engine_switched);
     }
 
     public void initializePermission(){
@@ -183,7 +183,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     }
 
     public void onProxyEnabled(View view){
-        if(pluginController.getInstance().isInitialized()){
+        if(pluginController.getInstance().isInitialized() && !page_closed){
             pluginController.getInstance().MessageManagerHandler(homeController.this,"-1",enums.popup_type.tor_banned);
         }
     }
@@ -261,6 +261,9 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
     public void onSwitchSearch(View view)
     {
+        home_view_controller.stopEngineAnimation();
+        dataController.getInstance().setBool(keys.engine_switched,true);
+
         if(status.search_status.equals(constants.backendGoogle))
         {
             ((ImageButton) view).setImageResource(R.drawable.duck_logo);
@@ -270,7 +273,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         }
         else if(status.search_status.equals(constants.backendGenesis))
         {
-            if(pluginController.getInstance().OrbotManagerInit(true))
+            if(pluginController.getInstance().OrbotManagerInit())
             {
                 ((ImageButton) view).setImageResource(R.drawable.google_logo);
                 status.search_status = constants.backendDuckDuckGo;
@@ -283,7 +286,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         }
         else
         {
-            if(pluginController.getInstance().OrbotManagerInit(true))
+            if(pluginController.getInstance().OrbotManagerInit())
             {
                 ((ImageButton) view).setImageResource(R.drawable.genesis_logo);
                 status.search_status = constants.backendGoogle;
@@ -325,6 +328,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     public void onPause()
     {
         super.onPause();
+        pluginController.getInstance().onPause();
     }
 
     public void onSuggestionUpdate(){
@@ -352,6 +356,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
     public void startGateway(boolean cur_status){
 
+        page_closed = true;
         new Thread(){
             public void run(){
                 try
@@ -439,7 +444,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                loadURL(data.get(0).toString());
            }
            else if(e_type.equals(enums.home_eventType.recheck_orbot)){
-               pluginController.getInstance().OrbotManagerInit(false);
+               pluginController.getInstance().OrbotManagerInit();
            }
 
         }
