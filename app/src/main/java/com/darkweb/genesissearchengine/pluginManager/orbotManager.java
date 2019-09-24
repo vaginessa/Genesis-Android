@@ -39,7 +39,6 @@ class orbotManager
 
     private boolean isLoading = false;
     private int threadCounter = 100;
-    private Handler updateUIHandler = null;
     private int onionProxyPort = 0;
     private boolean isTorInitialized = false;
     private boolean network_Error = false;
@@ -64,7 +63,6 @@ class orbotManager
     }
 
     private void initialize(){
-        createUpdateUiHandler();
         autoValidator();
     }
 
@@ -129,7 +127,7 @@ class orbotManager
                             if (helperMethod.isNetworkAvailable(app_context)) {
                                 network_Error = false;
                                 if (onionProxyManager == null) {
-                                    onionProxyManager = new AndroidOnionProxyManager(app_context, strings.torfolder);
+                                    onionProxyManager = new AndroidOnionProxyManager(app_context.getApplicationContext(), strings.torfolder);
                                 }
                                 isLoading = false;
                                 isTorInitialized = false;
@@ -156,27 +154,16 @@ class orbotManager
         if(!isLoading)
         {
             isLoading = true;
-            // if (installAndStartTorOp(useBridges) == false) {
-            //     return;
-            // }
-            //if(onionProxyManager.isBootstrapped()){
-            //}
-            //Log.i("SuperFuck:",ex.getMessage());
             Thread init_thread = new Thread() {
                 public void run() {
                     while (true) {
                         try {
-                            // if (installAndStartTorOp(useBridges) == false) {
-                            //     return;
-                            // }
 
                             int totalSecondsPerTorStartup = 4 * 60;
                             int totalTriesPerTorStartup = 5;
 
-                            //if(onionProxyManager.isBootstrapped()){
                             initContext(onionProxyManager.getWorkingDirectory());
                             initBridgeGateway();
-                            //}
 
                             boolean ok = onionProxyManager.startWithRepeat(totalSecondsPerTorStartup, totalTriesPerTorStartup);
 
@@ -185,13 +172,12 @@ class orbotManager
                             }
 
                             onionProxyPort = onionProxyManager.getIPv4LocalHostSocksPort();
-                            startPostTask();
-                            Log.i("TEST1", "TEST2");
+
+                            initializeProxy();
                             isLoading = false;
                             break;
 
                         } catch (Exception ex) {
-                            //Log.i("SuperFuck:",ex.getMessage());
                             ex.printStackTrace();
                         }
                     }
@@ -203,16 +189,6 @@ class orbotManager
     }
 
     /*------------------------------------------------------- POST TASK HANDLER -------------------------------------------------------*/
-
-    private void startPostTask(){
-        Message message = new Message();
-        message.what = messages.REINIT_HIDDEN;
-        updateUIHandler.sendMessage(message);
-    }
-
-    private void createUpdateUiHandler(){
-        initializeProxy();
-    }
 
     void setProxy(boolean status){
         if(status){

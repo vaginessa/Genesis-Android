@@ -73,6 +73,7 @@ class geckoClients
 
     /*Private Variables*/
     private LinkedList<GeckoSession.WebResponseInfo> mPendingDownloads = new LinkedList<>();
+    private ArrayList<String> url_list = new ArrayList<>();
     private boolean canGoBack = false;
     private boolean onGoBack = false;
     private boolean on_page_loaded = false;
@@ -117,6 +118,10 @@ class geckoClients
 
     void onBackPressed(){
         if(canGoBack){
+            if(url_list.size()>0){
+                url_list.remove(url_list.size()-1);
+                updateProxy(url_list.get(url_list.size()-1));
+            }
             session1.goBack();
             onGoBack = true;
         }
@@ -141,7 +146,6 @@ class geckoClients
                 event.invokeObserver(Collections.singletonList(url), enums.home_eventType.on_url_load);
             }
 
-            Log.i("NEWSTART","START:"+url);
             on_page_loaded = false;
             onGoBack = false;
             on_page_error = false;
@@ -183,45 +187,68 @@ class geckoClients
             if(var4==3 || var4==5 || var4==1){
                 event.invokeObserver(Collections.singletonList(var2), enums.home_eventType.on_request_completed);
                 event.invokeObserver(Collections.singletonList(var2), enums.home_eventType.on_url_load);
-                current_url = var2;
-                prev_url = var3;
+                url_list.add(current_url);
             }
             return null;
         }
 
         public void onHistoryStateChange(@NonNull GeckoSession var1, @NonNull GeckoSession.HistoryDelegate.HistoryList var2) {
+
         }
+    }
+
+    String getPrevURL(){
+        return prev_url;
+    }
+
+    String getCurrentURL(){
+        return current_url;
+    }
+
+    void setCurrentURL(String url){
+    }
+
+    private boolean updateProxy(String url){
+        if (!helperMethod.getHost(url).contains("boogle.store")) {
+            if(!status.isTorInitialized){
+                event.invokeObserver(Collections.singletonList(current_url), enums.home_eventType.proxy_error);
+                return false;
+            }
+            else {
+                event.invokeObserver(Collections.singletonList(true), enums.home_eventType.start_proxy);
+            }
+        }
+        else {
+            if(url.startsWith("https://boogle.store/advert__"))
+            {
+                String uri = url;
+                helperMethod.openPlayStore(uri.split("__")[1],context);
+                return false;
+            }
+            event.invokeObserver(Collections.singletonList(false), enums.home_eventType.start_proxy);
+        }
+        return true;
     }
 
     class navigationDelegate implements GeckoSession.NavigationDelegate
     {
+        public void onLocationChange(@NonNull GeckoSession var1, @Nullable String var2) {
+            prev_url = current_url;
+            current_url = var2;
+        }
+
         public GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession var2, @NonNull GeckoSession.NavigationDelegate.LoadRequest var1) {
-
-
             if(var1.target==2){
                 loadURL(var1.uri);
                 return GeckoResult.fromValue(AllowOrDeny.DENY);
             }
 
-            current_url = var1.uri;
-            if (!helperMethod.getHost(var1.uri).contains("boogle.store")) {
-                if(!status.isTorInitialized){
-                    event.invokeObserver(Collections.singletonList(current_url), enums.home_eventType.proxy_error);
-                    return GeckoResult.fromValue(AllowOrDeny.DENY);
-                }
-                else {
-                    event.invokeObserver(Collections.singletonList(true), enums.home_eventType.start_proxy);
-                }
+            boolean status = updateProxy(var1.uri);
+
+            if (!status) {
+                return GeckoResult.fromValue(AllowOrDeny.DENY);
             }
-            else {
-                if(var1.uri.startsWith("https://boogle.store/advert__"))
-                {
-                    String uri = var1.uri;
-                    helperMethod.openPlayStore(uri.split("__")[1],context);
-                    return GeckoResult.fromValue(AllowOrDeny.DENY);
-                }
-                event.invokeObserver(Collections.singletonList(false), enums.home_eventType.start_proxy);
-            }
+
             return GeckoResult.fromValue(AllowOrDeny.ALLOW);
         }
 

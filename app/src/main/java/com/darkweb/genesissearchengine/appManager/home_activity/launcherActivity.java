@@ -29,7 +29,6 @@ public class launcherActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.invalid_setup_view);
         initPostUI();
-        pluginController.getInstance().initializeAllProxies(this);
         helperMethod.openActivity(homeController.class, constants.list_history, this,false);
     }
 

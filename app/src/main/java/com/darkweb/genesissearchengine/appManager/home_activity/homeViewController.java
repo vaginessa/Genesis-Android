@@ -460,6 +460,7 @@ class homeViewController
         }
         else {
             progressBar.setProgress(0);
+            helperMethod.hideKeyboard(context);
         }
     }
 
@@ -475,6 +476,7 @@ class homeViewController
             if(!loading_status || value==100){
                 progressBar.setProgress(100);
                 progressBar.animate().alpha(0).withEndAction((() -> progressBar.setVisibility(View.GONE)));
+                helperMethod.hideKeyboard(context);
             }
         }, 100);
     }

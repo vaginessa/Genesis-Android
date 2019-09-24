@@ -23,8 +23,6 @@ public class pluginController
     private firebaseManager firebase_manager;
     private localNotification local_notification;
     private messageManager message_manager;
-    //private orbotManager orbot_manager;
-    //private proxyManager proxy_manager;
     private activityContextManager contextManager;
     private boolean is_initialized = false;
 
@@ -69,8 +67,6 @@ public class pluginController
     }
 
     public void initializeAllProxies(AppCompatActivity context){
-        //orbot_manager = orbotManager.getInstance();
-        //proxy_manager = proxyManager.getInstance();
         orbotManager.getInstance().initialize(context,new orbotCallback());
         proxyManager.getInstance().initialize(context,new proxyCallback());
     }
@@ -95,7 +91,6 @@ public class pluginController
 
     /*Proxy Manager*/
     public void proxyManagerInvoke(boolean status){
-        Log.i("SUPFUCK","SUP2");
         if(status){
             proxyManager.getInstance().startVPN();
         }
@@ -104,17 +99,18 @@ public class pluginController
         }
     }
 
-    public void onPause(){
+
+    public void onMessageReset(){
         message_manager.onReset();
     }
 
-    void proxyManagerExitInvoke(){
+    private void onExit(){
+        message_manager.onReset();
         proxyManager.getInstance().disconnectConnection();
-        //orbotManager.getInstance().onReset();
     }
 
-    public boolean proxyStatus(){
-        return proxyManager.getInstance().isProxyRunning();
+    void proxyManagerExitInvoke(){
+        onExit();
     }
 
     /*Notification Manager*/
@@ -133,7 +129,7 @@ public class pluginController
 
     /*Onion Proxy Manager*/
     public boolean OrbotManagerInit(){
-        return orbotManager.getInstance().isOrbotRunning(false);
+        return orbotManager.getInstance().isOrbotRunning();
     }
     public void setProxy(boolean status){
         orbotManager.getInstance().setProxy(status);
@@ -222,9 +218,9 @@ public class pluginController
                 dataController.getInstance().setBool(keys.is_welcome_enabled,false);
             }
             else if(e_type.equals(enums.eventType.reload)){
-                if(orbotManager.getInstance().isOrbotRunning(false))
+                if(orbotManager.getInstance().isOrbotRunning())
                 {
-                    home_controller.loadURL(data.toString());
+                    home_controller.onReload(null);
                 }
                 else {
                     message_manager.createMessage(home_controller,data.toString(),enums.popup_type.start_orbot);

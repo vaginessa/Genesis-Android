@@ -1,11 +1,15 @@
 package com.darkweb.genesissearchengine.appManager.home_activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ComponentCallbacks2;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
@@ -84,6 +88,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             databaseController.getInstance().initialize(this);
             dataController.getInstance().initialize(this);
             activityContextManager.getInstance().setHomeController(this);
+            pluginController.getInstance().initializeAllProxies(this);
 
             status.initStatus();
             dataController.getInstance().initializeListData();
@@ -93,7 +98,6 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             pluginController.getInstance().initialize();
             initializeGeckoView();
             initializeLocalEventHandlers();
-            //initializePermission();
         }
         else
         {
@@ -206,6 +210,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     /*User Events*/
 
     private void initializeLocalEventHandlers() {
+
         searchbar.setOnEditorActionListener((v, actionId, event) ->
         {
             if (actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_GO || actionId == EditorInfo.IME_ACTION_DONE)
@@ -216,6 +221,21 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             }
             return true;
         });
+
+        searchbar.setOnFocusChangeListener((v, hasFocus) -> {
+            if(hasFocus)
+            {
+                status.isAppStarted = true;
+            }
+        });
+
+        geckoView.setOnFocusChangeListener((v, hasFocus) -> {
+            if(hasFocus)
+            {
+                status.isAppStarted = true;
+            }
+        });
+
     }
 
     void onSearchBarInvoked(View view)
@@ -251,7 +271,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         geckoView.clearFocus();
         if(requestFailure.getVisibility()==View.VISIBLE){
             home_view_controller.onDisableInternetError();
-            home_view_controller.updateSearchBar(geckoclient.currentURLState());
+            home_view_controller.updateSearchBar(geckoclient.getCurrentURL());
         }
         else {
             geckoclient.onBackPressed();
@@ -268,6 +288,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         {
             ((ImageButton) view).setImageResource(R.drawable.duck_logo);
             status.search_status = constants.backendGenesis;
+            geckoclient.setCurrentURL(constants.backendGenesis);
             dataController.getInstance().setString(keys.search_engine,constants.backendGenesis);
             onHomeButton(null);
         }
@@ -281,6 +302,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                 onHomeButton(null);
             }
             else {
+                geckoclient.setCurrentURL(constants.backendDuckDuckGo);
                 pluginController.getInstance().MessageManagerHandler(homeController.this,constants.backendDuckDuckGo,enums.popup_type.start_orbot);
             }
         }
@@ -294,6 +316,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                 onHomeButton(null);
             }
             else {
+                geckoclient.setCurrentURL(constants.backendGoogle);
                 pluginController.getInstance().MessageManagerHandler(homeController.this,constants.backendGoogle,enums.popup_type.start_orbot);
             }
         }
@@ -301,7 +324,13 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
     public void onReload(View view)
     {
-        geckoclient.loadURL(searchbar.getText().toString());
+        geckoclient.loadURL(geckoclient.getCurrentURL());
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        pluginController.getInstance().onMessageReset();
     }
 
     @Override
@@ -328,7 +357,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     public void onPause()
     {
         super.onPause();
-        pluginController.getInstance().onPause();
+        pluginController.getInstance().onMessageReset();
     }
 
     public void onSuggestionUpdate(){
@@ -479,7 +508,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                     Runnable runnable = () ->
                     {
                         if(!status.isAppStarted){
-                            pluginController.getInstance().MessageManagerHandler(homeController.this, strings.emptyStr, enums.popup_type.welcome);
+                            pluginController.getInstance().MessageManagerHandler(activityContextManager.getInstance().getHomeController(), strings.emptyStr, enums.popup_type.welcome);
                         }
                         status.isAppStarted = true;
                     };

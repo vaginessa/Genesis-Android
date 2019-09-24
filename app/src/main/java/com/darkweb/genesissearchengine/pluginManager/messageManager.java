@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.crowdfire.cfalertdialog.CFAlertDialog;
+import com.darkweb.genesissearchengine.appManager.activityContextManager;
 import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.status;
@@ -343,9 +344,9 @@ class messageManager
     }
 
     void onReset(){
-        if(dialog_main!=null && dialog_main.isShowing()){
+        if(dialog_main!=null){
             dialog_main.dismiss();
-            dialog_main.cancel();
+            dialog_main = null;
         }
     }
 

@@ -79,7 +79,7 @@ class proxyManager
                 .channelId(channel_id)
                 .build();
 
-        HydraSdk.init(app_context, clientInfo, notificationConfig, config);
+        HydraSdk.init(app_context.getApplicationContext(), clientInfo, notificationConfig, config);
         proxy_started = true;
     }
 
