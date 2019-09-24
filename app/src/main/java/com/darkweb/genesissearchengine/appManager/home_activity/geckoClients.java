@@ -1,66 +1,29 @@
 package com.darkweb.genesissearchengine.appManager.home_activity;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
-import android.content.ClipData;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.PorterDuff;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.text.format.DateFormat;
-import android.util.Log;
-import android.view.InflateException;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import com.darkweb.genesissearchengine.constants.*;
 import com.darkweb.genesissearchengine.helperMethod;
-import com.darkweb.genesissearchengine.pluginManager.PathUtil;
-import com.darkweb.genesissearchengine.pluginManager.localNotification;
 
 import org.mozilla.geckoview.*;
 
-import java.net.URISyntaxException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
-import java.util.Locale;
-
-import static com.darkweb.genesissearchengine.helperMethod.addStandardLayout;
-import static com.darkweb.genesissearchengine.helperMethod.createStandardDialog;
-import static com.darkweb.genesissearchengine.helperMethod.parseDate;
-import static com.darkweb.genesissearchengine.helperMethod.setCalendarTime;
-import static com.darkweb.genesissearchengine.helperMethod.setTimePickerTime;
-import static com.google.ads.AdRequest.LOGTAG;
 
 class geckoClients
 {
@@ -79,7 +42,7 @@ class geckoClients
     private boolean on_page_loaded = false;
     private boolean on_page_error = false;
     private String current_url = strings.emptyStr;
-    private String prev_url = strings.emptyStr;
+    private String requested_url = strings.emptyStr;
 
     private Uri downloadURL;
     private String downloadFile = "";
@@ -113,7 +76,7 @@ class geckoClients
 
     String currentURLState()
     {
-        return prev_url;
+        return requested_url;
     }
 
     void onBackPressed(){
@@ -197,8 +160,8 @@ class geckoClients
         }
     }
 
-    String getPrevURL(){
-        return prev_url;
+    String getRequestedURL(){
+        return requested_url;
     }
 
     String getCurrentURL(){
@@ -233,7 +196,6 @@ class geckoClients
     class navigationDelegate implements GeckoSession.NavigationDelegate
     {
         public void onLocationChange(@NonNull GeckoSession var1, @Nullable String var2) {
-            prev_url = current_url;
             current_url = var2;
         }
 
@@ -244,6 +206,7 @@ class geckoClients
             }
 
             boolean status = updateProxy(var1.uri);
+            requested_url = var1.uri;
 
             if (!status) {
                 return GeckoResult.fromValue(AllowOrDeny.DENY);

@@ -324,7 +324,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
     public void onReload(View view)
     {
-        geckoclient.loadURL(geckoclient.getCurrentURL());
+        geckoclient.loadURL(geckoclient.getRequestedURL());
     }
 
     @Override
