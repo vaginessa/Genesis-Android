@@ -64,7 +64,7 @@ public class bookmarkController extends AppCompatActivity
         searchBar = findViewById(R.id.search);
         listView = findViewById(R.id.listview);
         clearButton = findViewById(R.id.clearButton);
-        viewController = new bookmarkViewController(emptyListNotifier,searchBar,listView,clearButton);
+        viewController = new bookmarkViewController(emptyListNotifier,searchBar,listView,clearButton,this);
         clearButton.setText("CLEAR BOOKMARK");
     }
     public void initializeList(){

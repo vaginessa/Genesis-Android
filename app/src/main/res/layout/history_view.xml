@@ -94,13 +94,14 @@
 
         <Button
                 android:id="@+id/clearButton"
-                android:layout_width="456dp"
+                android:layout_width="406dp"
                 android:layout_height="46dp"
                 android:layout_weight="90"
                 android:background="@xml/clear_button"
                 android:onClick="onclearDataTrigger"
                 android:layout_marginStart="2dp"
                 android:layout_marginEnd="2dp"
+                android:stateListAnimator="@null"
 
                 android:text="Clear History"
                 android:textAlignment="center"

@@ -64,7 +64,7 @@ public class settingController extends AppCompatActivity
         history = findViewById(R.id.history_manager);
 
         String currentSearchEngine = dataController.getInstance().getString(keys.search_engine, strings.darkweb);
-        viewController = new settingViewController(search,javascript,history,this,currentSearchEngine,new settingModelCallback());
+        viewController = new settingViewController(search,javascript,history,this,currentSearchEngine,new settingModelCallback(),this);
     }
 
     public void listenersInitializations()

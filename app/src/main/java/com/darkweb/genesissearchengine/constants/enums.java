@@ -18,6 +18,6 @@ public class enums
     public enum bookmark_eventType{url_triggered,url_clear,remove_from_database,is_empty}
 
     /*Home Manager*/
-    public enum home_eventType{progress_update,recheck_orbot,on_url_load,back_list_empty,start_proxy,onMenuSelected,on_request_completed,on_page_loaded,on_load_error,download_file_popup,download_file,proxy_error,on_init_ads}
+    public enum home_eventType{progress_update,recheck_orbot,on_url_load,back_list_empty,start_proxy,onMenuSelected,on_request_completed,on_page_loaded,on_load_error,download_file_popup,download_file,proxy_error,on_init_ads,rate_application}
 
 }

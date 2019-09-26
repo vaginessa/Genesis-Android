@@ -16,6 +16,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.darkweb.genesissearchengine.constants.*;
+import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperMethod;
 
 import org.mozilla.geckoview.*;
@@ -43,6 +44,7 @@ class geckoClients
     private boolean on_page_error = false;
     private String current_url = strings.emptyStr;
     private String requested_url = strings.emptyStr;
+    private int rate_us_counter = 0;
 
     private Uri downloadURL;
     private String downloadFile = "";
@@ -81,7 +83,7 @@ class geckoClients
 
     void onBackPressed(){
         if(canGoBack){
-            if(url_list.size()>0){
+            if(url_list.size()>1){
                 url_list.remove(url_list.size()-1);
                 updateProxy(url_list.get(url_list.size()-1));
             }
@@ -110,7 +112,6 @@ class geckoClients
             }
 
             on_page_loaded = false;
-            onGoBack = false;
             on_page_error = false;
 
             event.invokeObserver(Collections.singletonList(0), enums.home_eventType.progress_update);
@@ -127,6 +128,14 @@ class geckoClients
                 if(success){
                     event.invokeObserver(Collections.singletonList(0), enums.home_eventType.progress_update);
                     event.invokeObserver(Collections.singletonList(0), enums.home_eventType.progress_update);
+
+                    if(!status.isAppRated && current_url.contains(".onion")){
+                        rate_us_counter+=1;
+                        if(rate_us_counter>5){
+                            event.invokeObserver(Collections.singletonList(true), enums.home_eventType.rate_application);
+                            status.isAppRated = true;
+                        }
+                    }
                 }
             }
         }
@@ -150,7 +159,6 @@ class geckoClients
             if(var4==3 || var4==5 || var4==1){
                 event.invokeObserver(Collections.singletonList(var2), enums.home_eventType.on_request_completed);
                 event.invokeObserver(Collections.singletonList(var2), enums.home_eventType.on_url_load);
-                url_list.add(current_url);
             }
             return null;
         }
@@ -171,13 +179,13 @@ class geckoClients
     void setCurrentURL(String url){
     }
 
-    private boolean updateProxy(String url){
+    boolean updateProxy(String url){
         if (!helperMethod.getHost(url).contains("boogle.store")) {
             if(!status.isTorInitialized){
                 event.invokeObserver(Collections.singletonList(current_url), enums.home_eventType.proxy_error);
                 return false;
             }
-            else {
+            else{
                 event.invokeObserver(Collections.singletonList(true), enums.home_eventType.start_proxy);
             }
         }
@@ -197,6 +205,10 @@ class geckoClients
     {
         public void onLocationChange(@NonNull GeckoSession var1, @Nullable String var2) {
             current_url = var2;
+            if(!onGoBack){
+                url_list.add(current_url);
+                onGoBack = false;
+            }
         }
 
         public GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession var2, @NonNull GeckoSession.NavigationDelegate.LoadRequest var1) {

@@ -272,6 +272,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         if(requestFailure.getVisibility()==View.VISIBLE){
             home_view_controller.onDisableInternetError();
             home_view_controller.updateSearchBar(geckoclient.getCurrentURL());
+            geckoclient.updateProxy(geckoclient.getCurrentURL());
         }
         else {
             geckoclient.onBackPressed();
@@ -514,6 +515,9 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                     };
                     handler.postDelayed(runnable, 1300);
                 }
+            }
+            else if(e_type.equals(enums.home_eventType.rate_application)){
+                pluginController.getInstance().MessageManagerHandler(activityContextManager.getInstance().getHomeController(), strings.emptyStr, enums.popup_type.rate_app);
             }
             else if(e_type.equals(enums.home_eventType.on_load_error)){
                 dataController.getInstance().setBool(keys.is_bootstrapped,true);

@@ -66,7 +66,7 @@ public class historyController extends AppCompatActivity
         listView = findViewById(R.id.listview);
         clearButton = findViewById(R.id.clearButton);
         moreButton = findViewById(R.id.load_more);
-        history_view_controller = new historyViewController(emptyListNotifier,searchBar,listView,clearButton,moreButton);
+        history_view_controller = new historyViewController(emptyListNotifier,searchBar,listView,clearButton,moreButton,this);
     }
     public void initializeList(){
         ArrayList<historyRowModel> model = dataController.getInstance().getHistory();

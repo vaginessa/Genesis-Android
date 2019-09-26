@@ -235,7 +235,11 @@ class messageManager
                 {
                     event.invokeObserver(null, enums.eventType.app_rated);
                     tempDialog.dismiss();
-                    createMessage(app_context,strings.emptyStr, enums.popup_type.rate_success);
+                    final Handler handler = new Handler();
+                    handler.postDelayed(() ->
+                    {
+                        createMessage(app_context,strings.emptyStr, enums.popup_type.rate_success);
+                    }, 1000);
                 });
     }
 

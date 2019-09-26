@@ -22,6 +22,7 @@ public class status
     public static boolean isBootstrapped = false;
     public static boolean isWelcomeEnabled = true;
     public static boolean isAppStarted = false;
+    public static boolean isAppRated = false;
 
     /*Initializations*/
 
@@ -33,6 +34,7 @@ public class status
         status.gateway = dataController.getInstance().getBool(keys.gateway,false);
         status.isBootstrapped = dataController.getInstance().getBool(keys.is_bootstrapped,false);
         status.isWelcomeEnabled = dataController.getInstance().getBool(keys.is_welcome_enabled,true);
+        isAppRated = dataController.getInstance().getBool(keys.isAppRated,false);
     }
 
 }

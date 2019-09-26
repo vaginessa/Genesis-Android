@@ -255,6 +255,9 @@ public class pluginController
             else if(e_type.equals(enums.eventType.start_home)){
                 home_controller.disableSplash();
             }
+            else if(e_type.equals(enums.eventType.app_rated)){
+                home_controller.disableSplash();
+            }
         }
     }
 
