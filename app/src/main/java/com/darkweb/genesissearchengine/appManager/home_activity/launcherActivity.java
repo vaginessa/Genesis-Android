@@ -37,6 +37,7 @@ public class launcherActivity extends AppCompatActivity
     {
         if(isStarted){
             helperMethod.triggerRebirth(this);
+            pluginController.getInstance().logEvent(strings.app_restarted,"");
         }
         else {
             isStarted = true;

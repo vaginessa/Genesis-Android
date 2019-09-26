@@ -128,8 +128,8 @@ class homeViewController
         if(!is_triggered){
             engine_animator = ObjectAnimator.ofPropertyValuesHolder(
                     engineLogo,
-                    PropertyValuesHolder.ofFloat("scaleX", 1.135f),
-                    PropertyValuesHolder.ofFloat("scaleY", 1.135f));
+                    PropertyValuesHolder.ofFloat("scaleX", 1.145f),
+                    PropertyValuesHolder.ofFloat("scaleY", 1.145f));
             engine_animator.setDuration(650);
 
             engine_animator.setRepeatCount(ObjectAnimator.INFINITE);

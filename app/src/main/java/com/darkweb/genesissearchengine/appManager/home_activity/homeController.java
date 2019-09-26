@@ -215,9 +215,15 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         {
             if (actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_GO || actionId == EditorInfo.IME_ACTION_DONE)
             {
-                onSearchBarInvoked(v);
-                geckoView.clearFocus();
                 helperMethod.hideKeyboard(homeController.this);
+
+                final Handler handler = new Handler();
+                handler.postDelayed(() ->
+                {
+                    pluginController.getInstance().logEvent(strings.search_invoked,"");
+                    onSearchBarInvoked(v);
+                    geckoView.clearFocus();
+                }, 500);
             }
             return true;
         });
@@ -236,6 +242,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             }
         });
 
+        pluginController.getInstance().logEvent(strings.app_started,"");
     }
 
     void onSearchBarInvoked(View view)
@@ -255,11 +262,13 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
     public void onHomeButton(View view)
     {
+        pluginController.getInstance().logEvent(strings.home_invoked,"");
         loadURL(home_model.getSearchEngine());
     }
 
     public void onOpenMenuItem(View view)
     {
+        pluginController.getInstance().logEvent(strings.menu_invoked,"");
         status.isAppStarted = true;
         home_view_controller.clearSelections();
         home_view_controller.openMenu(view);
@@ -268,6 +277,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     @Override
     public void onBackPressed()
     {
+        pluginController.getInstance().logEvent(strings.on_back,"");
         geckoView.clearFocus();
         if(requestFailure.getVisibility()==View.VISIBLE){
             home_view_controller.onDisableInternetError();
@@ -284,6 +294,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     {
         home_view_controller.stopEngineAnimation();
         dataController.getInstance().setBool(keys.engine_switched,true);
+        pluginController.getInstance().logEvent(strings.search_switch,"");
 
         if(status.search_status.equals(constants.backendGoogle))
         {
@@ -387,6 +398,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     public void startGateway(boolean cur_status){
 
         page_closed = true;
+        pluginController.getInstance().logEvent(strings.proxy_changed,"");
         new Thread(){
             public void run(){
                 try
@@ -430,6 +442,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                     helperMethod.openActivity(historyController.class, constants.list_history, homeController.this,true);
                 }
                 else if (menuId == R.id.menu2) {
+                    pluginController.getInstance().logEvent(strings.enable_gateway,"");
                     pluginController.getInstance().proxyManagerInvoke(!status.gateway);
                     status.gateway = !status.gateway;
                     dataController.getInstance().setBool(keys.gateway,status.gateway);
@@ -500,6 +513,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                 dataController.getInstance().addHistory(data.get(0).toString());
             }
             else if(e_type.equals(enums.home_eventType.on_page_loaded)){
+                pluginController.getInstance().logEvent(strings.page_opened_success,"");
                 dataController.getInstance().setBool(keys.is_bootstrapped,true);
                 home_view_controller.onPageFinished();
                 if(status.isWelcomeEnabled && !status.isAppStarted){
@@ -521,11 +535,16 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             }
             else if(e_type.equals(enums.home_eventType.on_load_error)){
                 dataController.getInstance().setBool(keys.is_bootstrapped,true);
+                pluginController.getInstance().logEvent(strings.url_error,"");
                 home_view_controller.onLoadError();
                 dataController.getInstance().addHistory(data.get(0).toString());
                 home_view_controller.updateSearchBar(data.get(0).toString());
             }
+            else if(e_type.equals(enums.home_eventType.search_update)){
+                home_view_controller.updateSearchBar(data.get(0).toString());
+            }
             else if(e_type.equals(enums.home_eventType.proxy_error)){
+                pluginController.getInstance().logEvent(strings.url_error_not_loaded,"");
                 pluginController.getInstance().MessageManagerHandler(homeController.this,data.get(0).toString(),enums.popup_type.start_orbot);
             }
             else if(e_type.equals(enums.home_eventType.download_file_popup)){

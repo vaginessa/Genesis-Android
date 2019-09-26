@@ -10,6 +10,7 @@ import com.darkweb.genesissearchengine.appManager.historyManager.historyControll
 import com.darkweb.genesissearchengine.appManager.home_activity.homeController;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.keys;
+import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.dataManager.dataController;
 
 public class pluginController
@@ -110,12 +111,18 @@ public class pluginController
     }
 
     void proxyManagerExitInvoke(){
+        pluginController.getInstance().logEvent(strings.app_finished,"");
         onExit();
     }
 
     /*Notification Manager*/
     public void createNotification(String title,String message){
         local_notification.createNotification(title,message);
+    }
+
+    /*Firebase Manager*/
+    public void logEvent(String value,String id){
+        firebase_manager.logEvent(value,id);
     }
 
     /*Ad Manager*/
@@ -237,6 +244,7 @@ public class pluginController
             else if(e_type.equals(enums.eventType.bookmark)){
                 String [] dataParser = data.toString().split("split");
                 if(dataParser.length>1){
+                    logEvent(strings.url_bookmarked,"");
                     dataController.getInstance().addBookmark(dataParser[0],dataParser[1]);
                 }else {
                     dataController.getInstance().addBookmark(dataParser[0],"");
@@ -253,9 +261,6 @@ public class pluginController
                 home_controller.startGateway(status);
             }
             else if(e_type.equals(enums.eventType.start_home)){
-                home_controller.disableSplash();
-            }
-            else if(e_type.equals(enums.eventType.app_rated)){
                 home_controller.disableSplash();
             }
         }

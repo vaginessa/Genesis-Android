@@ -18,6 +18,7 @@ import com.darkweb.genesissearchengine.appManager.home_activity.homeController;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.keys;
 import com.darkweb.genesissearchengine.constants.status;
+import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperMethod;
 import com.darkweb.genesissearchengine.pluginManager.pluginController;
@@ -59,6 +60,7 @@ public class historyController extends AppCompatActivity
         home_controller = activityContextManager.getInstance().getHomeController();
         contextManager.setHistoryController(this);
         activityContextManager.getInstance().setHistoryController(this);
+        pluginController.getInstance().logEvent(strings.history_opened,"");
     }
     public void initializeViews(){
         emptyListNotifier = findViewById(R.id.empty_list);
@@ -168,6 +170,7 @@ public class historyController extends AppCompatActivity
         {
             if(e_type.equals(enums.history_eventType.url_triggered)){
                 String url_temp = helperMethod.completeURL(data.toString());
+                pluginController.getInstance().logEvent(strings.history_triggered,"");
                 home_controller.loadURL(url_temp);
                 finish();
             }

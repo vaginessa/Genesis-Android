@@ -20,6 +20,7 @@ import com.darkweb.genesissearchengine.appManager.home_activity.homeModel;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.keys;
 import com.darkweb.genesissearchengine.constants.status;
+import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperMethod;
 import com.darkweb.genesissearchengine.pluginManager.pluginController;
@@ -58,6 +59,7 @@ public class bookmarkController extends AppCompatActivity
         contextManager = activityContextManager.getInstance();
         home_controller = activityContextManager.getInstance().getHomeController();
         contextManager.setBookmarkController(this);
+        pluginController.getInstance().logEvent(strings.bookmark_opened,"");
     }
     public void initializeViews(){
         emptyListNotifier = findViewById(R.id.empty_list);
@@ -155,6 +157,7 @@ public class bookmarkController extends AppCompatActivity
         {
             if(e_type.equals(enums.bookmark_eventType.url_triggered)){
                 String url_temp = helperMethod.completeURL(data.toString());
+                pluginController.getInstance().logEvent(strings.bookmark_triggered,"");
                 home_controller.loadURL(url_temp);
                 finish();
             }

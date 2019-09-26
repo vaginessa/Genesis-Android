@@ -86,5 +86,25 @@ public class strings
     public static String duckDuckGo = "Duck Duck Go";
     public static String google_text = "Google";
 
+    /*Events*/
+    public static String app_started = "app_started";
+    public static String proxy_changed = "proxy_changed";
+    public static String app_restarted = "app_restarted";
+    public static String app_finished = "app_finished";
+    public static String search_switch = "search_switch";
+    public static String settings_opened = "settings_opened";
+    public static String url_bookmarked = "url_bookmarked";
+    public static String bookmark_opened = "bookmark_opened";
+    public static String history_opened = "history_opened";
+    public static String history_triggered = "history_triggered";
+    public static String bookmark_triggered = "bookmark_triggered";
+    public static String url_error = "url_error";
+    public static String url_error_not_loaded = "url_error_not_loaded";
+    public static String page_opened_success = "page_opened_success";
+    public static String home_invoked = "home_invoked";
+    public static String search_invoked = "search_invoked";
+    public static String menu_invoked = "menu_invoked";
+    public static String on_back = "on_back";
+    public static String enable_gateway = "enable_gateway";
 }
 

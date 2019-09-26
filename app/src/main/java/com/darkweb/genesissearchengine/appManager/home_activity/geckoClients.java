@@ -85,7 +85,8 @@ class geckoClients
         if(canGoBack){
             if(url_list.size()>1){
                 url_list.remove(url_list.size()-1);
-                updateProxy(url_list.get(url_list.size()-1));
+                updateProxy("bbc");
+                requested_url = url_list.get(url_list.size()-1);
             }
             session1.goBack();
             onGoBack = true;
@@ -109,6 +110,10 @@ class geckoClients
         {
             if(onGoBack){
                 event.invokeObserver(Collections.singletonList(url), enums.home_eventType.on_url_load);
+            }
+
+            if(on_page_loaded){
+                event.invokeObserver(Collections.singletonList(url), enums.home_eventType.search_update);
             }
 
             on_page_loaded = false;
@@ -234,7 +239,6 @@ class geckoClients
         }
 
         public GeckoResult<String> onLoadError(@NonNull GeckoSession var1, @Nullable String var2, @NonNull WebRequestError var3) {
-
             event.invokeObserver(Collections.singletonList(var2), enums.home_eventType.on_load_error);
             on_page_error = true;
             return null;

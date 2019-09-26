@@ -14,6 +14,7 @@ import com.darkweb.genesissearchengine.constants.keys;
 import com.darkweb.genesissearchengine.constants.status;
 import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.dataManager.dataController;
+import com.darkweb.genesissearchengine.pluginManager.pluginController;
 import com.example.myapplication.R;
 
 import static com.darkweb.genesissearchengine.constants.status.history_status;
@@ -72,6 +73,7 @@ public class settingController extends AppCompatActivity
         initializeItemSelectedListener(search);
         initializeItemSelectedListener(javascript);
         initializeItemSelectedListener(history);
+        pluginController.getInstance().logEvent(strings.settings_opened,"");
     }
 
     /*Event Handlers*/
