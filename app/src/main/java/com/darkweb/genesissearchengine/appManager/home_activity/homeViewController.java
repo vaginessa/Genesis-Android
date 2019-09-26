@@ -2,6 +2,7 @@ package com.darkweb.genesissearchengine.appManager.home_activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
@@ -19,6 +20,7 @@ import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.MenuInflater;
@@ -51,6 +53,10 @@ import java.util.Collections;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
+import static android.graphics.Color.RED;
+import static android.graphics.Color.WHITE;
+import static android.hardware.camera2.params.RggbChannelVector.BLUE;
+
 class homeViewController
 {
     /*ViewControllers*/
@@ -75,7 +81,7 @@ class homeViewController
     private LinearLayout top_bar;
     private GeckoView gecko_view;
     private ImageView backsplash;
-    private ObjectAnimator engine_animator = null;
+    private ValueAnimator engine_animator = null;
 
     private Handler progress_handler = null;
 
@@ -126,15 +132,11 @@ class homeViewController
 
     private void searchButtonPulseAnimation(boolean is_triggered){
         if(!is_triggered){
-            engine_animator = ObjectAnimator.ofPropertyValuesHolder(
-                    engineLogo,
-                    PropertyValuesHolder.ofFloat("scaleX", 1.145f),
-                    PropertyValuesHolder.ofFloat("scaleY", 1.145f));
-            engine_animator.setDuration(650);
-
-            engine_animator.setRepeatCount(ObjectAnimator.INFINITE);
-            engine_animator.setRepeatMode(ObjectAnimator.REVERSE);
-
+            engine_animator = ObjectAnimator.ofInt(engineLogo, "backgroundColor", context.getResources().getColor(R.color.button_gray), WHITE);
+            engine_animator.setDuration(1000);
+            engine_animator.setEvaluator(new ArgbEvaluator());
+            engine_animator.setRepeatCount(ValueAnimator.INFINITE);
+            engine_animator.setRepeatMode(ValueAnimator.REVERSE);
             engine_animator.start();
         }
     }
@@ -142,6 +144,10 @@ class homeViewController
     void stopEngineAnimation(){
         if(engine_animator!=null){
             engine_animator.end();
+            TypedValue outValue = new TypedValue();
+            context.getTheme().resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true);
+            engineLogo.setBackgroundResource(outValue.resourceId);
+            engine_animator = null;
         }
     }
 
