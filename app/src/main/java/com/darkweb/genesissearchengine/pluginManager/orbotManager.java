@@ -278,7 +278,18 @@ class orbotManager
 
     boolean isOrbotRunning(){
         Log.i("TEST1","TEST1:"+status.isTorInitialized);
+
+        /*try {
+            if(!onionProxyManager.isRunning() || !onionProxyManager.isNetworkEnabled()){
+                status.isTorInitialized = false;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+
         return status.isTorInitialized;
+
     }
 
 }

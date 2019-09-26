@@ -126,11 +126,8 @@ class geckoClients
         public void onPageStop(GeckoSession session, boolean success)
         {
             if(on_page_loaded){
-                if(!on_page_error){
-                    event.invokeObserver(null, enums.home_eventType.on_page_loaded);
-                    event.invokeObserver(Collections.singletonList(0), enums.home_eventType.progress_update);
-                }
                 if(success){
+                    on_page_loaded = false;
                     event.invokeObserver(Collections.singletonList(0), enums.home_eventType.progress_update);
                     event.invokeObserver(Collections.singletonList(0), enums.home_eventType.progress_update);
 
@@ -141,6 +138,11 @@ class geckoClients
                             status.isAppRated = true;
                         }
                     }
+                    event.invokeObserver(null, enums.home_eventType.on_page_loaded);
+                    event.invokeObserver(Collections.singletonList(0), enums.home_eventType.progress_update);
+                }
+                if(!on_page_error){
+                    event.invokeObserver(Collections.singletonList(100), enums.home_eventType.progress_update);
                 }
             }
         }
