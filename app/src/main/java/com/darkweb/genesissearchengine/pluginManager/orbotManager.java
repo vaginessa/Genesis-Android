@@ -1,23 +1,15 @@
 package com.darkweb.genesissearchengine.pluginManager;
 
-import android.annotation.SuppressLint;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Preconditions;
-
 import com.darkweb.genesissearchengine.constants.*;
 import com.darkweb.genesissearchengine.helperMethod;
 import com.msopentech.thali.android.toronionproxy.AndroidOnionProxyManager;
 import com.msopentech.thali.toronionproxy.OnionProxyContext;
 import com.msopentech.thali.toronionproxy.OnionProxyManager;
 import com.msopentech.thali.toronionproxy.WriteObserver;
-
 import org.mozilla.gecko.PrefsHelper;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -26,9 +18,6 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 class orbotManager
 {

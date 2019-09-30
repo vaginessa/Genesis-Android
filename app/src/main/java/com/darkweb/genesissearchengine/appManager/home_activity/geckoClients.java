@@ -241,7 +241,12 @@ class geckoClients
         }
 
         public GeckoResult<String> onLoadError(@NonNull GeckoSession var1, @Nullable String var2, @NonNull WebRequestError var3) {
-            event.invokeObserver(Collections.singletonList(var2), enums.home_eventType.on_load_error);
+
+            if(requested_url==null){
+                requested_url = strings.emptyStr;
+            }
+
+            event.invokeObserver(Collections.singletonList(requested_url), enums.home_eventType.on_load_error);
             on_page_error = true;
             return null;
         }
