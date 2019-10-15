@@ -13,16 +13,19 @@ public class status
 
     /*Settings Status*/
 
+    public static String tor_logs_status = strings.emptyStr;
     public static String search_status = constants.backendGenesis;
     public static boolean java_status = true;
     public static boolean history_status = true;
     public static boolean gateway = false;
     public static boolean isAppPaused = false;
     public static boolean isTorInitialized = false;
-    public static boolean isBootstrapped = false;
+    private static boolean isBootstrapped = false;
     public static boolean isWelcomeEnabled = true;
     public static boolean isAppStarted = false;
     public static boolean isAppRated = false;
+    public static boolean fontAdjustable = true;
+    public static float fontSize = 1;
 
     /*Initializations*/
 
@@ -35,6 +38,8 @@ public class status
         status.isBootstrapped = dataController.getInstance().getBool(keys.is_bootstrapped,false);
         status.isWelcomeEnabled = dataController.getInstance().getBool(keys.is_welcome_enabled,true);
         isAppRated = dataController.getInstance().getBool(keys.isAppRated,false);
+        status.fontSize = dataController.getInstance().getFloat(keys.font_size,100);
+        status.fontAdjustable = dataController.getInstance().getBool(keys.font_adjustable,true);
     }
 
 }

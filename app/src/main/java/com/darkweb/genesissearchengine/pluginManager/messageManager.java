@@ -21,6 +21,8 @@ import com.darkweb.genesissearchengine.constants.status;
 import com.darkweb.genesissearchengine.constants.strings;
 import com.example.myapplication.R;
 
+import java.io.File;
+
 class messageManager
 {
     /*Private Variables*/
@@ -261,6 +263,30 @@ class messageManager
 
     }
 
+    private void downloadFileLongPress()
+    {
+        File f = new File(data);
+
+        popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                .setTitle(strings.download_long_press_title)
+                .onDismissListener(dialog -> is_popup_open = false)
+                .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
+                .setTextColor(app_context.getResources().getColor(R.color.black))
+                .setMessage(strings.download_long_press_message + f.getName())
+                .addButton(strings.download_positive, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                {
+                    event.invokeObserver(data, enums.eventType.download_file_manual);
+                    dialog.dismiss();
+                })
+                .addButton(strings.download_long_press, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                {
+                    event.invokeObserver(data, enums.eventType.welcome);
+                    dialog.dismiss();
+                })
+                .addButton(strings.download_negative, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
+                        dialog.dismiss());
+    }
+
     private void startingOrbotInfo()
     {
         //if (!is_popup_open)
@@ -360,7 +386,7 @@ class messageManager
     {
         this.app_context = app_context;
         this.data = data;
-        if (!is_popup_open)
+        if (!is_popup_open && !app_context.isDestroyed())
         {
             is_popup_open = true;
             popup_instance = new CFAlertDialog.Builder(app_context);
@@ -418,6 +444,10 @@ class messageManager
 
                 case tor_banned:
                     torBanned();
+                    break;
+
+                case download_file_long_press:
+                    downloadFileLongPress();
                     break;
             }
 

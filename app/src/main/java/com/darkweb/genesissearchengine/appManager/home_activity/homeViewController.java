@@ -8,6 +8,8 @@ import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -113,6 +115,15 @@ class homeViewController
         initSearchImage();
         createUpdateUiHandler();
         searchButtonPulseAnimation(is_triggered);
+        initTopBar();
+    }
+
+    private static int dpFromPx(final Context context, final float px) {
+        return (int)(px / context.getResources().getDisplayMetrics().density);
+    }
+
+    private void initTopBar(){
+        webviewContainer.setPadding(0,dpFromPx(context,234),0,0);
     }
 
     private void initSearchImage(){
@@ -296,6 +307,9 @@ class homeViewController
 
         splashScreenDisable();
 
+        if(splashScreen.getAlpha()>0){
+            context.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_USER);//Set Portrait
+        }
         splashScreen.animate().setDuration(200).alpha(0f).withEndAction((() -> applicationStarted()));
         onDisableInternetError();
 
@@ -336,6 +350,63 @@ class homeViewController
         }
     }
 
+    void onReDraw(){
+        if(webviewContainer.getPaddingBottom()==0){
+            webviewContainer.setPadding(0,0,0,1);
+        }
+        else {
+            webviewContainer.setPadding(0,0,0,0);
+        }
+    }
+
+    void onUpdateLogo(){
+
+        if(status.search_status.equals(constants.backendGoogle))
+        {
+            engineLogo.setImageResource(R.drawable.genesis_logo);
+        }
+        else if(status.search_status.equals(constants.backendGenesis))
+        {
+            engineLogo.setImageResource(R.drawable.duck_logo);
+        }
+        else if(status.search_status.equals(constants.backendDuckDuckGo))
+        {
+            engineLogo.setImageResource(R.drawable.google_logo);
+        }
+    }
+
+    private int ui_option_temp = 0;
+    void onFullScreenStatus(boolean status){
+        int value = !status ? 1 : 0;
+
+        top_bar.setClickable(!status);
+        top_bar.setAlpha(value);
+
+        if(status){
+            webviewContainer.setPadding(0,0,0,0);
+
+            ui_option_temp = context.getWindow().getDecorView().getWindowSystemUiVisibility();
+
+            final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+
+            context.getWindow().getDecorView().setSystemUiVisibility(flags);
+            progressBar.setVisibility(View.GONE);
+        }
+        else {
+            webviewContainer.setPadding(0,dpFromPx(context,234),0,0);
+
+            context.getWindow().getDecorView().setSystemUiVisibility(ui_option_temp);
+            context.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+    }
+
     void disableSplashScreen(Callable<String> logs){
 
 
@@ -354,7 +425,7 @@ class homeViewController
                 public void run(){
 
                     AppCompatActivity temp_context = context;
-                    while (!status.isTorInitialized && (!status.search_status.equals(constants.backendGenesis) || !status.isBootstrapped)){
+                    while (!status.isTorInitialized && (!status.search_status.equals(constants.backendGenesis) || status.gateway)){
                         try
                         {
                             sleep(1000);
@@ -433,7 +504,7 @@ class homeViewController
         final float scale = context.getResources().getDisplayMetrics().density;
         int padding_102dp = (int) (48 * scale + 0.52f);
 
-        webviewContainer.setPadding(0,padding_102dp,0,0);
+        webviewContainer.setPadding(0,padding_102dp+dpFromPx(context,234),0,0);
 
         banner_ads.setAlpha(0f);
         banner_ads.animate().setDuration(1000).alpha(1f);

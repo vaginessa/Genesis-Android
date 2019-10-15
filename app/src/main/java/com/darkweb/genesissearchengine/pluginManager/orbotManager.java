@@ -1,36 +1,20 @@
 package com.darkweb.genesissearchengine.pluginManager;
 
+import android.content.Intent;
 import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.util.Preconditions;
 import com.darkweb.genesissearchengine.constants.*;
-import com.darkweb.genesissearchengine.helperMethod;
-import com.msopentech.thali.android.toronionproxy.AndroidOnionProxyManager;
-import com.msopentech.thali.toronionproxy.OnionProxyContext;
-import com.msopentech.thali.toronionproxy.OnionProxyManager;
-import com.msopentech.thali.toronionproxy.WriteObserver;
 import org.mozilla.gecko.PrefsHelper;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.util.List;
-import java.util.concurrent.Callable;
+import org.torproject.android.service.TorService;
+import org.torproject.android.service.util.Prefs;
+
+import static org.torproject.android.service.TorServiceConstants.ACTION_START;
 
 class orbotManager
 {
 
     /*Private Variables*/
-    private OnionProxyManager onionProxyManager = null;
-    private OnionProxyContext onionProxyContext;
-
-    private boolean isLoading = false;
-    private int threadCounter = 100;
-    private int onionProxyPort = 0;
-    private boolean isTorInitialized = false;
-    private boolean network_Error = false;
 
     private AppCompatActivity app_context;
     private eventObserver.eventListener event;
@@ -48,162 +32,54 @@ class orbotManager
     public void initialize(AppCompatActivity app_context, eventObserver.eventListener event){
         this.app_context = app_context;
         this.event = event;
+        initializeProxy();
         initialize();
     }
 
-    private void initialize(){
-        autoValidator();
+    TorService service = new TorService();
+
+    public void initialize(){
+        Prefs.setContext(app_context.getApplicationContext());
+        Intent intent = new Intent(app_context.getApplicationContext(), service.getClass());
+        intent.setAction(ACTION_START);
+        app_context.startService(intent);
     }
 
-    private void initContext(File workingDirectory){
-        onionProxyContext = new OnionProxyContext(workingDirectory)
-        {
-            @Override
-            public String getProcessId()
-            {
-                return null;
-            }
-
-            @Override
-            public WriteObserver generateWriteObserver(File file)
-            {
-                return null;
-            }
-
-            @Override
-            protected InputStream getAssetOrResourceByName(String fileName) throws IOException
-            {
-                return null;
-            }
-        };
-    }
-    /*Orbot Initialization*/
-
-    private class getProxtStatus implements Callable<Boolean>
-    {
-        @Override
-        public Boolean call()
-        {
-            try
-            {
-                if(!isLoading && !onionProxyManager.isNetworkEnabled())
-                {
-                    isTorInitialized = false;
-                }
-            }
-            catch (Exception ignored)
-            {
-            }
-            return Boolean.FALSE;
-        }
-    }
-
-    private void autoValidator()
-    {
-        Thread validator_thread = new Thread() {
-            @SuppressWarnings("InfiniteLoopStatement")
-            public void run() {
-                while (true) {
-                    try {
-                        if (onionProxyManager != null) {
-                            if (onionProxyManager.isRunning() && onionProxyManager.isNetworkEnabled()) {
-                                threadCounter = 5000;
-                            } else {
-                                isTorInitialized = false;
-                            }
-                        }
-                        if (!isLoading && !isTorInitialized) {
-                            if (helperMethod.isNetworkAvailable(app_context)) {
-                                network_Error = false;
-                                if (onionProxyManager == null) {
-                                    onionProxyManager = new AndroidOnionProxyManager(app_context.getApplicationContext(), strings.torfolder);
-                                }
-                                isLoading = false;
-                                isTorInitialized = false;
-                                initializeTorClient();
-                            } else {
-                                network_Error = true;
-                            }
-                        } else {
-                            sleep(threadCounter);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-            }
-        };
-        validator_thread.start();
-    }
-
-    private void initializeTorClient()
-    {
-        isTorInitialized = false;
-        if(!isLoading)
-        {
-            isLoading = true;
-            Thread init_thread = new Thread() {
-                public void run() {
-                    while (true) {
-                        try {
-
-                            int totalSecondsPerTorStartup = 4 * 60;
-                            int totalTriesPerTorStartup = 5;
-
-                            initContext(onionProxyManager.getWorkingDirectory());
-                            initBridgeGateway();
-
-                            boolean ok = onionProxyManager.startWithRepeat(totalSecondsPerTorStartup, totalTriesPerTorStartup);
-
-                            if (!ok) {
-                                continue;
-                            }
-
-                            onionProxyPort = onionProxyManager.getIPv4LocalHostSocksPort();
-
-                            initializeProxy();
-                            isLoading = false;
-                            break;
-
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                }
-
-            };
-            init_thread.start();
-        }
+    public void reInit(){
+        //service.stopTor();
+        Prefs.setContext(app_context.getApplicationContext());
+        Intent intent = new Intent(app_context.getApplicationContext(), service.getClass());
+        intent.setAction(ACTION_START);
+        app_context.startService(intent);
     }
 
     /*------------------------------------------------------- POST TASK HANDLER -------------------------------------------------------*/
 
-    void setProxy(boolean status){
-        if(status){
-            PrefsHelper.setPref(keys.proxy_type, 1);
-            PrefsHelper.setPref(keys.proxy_socks,constants.proxy_socks);
-            PrefsHelper.setPref(keys.proxy_socks_port, onionProxyPort);
-            PrefsHelper.setPref(keys.proxy_socks_version,constants.proxy_socks_version);
-            PrefsHelper.setPref(keys.proxy_socks_remote_dns,constants.proxy_socks_remote_dns);
-        }
-        else {
+    void setProxy(boolean tor_status,boolean is_genesis){
+        if(is_genesis){
             PrefsHelper.setPref(keys.proxy_type, 0);
             PrefsHelper.setPref(keys.proxy_socks,null);
             PrefsHelper.setPref(keys.proxy_socks_port, null);
             PrefsHelper.setPref(keys.proxy_socks_version,null);
             PrefsHelper.setPref(keys.proxy_socks_remote_dns,null);
         }
+        else if(tor_status){
+            PrefsHelper.setPref(keys.proxy_type, 1);
+            PrefsHelper.setPref(keys.proxy_socks,constants.proxy_socks);
+            PrefsHelper.setPref(keys.proxy_socks_port, 9050);
+            PrefsHelper.setPref(keys.proxy_socks_version,constants.proxy_socks_version);
+            PrefsHelper.setPref(keys.proxy_socks_remote_dns,constants.proxy_socks_remote_dns);
+        }
     }
 
     private void initializeProxy()
     {
-        isTorInitialized = true;
-        status.isTorInitialized = true;
-        PrefsHelper.setPref(keys.proxy_socks,constants.proxy_socks);
-        PrefsHelper.setPref(keys.proxy_socks_port, onionProxyPort);
-        PrefsHelper.setPref(keys.proxy_socks_version,constants.proxy_socks_version);
-        PrefsHelper.setPref(keys.proxy_socks_remote_dns,constants.proxy_socks_remote_dns);
+        PrefsHelper.setPref(keys.proxy_type, 0);
+        PrefsHelper.setPref(keys.proxy_socks,null);
+        PrefsHelper.setPref(keys.proxy_socks_port, null);
+        PrefsHelper.setPref(keys.proxy_socks_version,null);
+        PrefsHelper.setPref(keys.proxy_socks_remote_dns,null);
+
         PrefsHelper.setPref(keys.proxy_cache,constants.proxy_cache);
         PrefsHelper.setPref(keys.proxy_memory,constants.proxy_memory);
         PrefsHelper.setPref(keys.proxy_useragent_override, constants.proxy_useragent_override);
@@ -213,72 +89,37 @@ class orbotManager
         PrefsHelper.setPref("browser.cache.disk.enable",true);
         PrefsHelper.setPref("browser.cache.memory.enable",true);
         PrefsHelper.setPref("browser.cache.disk.capacity",10000);
-
-
     }
 
-    private synchronized void initBridgeGateway() throws IOException, InterruptedException {
-
-        //onionProxyContext.installFiles();
-
-        try (PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter(onionProxyContext.getTorrcFile(), true)))) {
-            printWriter.println("CookieAuthFile " + onionProxyContext.getCookieFile().getAbsolutePath());
-            // For some reason the GeoIP's location can only be given as a file
-            // name, not a path and it has
-            // to be in the data directory so we need to set both
-            printWriter.println("DataDirectory " + onionProxyContext.getWorkingDirectory().getAbsolutePath());
-            printWriter.println("GeoIPFile " + onionProxyContext.getGeoIpFile().getName());
-            printWriter.println("GeoIPv6File " + onionProxyContext.getGeoIpv6File().getName());
-
-            if (true) {
-                List<String> bridges = BridgeProvider.getBridges();
-                Preconditions.checkNotNull(bridges, "Bridges must not be null");
-                Preconditions.checkArgument(!bridges.isEmpty(), "Bridges must not be empty");
-
-                printWriter.println("UseBridges 1");
-                for (String bridgeLine : bridges)
-                    printWriter.println(bridgeLine);
-            }
-        }
-
-    }
-
-    /*External Helper Methods*/
-
+    boolean logs_started = false;
     String getLogs()
     {
-        if(network_Error){
-            return "Internet Error | Failed To Connect";
+        String logs = status.tor_logs_status;
+
+        if(!logs.contains("Bootstrapped") && !logs_started){
+            logs = "Starting Bootstrap";
+            logs_started = true;
         }
         else {
-            if(onionProxyManager!=null)
-            {
-                String Logs = onionProxyManager.getLastLog();
-                if(Logs.equals(""))
-                {
-                    return "Installing | Setting Configurations";
-                }
-                Logs="Installing | " + Logs.replace("FAILED","Securing");
-                return Logs;
-            }
-            return "Loading Please Wait";
+            logs = logs.replace("(","").replace(":","").replace("NOTICE","").replace(")","");
         }
+
+
+        if(logs!=null && !logs.equals(strings.emptyStr))
+        {
+            String Logs = logs;
+            if(Logs.equals(""))
+            {
+                return "Installing | Setting Configurations";
+            }
+            Logs="Installing | " + Logs.replace("FAILED","Securing");
+            return Logs;
+        }
+        return "Loading Please Wait";
     }
 
     boolean isOrbotRunning(){
-        Log.i("TEST1","TEST1:"+status.isTorInitialized);
-
-        /*try {
-            if(!onionProxyManager.isRunning() || !onionProxyManager.isNetworkEnabled()){
-                status.isTorInitialized = false;
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
         return status.isTorInitialized;
-
     }
 
 }

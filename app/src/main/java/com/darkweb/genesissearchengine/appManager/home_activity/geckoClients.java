@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,10 +22,12 @@ import com.darkweb.genesissearchengine.helperMethod;
 
 import org.mozilla.geckoview.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 class geckoClients
 {
@@ -34,6 +37,7 @@ class geckoClients
     private GeckoRuntime runtime1 = null;
     private eventObserver.eventListener event;
     private AppCompatActivity context;
+    private AdBlocker adBlocker;
 
     /*Private Variables*/
     private LinkedList<GeckoSession.WebResponseInfo> mPendingDownloads = new LinkedList<>();
@@ -45,20 +49,35 @@ class geckoClients
     private String current_url = strings.emptyStr;
     private String requested_url = strings.emptyStr;
     private int rate_us_counter = 0;
+    private boolean maximize_status = false;
 
     private Uri downloadURL;
     private String downloadFile = "";
     private BasicGeckoViewPrompt prompt;
+    private GeckoView geckoView;
 
 
     void initialize(GeckoView geckoView, AppCompatActivity Context,eventObserver.eventListener event,String searchEngine,AppCompatActivity context)
     {
         this.context = context;
         this.event = event;
+        this.geckoView = geckoView;
         prompt = new BasicGeckoViewPrompt(context);
         session1 = new GeckoSession();
         runtime1 = GeckoRuntime.getDefault(Context);
-        runtime1.getSettings().setJavaScriptEnabled(status.java_status);
+        adBlocker = new AdBlocker(context);
+
+        runtime1.getSettings().setAutomaticFontSizeAdjustment(status.fontAdjustable);
+        if(!status.fontAdjustable){
+            float font = status.fontSize;
+            font = (status.fontSize-100)/4+100;
+            if(!runtime1.getSettings().getAutomaticFontSizeAdjustment()){
+                runtime1.getSettings().setFontSizeFactor(font/100);
+            }
+        }
+
+        runtime1.getSettings().getContentBlocking().setAntiTracking(ContentBlocking.AntiTracking.AD);
+
         session1.open(runtime1);
         geckoView.setSession(session1);
         session1.setProgressDelegate(new progressDelegate());
@@ -81,6 +100,10 @@ class geckoClients
         return requested_url;
     }
 
+    public void setRequestedUrl(String url){
+        requested_url = url;
+    }
+
     void onBackPressed(){
         if(canGoBack){
             if(url_list.size()>1){
@@ -96,9 +119,17 @@ class geckoClients
         }
     }
 
-    void onUpdateJavascript(){
-        runtime1.getSettings().setJavaScriptEnabled(status.java_status);
+    void onUpdateSettings(){
         session1.reload();
+    }
+
+    void onUpdateFont(){
+        float font = status.fontSize;
+        font = (status.fontSize-100)/4+100;
+        runtime1.getSettings().setAutomaticFontSizeAdjustment(status.fontAdjustable);
+        if(!runtime1.getSettings().getAutomaticFontSizeAdjustment()){
+            runtime1.getSettings().setFontSizeFactor(font/100);
+        }
     }
 
     /*Delegate Handler*/
@@ -175,6 +206,14 @@ class geckoClients
         }
     }
 
+    boolean getFullScreenStatus(){
+        return maximize_status;
+    }
+
+    public void exitFullScreen(){
+        session1.exitFullScreen();
+    }
+
     String getRequestedURL(){
         return requested_url;
     }
@@ -193,7 +232,7 @@ class geckoClients
                 return false;
             }
             else{
-                event.invokeObserver(Collections.singletonList(true), enums.home_eventType.start_proxy);
+                event.invokeObserver(Arrays.asList(true,false), enums.home_eventType.start_proxy);
             }
         }
         else {
@@ -203,7 +242,7 @@ class geckoClients
                 helperMethod.openPlayStore(uri.split("__")[1],context);
                 return false;
             }
-            event.invokeObserver(Collections.singletonList(false), enums.home_eventType.start_proxy);
+            event.invokeObserver(Arrays.asList(false,true), enums.home_eventType.start_proxy);
         }
         return true;
     }
@@ -216,9 +255,18 @@ class geckoClients
                 url_list.add(current_url);
                 onGoBack = false;
             }
+
+            if (var2 != null && var2.contains("boogle.store")) {
+            }
         }
 
         public GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession var2, @NonNull GeckoSession.NavigationDelegate.LoadRequest var1) {
+
+            if(adBlocker.isAd(var1.uri))
+            {
+                return GeckoResult.fromValue(AllowOrDeny.DENY);
+            }
+
             if(var1.target==2){
                 loadURL(var1.uri);
                 return GeckoResult.fromValue(AllowOrDeny.DENY);
@@ -267,6 +315,19 @@ class geckoClients
                 downloadFile(response);
             }
         }
+
+        @Override
+        public void onFullScreen(@NonNull GeckoSession var1, boolean var2) {
+            event.invokeObserver(Collections.singletonList(var2), enums.home_eventType.on_full_screen);
+            maximize_status = var2;
+        }
+
+        public void onContextMenu(@NonNull GeckoSession var1, int var2, int var3, @NonNull GeckoSession.ContentDelegate.ContextElement var4) {
+            if(var4.type==1){
+                event.invokeObserver(Collections.singletonList(var4.srcUri), enums.home_eventType.on_long_press);
+            }
+        }
+
     }
 
     private void downloadFile(GeckoSession.WebResponseInfo response) {
@@ -296,6 +357,20 @@ class geckoClients
         event.invokeObserver(Collections.singletonList(0), enums.home_eventType.progress_update);
 
         event.invokeObserver(Arrays.asList(downloadFile,downloadURL), enums.home_eventType.download_file_popup);
+    }
+
+    void manual_download(String url){
+        downloadURL = Uri.parse(url);
+
+        File f = new File(url);
+
+        downloadFile = f.getName() != null ? f.getName() : downloadURL.getLastPathSegment();
+
+        session1.stop();
+        event.invokeObserver(Collections.singletonList(0), enums.home_eventType.progress_update);
+
+        event.invokeObserver(Arrays.asList(downloadFile,downloadURL), enums.home_eventType.download_file_popup);
+        downloadFile();
     }
 
     void downloadFile()

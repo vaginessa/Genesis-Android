@@ -3,7 +3,10 @@ package com.darkweb.genesissearchengine.appManager.settingManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.darkweb.genesissearchengine.appManager.activityContextManager;
@@ -25,7 +28,7 @@ public class settingController extends AppCompatActivity
     /*Private Observer Classes*/
 
     private homeController home_controller;
-    private settingViewController viewController;
+    private settingViewController setting_view_controller;
     private settingModel setting_model;
 
     /*Private Variables*/
@@ -33,6 +36,9 @@ public class settingController extends AppCompatActivity
     private Spinner search;
     private Spinner javascript;
     private Spinner history;
+    private Spinner font_adjustable;
+    private SeekBar font_size;
+    private TextView font_size_percentage;
 
     /*Initializations*/
 
@@ -50,12 +56,15 @@ public class settingController extends AppCompatActivity
         viewsInitializations();
         modelInitialization();
         listenersInitializations();
+        initializeFontSizeListener();
     }
 
     public void modelInitialization(){
         setting_model.setJavaStatus(java_status);
         setting_model.setHistoryStatus(history_status);
         setting_model.setSearchStatus(status.search_status);
+        setting_model.setAdjustableStatus(status.fontAdjustable);
+        setting_model.setFontSize(status.fontSize);
     }
 
     public void viewsInitializations()
@@ -63,9 +72,12 @@ public class settingController extends AppCompatActivity
         search = findViewById(R.id.search_manager);
         javascript = findViewById(R.id.javascript_manager);
         history = findViewById(R.id.history_manager);
+        font_size = findViewById(R.id.font_size);
+        font_adjustable = findViewById(R.id.font_adjustable);
+        font_size_percentage = findViewById(R.id.font_size_percentage);
 
         String currentSearchEngine = dataController.getInstance().getString(keys.search_engine, strings.darkweb);
-        viewController = new settingViewController(search,javascript,history,this,currentSearchEngine,new settingModelCallback(),this);
+        setting_view_controller = new settingViewController(search,javascript,history,font_size,font_adjustable,font_size_percentage,this,currentSearchEngine,new settingModelCallback(),this);
     }
 
     public void listenersInitializations()
@@ -73,6 +85,7 @@ public class settingController extends AppCompatActivity
         initializeItemSelectedListener(search);
         initializeItemSelectedListener(javascript);
         initializeItemSelectedListener(history);
+        initializeItemSelectedListener(font_adjustable);
         pluginController.getInstance().logEvent(strings.settings_opened,"");
     }
 
@@ -123,9 +136,38 @@ public class settingController extends AppCompatActivity
                 {
                     setting_model.setHistoryStatus(position==0);
                 }
+                else if(parentView.getId()== R.id.font_adjustable)
+                {
+                    setting_model.setAdjustableStatus(position==0);
+                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
+    }
+
+    public void initializeFontSizeListener(){
+
+        font_size.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                float cur_progress = seekBar.getProgress();
+                float progress = (cur_progress);
+                setting_model.setFontSize(progress);
+                setting_view_controller.updatePercentage(font_size.getProgress());
+                if(cur_progress<1){
+                    font_size.setProgress(1);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
     }
@@ -163,6 +205,9 @@ public class settingController extends AppCompatActivity
             else if(e_type == enums.eventType.update_history){
                 history_status = (boolean)data;
                 dataController.getInstance().setBool(keys.history_clear, history_status);
+            }
+            else if(e_type == enums.eventType.update_font_adjustable || e_type == enums.eventType.update_font_size){
+                home_controller.onUpdateFont();
             }
             else if(e_type == enums.eventType.close_view){
                 finish();

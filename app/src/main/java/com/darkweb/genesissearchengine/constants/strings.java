@@ -68,8 +68,11 @@ public class strings
     public static String clear_bookmark_bt2 = "Dismiss";
 
     public static String download_title = "Download Notification";
+    public static String download_long_press_title = "File Notification";
+    public static String download_long_press_message = "File Description | ";
     public static String download_message = "Download File | ";
     public static String download_positive = "Download";
+    public static String download_long_press = "Open Image";
     public static String download_negative = "Dismiss";
 
     public static String banned_title = "Is Tor Bannned In Your Country?";

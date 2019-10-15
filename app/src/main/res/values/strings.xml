@@ -2,46 +2,59 @@
 
     <!-- Application Strings -->
     <string name="app_name">Genesis</string>
-    <string name="SearchHint">Search History</string>
-    <string name="SearchHintMain">Search or type web address</string>
-    <string name="homeUrl">https://genesis.onion</string>
-    <string name="errorTiyle">\u0020\u0020\u0020Opps! Some Thing Went Wrong</string>
-    <string name="todo">TODO</string>
-    <string name="projectName">Genesis Search Engine</string>
-    <string name="loadingText">Online Freedom</string>
-    <string name="reload">Reload</string>
-    <string name="internetErrorMessage">These might be the problems you are facing \n\n• Webpage or Website might be down \n• Your Internet connection might be poor \n• You might be using a proxy \n• Website might be blocked by firewall</string>
-    <string name="title_activity_list_manager">list_manager</string>
-    <string name="title_activity_setting_controller">Settings</string>
+    <string name="SearchHint" translatable="false">Search History</string>
+    <string name="SearchHintMain" translatable="false">Search or type web address</string>
+    <string name="homeUrl" translatable="false">https://genesis.onion</string>
+    <string name="errorTiyle" translatable="false">\u0020\u0020\u0020Opps! Some Thing Went Wrong</string>
+    <string name="todo" translatable="false">TODO</string>
+    <string name="projectName" translatable="false">Genesis Search Engine</string>
+    <string name="loadingText" translatable="false">Online Freedom</string>
+    <string name="reload" translatable="false">Reload</string>
+    <string name="internetErrorMessage" translatable="false">These might be the problems you are facing \n\n• Webpage or Website might be down \n• Your Internet connection might be poor \n• You might be using a proxy \n• Website might be blocked by firewall</string>
+    <string name="title_activity_list_manager" translatable="false">list_manager</string>
+    <string name="title_activity_setting_controller" translatable="false">Settings</string>
 
     <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
+    <string name="messages_header" translatable="false">Messages</string>
+    <string name="sync_header" translatable="false">Sync</string>
 
     <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
+    <string name="signature_title" translatable="false">Your signature</string>
+    <string name="reply_title" translatable="false">Default reply action</string>
 
     <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails</string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="sync_title" translatable="false">Sync email periodically</string>
+    <string name="attachment_title" translatable="false">Download incoming attachments</string>
+    <string name="attachment_summary_on" translatable="false">Automatically download attachments for incoming emails</string>
+    <string name="attachment_summary_off" translatable="false">Only download attachments when manually requested</string>
 
     <!-- Settings -->
-    <string name="basic_settings">Basic Settings</string>
-    <string name="settings_header">Settings</string>
-    <string name="settings_search_engine">Search Engine</string>
-    <string name="settings_javascript">Javascript</string>
-    <string name="settings_clear_history">Auto Clear History</string>
+    <string name="basic_settings" translatable="false">Basic Settings</string>
+    <string name="settings_header" translatable="false">Settings</string>
+    <string name="settings_search_engine" translatable="false">Search Engine</string>
+    <string name="settings_javascript" translatable="false">Javascript</string>
+    <string name="settings_clear_history" translatable="false">Auto Clear History</string>
+    <string name="settings_font_title" translatable="false">Font Settings</string>
+    <string name="adjust_font" translatable="false">Adjust Font</string>
+    <string name="manual_font" translatable="false">Manual Font</string>
 
     <!-- List View -->
-    <string name="listview_clear">Clear</string>
+    <string name="listview_clear" translatable="false">Clear</string>
 
     <!-- Splash -->
-    <string name="gateway_info">Enable Gateway</string>
-    <string name="gateway_button">Enable Gateway</string>
-    <string name="loading_please_wait">Loading Please Wait</string>
+    <string name="gateway_info" translatable="false">Enable Gateway</string>
+    <string name="gateway_button" translatable="false">Enable Gateway</string>
+    <string name="loading_please_wait" translatable="false">Loading Please Wait</string>
+
+    <string-array name="fonts">
+        <item>55 Percent</item>
+        <item>70 Percent</item>
+        <item>85 Percent</item>
+        <item>100 Percent</item>
+        <item>115 Percent</item>
+        <item>130 Percent</item>
+        <item>145 Percent</item>
+    </string-array>
 
     <string-array name="search_engines">
         <item>Hidden Web</item>
@@ -53,5 +66,40 @@
         <item>Enabled</item>
         <item>Disabled</item>
     </string-array>
+
+    <string name="app_description" translatable="false">Orbot is a free proxy app that empowers other apps to use the internet more securely. Orbot uses Tor to encrypt your Internet traffic and then hides it by bouncing through a series of computers around the world. Tor is free software and an open network that helps you defend against a form of network surveillance that threatens personal freedom and privacy, confidential business activities and relationships, and state security known as traffic analysis.</string>
+    <string name="status_starting_up" translatable="false">Orbot is starting&#8230;</string>
+    <string name="status_activated" translatable="false">Connected to the Tor network</string>
+    <string name="status_disabled" translatable="false">Orbot is deactivated</string>
+    <string name="status_shutting_down" translatable="false">TorService is shutting down</string>
+    <string name="tor_process_starting" translatable="false">Starting Tor client&#8230;</string>
+    <string name="tor_process_complete" translatable="false">complete.</string>
+    <!--Welcome Wizard strings (DJH)-->
+    <!--END Welcome Wizard strings (DJH)-->
+    <!--New Wizard Strings-->
+    <!--Title Screen-->
+    <!--Warning screen-->
+    <!--Permissions screen-->
+    <!--TipsAndTricks screen-->
+    <!--Transparent Proxy screen-->
+
+
+    <string name="couldn_t_start_tor_process_" translatable="false">Couldn\'t start Tor process: </string>
+    <string name="your_reachableaddresses_settings_caused_an_exception_" translatable="false">Your ReachableAddresses settings caused an exception!</string>
+    <string name="your_relay_settings_caused_an_exception_" translatable="false">Your relay settings caused an exception!</string>
+    <string name="found_existing_tor_process" translatable="false">found existing Tor process&#8230;</string>
+    <string name="something_bad_happened" translatable="false">Something bad happened. Check the log</string>
+    <string name="unable_to_read_hidden_service_name" translatable="false">unable to read onion service name</string>
+    <string name="unable_to_start_tor" translatable="false">Unable to start Tor:</string>
+
+    <string name="no_internet_connection_tor" translatable="false">No internet connection; Tor is on standby…</string>
+    <string name="newnym" translatable="false">You\'ve switched to a new Tor identity!</string>
+
+    <string name="no_network_connectivity_putting_tor_to_sleep_" translatable="false">No network connectivity. Putting Tor to sleep…</string>
+    <string name="network_connectivity_is_good_waking_tor_up_" translatable="false">Network connectivity is good. Waking Tor up…</string>
+    <string name="updating_settings_in_tor_service" translatable="false">updating settings in Tor service</string>
+
+
+    <string name="menu_new_identity" translatable="false">New Identity</string>
 
 </resources>

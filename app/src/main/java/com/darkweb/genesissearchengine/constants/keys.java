@@ -32,9 +32,11 @@ public class keys
     public static String search_engine  = "search_engine";
     public static String java_script  = "java_script";
     public static String history_clear  = "history_clear";
-    public static String gateway  = "gateway";
+    public static String gateway  = "pref_bridges_enabled";
     public static String is_bootstrapped  = "is_bootstrapped";
     public static String is_welcome_enabled  = "is_welcome_enabled";
     public static String engine_switched  = "engine_switched";
+    public static String font_size  = "font_size";
+    public static String font_adjustable  = "font_adjustable";
 
 }

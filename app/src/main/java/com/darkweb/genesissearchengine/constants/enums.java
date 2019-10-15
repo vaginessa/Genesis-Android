@@ -9,8 +9,8 @@ public class enums
     public enum navigationType{onion, base}
 
     /*Message Manager*/
-    public enum popup_type{welcome,abi_error,rate_success,reported_success,bookmark, clear_history,clear_bookmark,report_url,rate_app,version_warning,start_orbot,download_file,tor_banned}
-    public enum eventType{welcome,cancel_welcome,reload,connect_vpn,start_home,disable_splash, clear_history,clear_bookmark,bookmark, app_rated,download_file, update_searcn, update_javascript, update_history,close_view}
+    public enum popup_type{welcome,abi_error,rate_success,reported_success,bookmark, clear_history,clear_bookmark,report_url,rate_app,version_warning,start_orbot,download_file,download_file_long_press,tor_banned}
+    public enum eventType{welcome,cancel_welcome,reload,connect_vpn,start_home,disable_splash, clear_history,clear_bookmark,bookmark, app_rated,download_file,download_file_manual, update_searcn, update_javascript, update_history, update_font_size,update_font_adjustable,close_view}
 
 
     /*List Manager*/
@@ -18,6 +18,6 @@ public class enums
     public enum bookmark_eventType{url_triggered,url_clear,remove_from_database,is_empty}
 
     /*Home Manager*/
-    public enum home_eventType{progress_update,recheck_orbot,on_url_load,back_list_empty,start_proxy,onMenuSelected,on_request_completed,on_page_loaded,on_load_error,download_file_popup,download_file,proxy_error,on_init_ads,rate_application,search_update}
+    public enum home_eventType{on_long_press,on_full_screen,progress_update,recheck_orbot,on_url_load,back_list_empty,redraw,start_proxy,onMenuSelected,on_request_completed,on_page_loaded,on_load_error,download_file_popup,download_file,proxy_error,on_init_ads,rate_application,search_update}
 
 }

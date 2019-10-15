@@ -45,6 +45,12 @@ class dataModel
         edit.commit();
     }
 
+    void setFloat(String valueKey, int value)
+    {
+        edit.putInt(valueKey, value);
+        edit.commit();
+    }
+
     String getString(String valueKey, String valueDefault)
     {
         return prefs.getString(valueKey, valueDefault);
@@ -55,6 +61,10 @@ class dataModel
         return prefs.getBoolean(valueKey, valueDefault);
     }
 
+    int getFloat(String valueKey, int valueDefault)
+    {
+        return prefs.getInt(valueKey, valueDefault);
+    }
     /*List Bookmarks and History*/
 
     void initializeHistory(ArrayList<historyRowModel> history){

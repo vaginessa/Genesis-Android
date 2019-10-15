@@ -11,7 +11,7 @@ public class constants
 
     /*URL CONSTANTS*/
 
-    public static String backendGenesis = "https://boogle.store/";
+    public static String backendGenesis = "http://boogle.store";
     public static String backendUrlHost = "boogle.store";
     public static String updateUrl = "https://boogle.store/manual?abi=";
     public static String frontEndUrlHost = "genesis.store";

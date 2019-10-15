@@ -33,7 +33,7 @@
                 android:id="@+id/webLoader"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="58dp"
+                android:layout_marginTop="0dp"
                 android:alpha="1"
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="8dp" />

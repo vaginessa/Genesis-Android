@@ -92,12 +92,7 @@ public class pluginController
 
     /*Proxy Manager*/
     public void proxyManagerInvoke(boolean status){
-        if(status){
-            proxyManager.getInstance().startVPN();
-        }
-        else{
-            proxyManager.getInstance().disconnectConnection();
-        }
+        orbotManager.getInstance().reInit();
     }
 
 
@@ -106,8 +101,12 @@ public class pluginController
     }
 
     private void onExit(){
-        message_manager.onReset();
+        onResetMessage();
         proxyManager.getInstance().disconnectConnection();
+    }
+
+    public void onResetMessage(){
+        message_manager.onReset();
     }
 
     void proxyManagerExitInvoke(){
@@ -138,8 +137,8 @@ public class pluginController
     public boolean OrbotManagerInit(){
         return orbotManager.getInstance().isOrbotRunning();
     }
-    public void setProxy(boolean status){
-        orbotManager.getInstance().setProxy(status);
+    public void setProxy(boolean status,boolean is_genesis){
+        orbotManager.getInstance().setProxy(status,is_genesis);
     }
     public String orbotLogs(){
         return orbotManager.getInstance().getLogs();
@@ -255,6 +254,9 @@ public class pluginController
             }
             else if(e_type.equals(enums.eventType.download_file)){
                 home_controller.onDownloadFile();
+            }
+            else if(e_type.equals(enums.eventType.download_file_manual)){
+                home_controller.manualDownload(data.toString());
             }
             else if(e_type.equals(enums.eventType.connect_vpn)){
                 boolean status = (boolean)data;

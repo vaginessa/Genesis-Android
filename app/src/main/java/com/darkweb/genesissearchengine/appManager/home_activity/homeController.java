@@ -1,15 +1,12 @@
 package com.darkweb.genesissearchengine.appManager.home_activity;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.ComponentCallbacks2;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
@@ -93,6 +90,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             status.initStatus();
             dataController.getInstance().initializeListData();
 
+            initializePermission();
             initializeAppModel();
             initializeConnections();
             pluginController.getInstance().initialize();
@@ -145,11 +143,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
     private void checkPermissions() {
         String[] permissions = new String[]{
-                Manifest.permission.INTERNET,
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.ACCESS_NETWORK_STATE,
         };
 
         int result;
@@ -167,7 +161,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
     public void initializeGeckoView(){
         geckoclient.initialize(geckoView,this,new geckoViewCallback(),status.search_status,this);
-        pluginController.getInstance().setProxy(true);
+        //pluginController.getInstance().setProxy(true,status.search_status==constants.backendGenesis);
 
         Callable<String> callable = () -> {
             String log = pluginController.getInstance().orbotLogs();
@@ -177,14 +171,14 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         };
 
 
-        if(status.gateway){
+        /*if(status.gateway){
             home_view_controller.updateLogs("Loading | Starting Gateway");
             initializeProxy();
         }
         else {
-            home_view_controller.disableSplashScreen(callable);
-        }
-    }
+        }*/
+        home_view_controller.disableSplashScreen(callable);
+       }
 
     public void onProxyEnabled(View view){
         if(pluginController.getInstance().isInitialized() && !page_closed){
@@ -198,7 +192,12 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     /*Shared Controller Events*/
 
     public void reloadJavaScript(){
-        geckoclient.onUpdateJavascript();
+        geckoclient.onUpdateSettings();
+    }
+
+    public void onUpdateFont(){
+        geckoclient.onUpdateFont();
+        home_view_controller.onReDraw();
     }
 
     public void loadURL(String url){
@@ -232,6 +231,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             if(hasFocus)
             {
                 status.isAppStarted = true;
+                pluginController.getInstance().onMessageReset();
             }
         });
 
@@ -239,6 +239,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             if(hasFocus)
             {
                 status.isAppStarted = true;
+                pluginController.getInstance().onMessageReset();
             }
         });
 
@@ -272,6 +273,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         status.isAppStarted = true;
         home_view_controller.clearSelections();
         home_view_controller.openMenu(view);
+        pluginController.getInstance().onMessageReset();
     }
 
     @Override
@@ -285,8 +287,13 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             geckoclient.updateProxy(geckoclient.getCurrentURL());
         }
         else {
-            geckoclient.onBackPressed();
-            home_view_controller.clearSelections();
+            if(!geckoclient.getFullScreenStatus()){
+                geckoclient.onBackPressed();
+                home_view_controller.clearSelections();
+            }
+            else {
+                geckoclient.exitFullScreen();
+            }
         }
     }
 
@@ -298,38 +305,43 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
         if(status.search_status.equals(constants.backendGoogle))
         {
-            ((ImageButton) view).setImageResource(R.drawable.duck_logo);
             status.search_status = constants.backendGenesis;
+            home_view_controller.onUpdateLogo();
             geckoclient.setCurrentURL(constants.backendGenesis);
+            geckoclient.setRequestedUrl(constants.backendGenesis);
             dataController.getInstance().setString(keys.search_engine,constants.backendGenesis);
             onHomeButton(null);
         }
         else if(status.search_status.equals(constants.backendGenesis))
         {
+            status.search_status = constants.backendDuckDuckGo;
             if(pluginController.getInstance().OrbotManagerInit())
             {
-                ((ImageButton) view).setImageResource(R.drawable.google_logo);
-                status.search_status = constants.backendDuckDuckGo;
+                home_view_controller.onUpdateLogo();
                 dataController.getInstance().setString(keys.search_engine,constants.backendDuckDuckGo);
+                geckoclient.setRequestedUrl(constants.backendDuckDuckGo);
                 onHomeButton(null);
             }
             else {
                 geckoclient.setCurrentURL(constants.backendDuckDuckGo);
+                geckoclient.setRequestedUrl(constants.backendDuckDuckGo);
                 pluginController.getInstance().MessageManagerHandler(homeController.this,constants.backendDuckDuckGo,enums.popup_type.start_orbot);
             }
         }
         else
         {
+            status.search_status = constants.backendGoogle;
             if(pluginController.getInstance().OrbotManagerInit())
             {
-                ((ImageButton) view).setImageResource(R.drawable.genesis_logo);
-                status.search_status = constants.backendGoogle;
+                home_view_controller.onUpdateLogo();
                 dataController.getInstance().setString(keys.search_engine,constants.backendGoogle);
+                geckoclient.setRequestedUrl(constants.backendGoogle);
                 onHomeButton(null);
             }
             else {
-                geckoclient.setCurrentURL(constants.backendGoogle);
+                geckoclient.setCurrentURL(constants.backendDuckDuckGo);
                 pluginController.getInstance().MessageManagerHandler(homeController.this,constants.backendGoogle,enums.popup_type.start_orbot);
+                geckoclient.setRequestedUrl(constants.backendGoogle);
             }
         }
     }
@@ -337,6 +349,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     public void onReload(View view)
     {
         geckoclient.loadURL(geckoclient.getRequestedURL());
+        home_view_controller.onUpdateLogo();
     }
 
     @Override
@@ -378,6 +391,10 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
     public void onDownloadFile(){
         geckoclient.downloadFile();
+    }
+
+    public void manualDownload(String url){
+        geckoclient.manual_download(url);
     }
 
     public void onBannerAdLoaded(){
@@ -446,6 +463,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                     pluginController.getInstance().proxyManagerInvoke(!status.gateway);
                     status.gateway = !status.gateway;
                     dataController.getInstance().setBool(keys.gateway,status.gateway);
+                    finish();
                 }
                 else if (menuId == R.id.menu9) {
                     loadURL("https://whatismycountry.com/");
@@ -507,7 +525,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                 helperMethod.onMinimizeApp(homeController.this);
             }
             else if(e_type.equals(enums.home_eventType.start_proxy)){
-                pluginController.getInstance().setProxy((Boolean)data.get(0));
+                pluginController.getInstance().setProxy((Boolean)data.get(0),(Boolean)data.get(1));
             }
             else if(e_type.equals(enums.home_eventType.on_request_completed)){
                 dataController.getInstance().addHistory(data.get(0).toString());
@@ -517,7 +535,6 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                 dataController.getInstance().setBool(keys.is_bootstrapped,true);
                 home_view_controller.onPageFinished();
                 if(status.isWelcomeEnabled && !status.isAppStarted){
-
                     final Handler handler = new Handler();
                     helperMethod.hideKeyboard(homeController.this);
                     Runnable runnable = () ->
@@ -526,11 +543,13 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                             pluginController.getInstance().MessageManagerHandler(activityContextManager.getInstance().getHomeController(), strings.emptyStr, enums.popup_type.welcome);
                         }
                         status.isAppStarted = true;
+                        //pluginController.getInstance().onMessageReset();
                     };
                     handler.postDelayed(runnable, 1300);
                 }
             }
             else if(e_type.equals(enums.home_eventType.rate_application)){
+                dataController.getInstance().setBool(keys.isAppRated,true);
                 pluginController.getInstance().MessageManagerHandler(activityContextManager.getInstance().getHomeController(), strings.emptyStr, enums.popup_type.rate_app);
             }
             else if(e_type.equals(enums.home_eventType.on_load_error)){
@@ -544,11 +563,23 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                 home_view_controller.updateSearchBar(data.get(0).toString());
             }
             else if(e_type.equals(enums.home_eventType.proxy_error)){
+                helperMethod.hideKeyboard(homeController.this);
+                geckoView.clearFocus();
                 pluginController.getInstance().logEvent(strings.url_error_not_loaded,"");
                 pluginController.getInstance().MessageManagerHandler(homeController.this,data.get(0).toString(),enums.popup_type.start_orbot);
             }
             else if(e_type.equals(enums.home_eventType.download_file_popup)){
                 pluginController.getInstance().MessageManagerHandler(homeController.this,data.get(0).toString(),enums.popup_type.download_file);
+            }
+            else if(e_type.equals(enums.home_eventType.redraw)){
+                home_view_controller.reset();
+            }
+            else if(e_type.equals(enums.home_eventType.on_full_screen)){
+                boolean status = (Boolean)data.get(0);
+                home_view_controller.onFullScreenStatus(status);
+            }
+            else if(e_type.equals(enums.home_eventType.on_long_press)){
+                pluginController.getInstance().MessageManagerHandler(homeController.this,data.get(0).toString(),enums.popup_type.download_file_long_press);
             }
         }
     }

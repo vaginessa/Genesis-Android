@@ -16,13 +16,13 @@ class fabricManager
     /*Initializations*/
 
     fabricManager(AppCompatActivity app_context, eventObserver.eventListener event){
-        this.app_context = app_context;
-        this.event = event;
-        initialize();
+        //this.app_context = app_context;
+        //this.event = event;
+        //initialize();
     }
 
     private void initialize(){
-        Fabric.with(app_context, new Crashlytics());
-        event.invokeObserver(null,null);
+        //Fabric.with(app_context, new Crashlytics());
+        //event.invokeObserver(null,null);
     }
 }

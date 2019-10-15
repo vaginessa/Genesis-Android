@@ -6,19 +6,6 @@ import android.os.Debug;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import com.anchorfree.hydrasdk.HydraSDKConfig;
-import com.anchorfree.hydrasdk.HydraSdk;
-import com.anchorfree.hydrasdk.SessionConfig;
-import com.anchorfree.hydrasdk.api.AuthMethod;
-import com.anchorfree.hydrasdk.api.ClientInfo;
-import com.anchorfree.hydrasdk.api.data.ServerCredentials;
-import com.anchorfree.hydrasdk.api.response.User;
-import com.anchorfree.hydrasdk.callbacks.Callback;
-import com.anchorfree.hydrasdk.callbacks.CompletableCallback;
-import com.anchorfree.hydrasdk.dns.DnsRule;
-import com.anchorfree.hydrasdk.exceptions.HydraException;
-import com.anchorfree.hydrasdk.vpnservice.connectivity.NotificationConfig;
-import com.anchorfree.reporting.TrackingConstants;
 import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.status;
@@ -59,7 +46,7 @@ class proxyManager
 
     private void initHydraSdk() {
 
-
+        /*
         SharedPreferences prefs = getPrefs();
         ClientInfo clientInfo = ClientInfo.newBuilder()
                 .baseUrl(prefs.getString(BuildConfig.STORED_HOST_URL_KEY, BuildConfig.BASE_HOST))
@@ -80,7 +67,7 @@ class proxyManager
                 .build();
 
         HydraSdk.init(app_context.getApplicationContext(), clientInfo, notificationConfig, config);
-        proxy_started = true;
+        proxy_started = true;*/
     }
 
     private SharedPreferences getPrefs() {
@@ -90,6 +77,7 @@ class proxyManager
     /*Hydra States*/
 
     private void connect() {
+        /*
         AuthMethod authMethod = AuthMethod.anonymous();
         HydraSdk.login(authMethod, new Callback<User>()
         {
@@ -107,12 +95,13 @@ class proxyManager
             {
                 loadBoogle();
             }
-        });
+        });*/
     }
 
 
     private void startVPNConnection()
     {
+        /*
         HydraSdk.startVPN(createConnectionRequest(), new Callback<ServerCredentials>()
         {
             @Override
@@ -127,45 +116,33 @@ class proxyManager
             {
                 loadBoogle();
             }
-        });
+        });*/
     }
 
     /*Start Application*/
 
     private void loadBoogle()
-    {
+    {/*
         is_running = true;
         //is_loading = false;
-        event.invokeObserver(null, enums.eventType.disable_splash);
+        event.invokeObserver(null, enums.eventType.disable_splash);*/
     }
 
     /*Helper Methods*/
 
-    private SessionConfig createConnectionRequest()
-    {
-        List<String> bypassDomains = new LinkedList<>();
-
-        bypassDomains.add(constants.bypassDomains_1);
-        bypassDomains.add(constants.bypassDomains_2);
-
-        SessionConfig.Builder builder = new SessionConfig.Builder()
-                .withReason(TrackingConstants.GprReasons.M_UI)
-                .addDnsRule(DnsRule.Builder.bypass().fromDomains(bypassDomains));
-
-        return builder.build();
-    }
-
     /*External Helper Methods*/
 
     void startVPN() {
+        /*
         if(!is_loading){
             is_loading = true;
             initHydraSdk();
         }
-        connect();
+        connect();*/
     }
     void reset()
     {
+        /*
         if(proxy_started){
             HydraSdk.stopVPN(TrackingConstants.GprReasons.M_UI, new CompletableCallback() {
                 @Override
@@ -176,11 +153,11 @@ class proxyManager
                 public void error(@NonNull HydraException e) {
                 }
             });
-        }
+        }*/
     }
 
     void disconnectConnection() {
-
+        /*
         if(is_running){
             HydraSdk.stopVPN(TrackingConstants.GprReasons.M_UI, new CompletableCallback() {
                 @Override
@@ -191,7 +168,7 @@ class proxyManager
                 public void error(@NonNull HydraException e) {
                 }
             });
-        }
+        }*/
     }
 
     boolean isProxyRunning(){

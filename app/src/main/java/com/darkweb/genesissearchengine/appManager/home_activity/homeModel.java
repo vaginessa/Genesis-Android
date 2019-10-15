@@ -52,7 +52,7 @@ public class homeModel
             return getSearchEngine()+"search?q="+url.replaceAll(" ","+");
         }
         else if(status.search_status.equals(constants.backendGenesis)){
-            return getSearchEngine()+"search?s_type=all&p_num=1&q="+url.replaceAll(" ","+");
+            return getSearchEngine()+"/search?s_type=all&p_num=1&q="+url.replaceAll(" ","+");
         }
         else{
             return getSearchEngine()+"?q="+url.replaceAll(" ","+");

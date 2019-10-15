@@ -1,11 +1,16 @@
 package com.darkweb.genesissearchengine.appManager.settingManager;
 
 import android.os.Build;
+import android.text.InputFilter;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -27,14 +32,21 @@ class settingViewController
     private Spinner search;
     private Spinner javascript;
     private Spinner history;
+    private Spinner font_adjustable;
+    private SeekBar font_size;
+    private TextView font_size_percentage;
 
     /*Initializations*/
 
-    settingViewController(Spinner search, Spinner javascript, Spinner history, settingController app_context, String currentSearchEngine, eventObserver.eventListener event,AppCompatActivity context)
+    settingViewController(Spinner search, Spinner javascript, Spinner history,SeekBar font_size,Spinner font_adjustable,TextView font_size_percentage, settingController app_context, String currentSearchEngine, eventObserver.eventListener event,AppCompatActivity context)
     {
+        this.font_size_percentage = font_size_percentage;
         this.search = search;
         this.javascript = javascript;
         this.history = history;
+        this.font_adjustable = font_adjustable;
+        this.font_size = font_size;
+
         this.event = event;
         this.context = context;
 
@@ -42,6 +54,8 @@ class settingViewController
         initJavascript();
         initHistory();
         initSearchEngine();
+        initFontAdjustable();
+        initFontSize();
         initPostUI();
     }
 
@@ -94,6 +108,24 @@ class settingViewController
         }
     }
 
+    private void initFontAdjustable()
+    {
+        if (status.fontAdjustable)
+        {
+            font_adjustable.setSelection(0);
+        }
+        else
+        {
+            font_adjustable.setSelection(1);
+        }
+    }
+
+    private void initFontSize()
+    {
+        font_size.setProgress((int)status.fontSize);
+        updatePercentage(font_size.getProgress());
+    }
+
     @SuppressWarnings("unchecked")
     private void initSearchEngine()
     {
@@ -111,5 +143,12 @@ class settingViewController
         }
         else
             return 2;
+    }
+
+    void updatePercentage(int font_size){
+        int percentage = font_size;
+
+        Log.i("asd"," | Percentage:"+status.fontSize);
+        font_size_percentage.setText("Adjust Font" + " " + percentage+"%");
     }
 }

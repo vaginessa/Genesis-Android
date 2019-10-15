@@ -67,6 +67,11 @@ public class dataController
         preferences_model.setBool(valueKey, value);
     }
 
+    public void setInt(String valueKey, int value)
+    {
+        preferences_model.setFloat(valueKey, value);
+    }
+
     /*Recieving Preferences*/
 
     public String getString(String valueKey, String valueDefault)
@@ -77,6 +82,11 @@ public class dataController
     public boolean getBool(String valueKey, boolean valueDefault)
     {
         return preferences_model.getBool(valueKey, valueDefault);
+    }
+
+    public float getFloat(String valueKey, int valueDefault)
+    {
+        return preferences_model.getFloat(valueKey, valueDefault);
     }
 
     /*Recieving History and Bookmarks*/
