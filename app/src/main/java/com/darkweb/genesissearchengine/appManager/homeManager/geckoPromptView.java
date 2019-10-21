@@ -1,4 +1,4 @@
-package com.darkweb.genesissearchengine.appManager.home_activity;
+package com.darkweb.genesissearchengine.appManager.homeManager;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -34,7 +34,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.darkweb.genesissearchengine.pluginManager.PathUtil;
-import com.example.myapplication.R;
 
 import java.net.URISyntaxException;
 import java.text.ParseException;

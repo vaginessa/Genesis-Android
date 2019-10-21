@@ -1,4 +1,4 @@
-package com.darkweb.genesissearchengine.appManager.home_activity;
+package com.darkweb.genesissearchengine.appManager.launcherManager;
 
 import com.darkweb.genesissearchengine.constants.enums;
 

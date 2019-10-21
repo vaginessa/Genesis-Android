@@ -1,16 +1,13 @@
-package com.darkweb.genesissearchengine.appManager.home_activity;
+package com.darkweb.genesissearchengine.appManager.homeManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;

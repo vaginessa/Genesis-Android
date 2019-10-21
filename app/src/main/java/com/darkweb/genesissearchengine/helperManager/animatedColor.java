@@ -1,4 +1,4 @@
-package com.darkweb.genesissearchengine.appManager.home_activity;
+package com.darkweb.genesissearchengine.appManager.homeManager;
 
 import android.graphics.Color;
 
@@ -8,7 +8,7 @@ public class AnimatedColor {
     private float[] mMove = new float[3];
 
 
-    public AnimatedColor(int start, int end) {
+    AnimatedColor(int start, int end) {
         mStartColor = start;
         mEndColor = end;
         mStartHSV = toHSV(start);

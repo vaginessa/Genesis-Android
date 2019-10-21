@@ -1,4 +1,4 @@
-package com.darkweb.genesissearchengine.appManager.home_activity;
+package com.darkweb.genesissearchengine.appManager.homeManager;
 
 import android.annotation.SuppressLint;
 import android.app.DownloadManager;
