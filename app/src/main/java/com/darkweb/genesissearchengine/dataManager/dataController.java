@@ -7,9 +7,12 @@ import com.darkweb.genesissearchengine.appManager.bookmarkManager.bookmarkRowMod
 import com.darkweb.genesissearchengine.appManager.databaseManager.databaseController;
 import com.darkweb.genesissearchengine.appManager.historyManager.historyController;
 import com.darkweb.genesissearchengine.appManager.historyManager.historyRowModel;
+import com.darkweb.genesissearchengine.appManager.tabManager.tabRowModel;
 import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.status;
 
+
+import org.mozilla.geckoview.GeckoSession;
 
 import java.util.ArrayList;
 
@@ -17,37 +20,30 @@ public class dataController
 {
     /*Private Variables*/
 
-    private dataModel preferences_model;
-    private historyController history_controller;
+    private dataModel mPreferencesModel;
+    private historyController mHistoryController;
 
     /*Private Declarations*/
 
-    private static final dataController ourInstance = new dataController();
+    private static final dataController sOurInstance = new dataController();
     public static dataController getInstance()
     {
-        return ourInstance;
+        return sOurInstance;
     }
 
     /*Initializations*/
 
-    private dataController()
-    {
+    public void initialize(AppCompatActivity app_context){
+        mPreferencesModel = new dataModel(app_context);
+        mPreferencesModel.initializeBookmarks();
+        mPreferencesModel.setMaxHistoryID(databaseController.getInstance().getLargestHistoryID());
+        mPreferencesModel.setHistorySize(databaseController.getInstance().getLargestHistoryID());
+        mPreferencesModel.initSuggestions();
     }
-
-    public void initialize(AppCompatActivity app_context)
-    {
-        preferences_model = new dataModel(app_context);
-        preferences_model.initializeBookmarks();
-        preferences_model.setMaxHistoryID(databaseController.getInstance().getLargestHistoryID());
-        preferences_model.setHistorySize(databaseController.getInstance().getLargestHistoryID());
-        preferences_model.initSuggestions();
-    }
-
-    public void initializeListData()
-    {
-        if(!status.history_status)
+    public void initializeListData(){
+        if(!status.sHistoryStatus)
         {
-            preferences_model.initializeHistory(databaseController.getInstance().selectHistory(0,constants.start_list_size));
+            mPreferencesModel.initializeHistory(databaseController.getInstance().selectHistory(0,constants.START_LIST_SIZE));
         }
         else
         {
@@ -57,72 +53,85 @@ public class dataController
 
     /*Saving Preferences*/
 
-    public void setString(String valueKey, String value)
-    {
-        preferences_model.setString(valueKey, value);
+    public void setString(String valueKey, String value){
+        mPreferencesModel.setString(valueKey, value);
     }
-
-    public void setBool(String valueKey, boolean value)
-    {
-        preferences_model.setBool(valueKey, value);
+    public void setBool(String valueKey, boolean value){
+        mPreferencesModel.setBool(valueKey, value);
     }
-
     public void setInt(String valueKey, int value)
     {
-        preferences_model.setFloat(valueKey, value);
+        mPreferencesModel.setFloat(valueKey, value);
     }
 
     /*Recieving Preferences*/
 
-    public String getString(String valueKey, String valueDefault)
-    {
-        return preferences_model.getString(valueKey, valueDefault);
+    public String getString(String valueKey, String valueDefault){
+        return mPreferencesModel.getString(valueKey, valueDefault);
+    }
+    public boolean getBool(String valueKey, boolean valueDefault){
+        return mPreferencesModel.getBool(valueKey, valueDefault);
+    }
+    public float getFloat(String valueKey, int valueDefault){
+        return mPreferencesModel.getFloat(valueKey, valueDefault);
     }
 
-    public boolean getBool(String valueKey, boolean valueDefault)
-    {
-        return preferences_model.getBool(valueKey, valueDefault);
-    }
-
-    public float getFloat(String valueKey, int valueDefault)
-    {
-        return preferences_model.getFloat(valueKey, valueDefault);
-    }
-
-    /*Recieving History and Bookmarks*/
+    /*Recieving History*/
 
     public ArrayList<historyRowModel> getHistory() {
-        return preferences_model.getHistory();
+        return mPreferencesModel.getmHistory();
     }
     public void addHistory(String url) {
-        preferences_model.addHistory(url);
+        mPreferencesModel.addHistory(url);
         activityContextManager.getInstance().getHomeController().onSuggestionUpdate();
     }
     public void removeHistory(String url){
-        preferences_model.removeHistory(url);
+        mPreferencesModel.removeHistory(url);
     }
     public void clearHistory(){
-        preferences_model.clearHistory();
+        mPreferencesModel.clearHistory();
     }
     public void loadMoreHistory(){
-        ArrayList<historyRowModel> history = databaseController.getInstance().selectHistory(preferences_model.getHistory().size()-1,constants.max_list_size);
+        ArrayList<historyRowModel> history = databaseController.getInstance().selectHistory(mPreferencesModel.getmHistory().size()-1,constants.MAX_LIST_SIZE);
         if(history.size()>0){
-            preferences_model.loadMoreHistory(history);
+            mPreferencesModel.loadMoreHistory(history);
         }
         activityContextManager.getInstance().getHistoryController().updateHistory();
     }
 
+    /*Recieving Bookmarks*/
+
     public ArrayList<bookmarkRowModel> getBookmark(){
-        return preferences_model.getBookmark();
+        return mPreferencesModel.getBookmark();
     }
     public void addBookmark(String url,String title){
-        preferences_model.addBookmark(url,title);
+        mPreferencesModel.addBookmark(url,title);
     }
     public void clearBookmark(){
-        preferences_model.clearBookmark();
+        mPreferencesModel.clearBookmark();
     }
 
+    /*Recieving Suggestions*/
+
     public ArrayList<String> getSuggestions(){
-        return preferences_model.getSuggestions();
+        return mPreferencesModel.getmSuggestions();
+    }
+
+    /*Recieving Tabs*/
+
+    public ArrayList<tabRowModel> getTab(){
+        return mPreferencesModel.getTab();
+    }
+    public void addTab(String url, String title, GeckoSession session,int progress){
+        mPreferencesModel.addTabs(url,title,session,progress);
+    }
+    public void clearTabs(){
+        mPreferencesModel.clearTab();
+    }
+    public void closeTab(GeckoSession session){
+        mPreferencesModel.closeTab(session);
+    }
+    public tabRowModel getCurrentTab(){
+        return mPreferencesModel.getCurrentTab();
     }
 }

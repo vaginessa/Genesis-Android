@@ -5,38 +5,36 @@ import android.content.SharedPreferences;
 import androidx.appcompat.app.AppCompatActivity;
 import com.crashlytics.android.Crashlytics;
 import com.darkweb.genesissearchengine.constants.constants;
+import com.darkweb.genesissearchengine.helperManager.eventObserver;
 
 import java.util.UUID;
 
-@SuppressWarnings("FieldCanBeLocal")
 class analyticManager
 {
     /*Private Variables*/
 
-    private AppCompatActivity app_context;
-    private eventObserver.eventListener event;
-    private String uniqueID = null;
+    private AppCompatActivity mAppContext;
+    private String mUniqueID = null;
 
     /*Initializations*/
 
     analyticManager(AppCompatActivity app_context, eventObserver.eventListener event){
-        this.app_context = app_context;
-        this.event = event;
+        this.mAppContext = app_context;
         initialize();
     }
 
     private void initialize(){
-        final String PREF_UNIQUE_ID = constants.unique_key_id;
+        final String PREF_UNIQUE_ID = constants.UNIQUE_KEY_ID;
 
-        if (uniqueID == null)
+        if (mUniqueID == null)
         {
-            SharedPreferences sharedPrefs = app_context.getSharedPreferences(
+            SharedPreferences sharedPrefs = mAppContext.getSharedPreferences(
                     PREF_UNIQUE_ID, Context.MODE_PRIVATE);
-            uniqueID = sharedPrefs.getString(PREF_UNIQUE_ID, null);
-            if (uniqueID == null) {
-                uniqueID = UUID.randomUUID().toString();
+            mUniqueID = sharedPrefs.getString(PREF_UNIQUE_ID, null);
+            if (mUniqueID == null) {
+                mUniqueID = UUID.randomUUID().toString();
                 SharedPreferences.Editor editor = sharedPrefs.edit();
-                editor.putString(PREF_UNIQUE_ID, uniqueID);
+                editor.putString(PREF_UNIQUE_ID, mUniqueID);
                 editor.apply();
             }
         }
@@ -45,9 +43,9 @@ class analyticManager
     /*Helper Methods*/
 
     void logUser(){
-        Crashlytics.setUserIdentifier(uniqueID);
-        Crashlytics.setUserEmail(constants.user_email);
-        Crashlytics.setUserName(uniqueID);
+        Crashlytics.setUserIdentifier(mUniqueID);
+        Crashlytics.setUserEmail(constants.USER_EMAIL);
+        Crashlytics.setUserName(mUniqueID);
     }
 
 }

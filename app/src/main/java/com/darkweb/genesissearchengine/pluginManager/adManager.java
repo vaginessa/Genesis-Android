@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import com.darkweb.genesissearchengine.constants.constants;
+import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.google.android.gms.ads.*;
 
 class adManager
@@ -11,32 +12,32 @@ class adManager
 
     /*Private Variables*/
 
-    private AppCompatActivity app_context;
-    private eventObserver.eventListener event;
-    private AdView banner_ads = null;
+    private AppCompatActivity mAppContext;
+    private eventObserver.eventListener mEvent;
+    private AdView mBannerAds = null;
 
     /*Initializations*/
 
     adManager(AppCompatActivity app_context, eventObserver.eventListener event, AdView banner_ads) {
-        this.app_context = app_context;
-        this.event = event;
+        this.mAppContext = app_context;
+        this.mEvent = event;
         initialize(banner_ads);
     }
 
     private void initialize(AdView banner_ads){
-        this.banner_ads = banner_ads;
-        MobileAds.initialize(app_context, constants.admobKey);
+        this.mBannerAds = banner_ads;
+        MobileAds.initialize(mAppContext, constants.ADMOB_KEY);
         banner_ads.setAlpha(0f);
     }
 
     /*Local Helper Methods*/
 
     private void admobListeners(){
-            banner_ads.setAdListener(new AdListener() {
+            mBannerAds.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
                 Log.i("Success___","Success");
-                event.invokeObserver(null,null);
+                mEvent.invokeObserver(null,null);
             }
 
             @Override
@@ -66,7 +67,7 @@ class adManager
 
     void initializeBannerAds(){
         AdRequest request = new AdRequest.Builder().addTestDevice("41B9A0495CE25FCA44B3186D6B8268F0").build();
-        banner_ads.loadAd(request);
+        mBannerAds.loadAd(request);
         admobListeners();
     }
 

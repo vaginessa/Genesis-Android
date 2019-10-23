@@ -44,7 +44,7 @@
   MG           8 a mail group member (EXPERIMENTAL)           [RFC 1035]
   MR           9 a mail rename domain name (EXPERIMENTAL)     [RFC 1035]
   NULL         10 a null RR (EXPERIMENTAL)                    [RFC 1035]
-  WKS          11 (RECORD) a well known service description   [RFC 1035]
+  WKS          11 (RECORD) a well known service mDescription   [RFC 1035]
 + PTR          12 (PTR) a domain name pointer                 [RFC 1035]
   HINFO        13 (RECORD) host information                   [RFC 1035]
   MINFO        14 mailbox or mail list information            [RFC 1035]

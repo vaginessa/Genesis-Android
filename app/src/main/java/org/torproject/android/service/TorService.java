@@ -855,7 +855,7 @@ public class TorService extends Service implements TorServiceConstants, OrbotCon
 	        
 	        ArrayList<String> customEnv = new ArrayList<String>();
 	
-	        if (status.gateway)
+	        if (status.sGateway)
 	        	if (Prefs.useVpn() && !mIsLollipop)
 	        	{
 	        		customEnv.add("TOR_PT_PROXY=socks5://" + OrbotVpnManager.sSocksProxyLocalhost + ":" + OrbotVpnManager.sSocksProxyServerPort);
@@ -1428,7 +1428,7 @@ public class TorService extends Service implements TorServiceConstants, OrbotCon
           // You can also include some extra data.
           intent.putExtra(LOCAL_EXTRA_LOG, logMessage);
 	      intent.putExtra(EXTRA_STATUS, mCurrentStatus);
-          status.tor_logs_status = logMessage;
+          status.sTorLogsStatus = logMessage;
 
           LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
@@ -1530,7 +1530,7 @@ public class TorService extends Service implements TorServiceConstants, OrbotCon
                         logNotice(context.getString(R.string.network_connectivity_is_good_waking_tor_up_));
                         showToolbarNotification(getString(R.string.status_activated),NOTIFY_ID,R.drawable.ic_stat_tor);
                     }
-                    status.isTorInitialized = mConnectivity;
+                    status.sIsTorInitialized = mConnectivity;
                 }
                 catch (IOException e) {
                     e.printStackTrace();
@@ -1548,7 +1548,7 @@ public class TorService extends Service implements TorServiceConstants, OrbotCon
         
         SharedPreferences prefs = TorServiceUtils.getSharedPrefs(getApplicationContext());
         
-        boolean useBridges = status.gateway;
+        boolean useBridges = status.sGateway;
 
         boolean becomeRelay = prefs.getBoolean(OrbotConstants.PREF_OR, false);
         boolean ReachableAddresses = prefs.getBoolean(OrbotConstants.PREF_REACHABLE_ADDRESSES,false);

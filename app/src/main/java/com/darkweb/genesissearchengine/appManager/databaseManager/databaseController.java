@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.darkweb.genesissearchengine.appManager.bookmarkManager.bookmarkRowModel;
 import com.darkweb.genesissearchengine.appManager.historyManager.historyRowModel;
-import com.darkweb.genesissearchengine.appManager.home_activity.homeModel;
 import com.darkweb.genesissearchengine.constants.constants;
 
 import java.util.ArrayList;
@@ -18,12 +17,12 @@ public class databaseController
 
     /*Private Variables*/
 
-    private static final databaseController ourInstance = new databaseController();
-    private SQLiteDatabase database_instance;
+    private static final databaseController sOurInstance = new databaseController();
+    private SQLiteDatabase mDatabaseInstance;
 
     public static databaseController getInstance()
     {
-        return ourInstance;
+        return sOurInstance;
     }
 
     private databaseController()
@@ -36,9 +35,9 @@ public class databaseController
     {
         try
         {
-            database_instance = app_context.openOrCreateDatabase(constants.databae_name, MODE_PRIVATE, null);
-            database_instance.execSQL("CREATE TABLE IF NOT EXISTS " + "history" + " (id  INT(4) PRIMARY KEY,date VARCHAR,url VARCHAR);");
-            database_instance.execSQL("CREATE TABLE IF NOT EXISTS " + "bookmark" + " (id INT(4) PRIMARY KEY,title VARCHAR,url VARCHAR);");
+            mDatabaseInstance = app_context.openOrCreateDatabase(constants.DATABASE_NAME, MODE_PRIVATE, null);
+            mDatabaseInstance.execSQL("CREATE TABLE IF NOT EXISTS " + "history" + " (id  INT(4) PRIMARY KEY,date VARCHAR,url VARCHAR);");
+            mDatabaseInstance.execSQL("CREATE TABLE IF NOT EXISTS " + "bookmark" + " (id INT(4) PRIMARY KEY,title VARCHAR,url VARCHAR);");
 
         }
         catch (Exception ex)
@@ -54,17 +53,17 @@ public class databaseController
     {
         if(params==null)
         {
-            database_instance.execSQL(query);
+            mDatabaseInstance.execSQL(query);
         }
         else
         {
-            database_instance.execSQL(query,params);
+            mDatabaseInstance.execSQL(query,params);
         }
     }
 
     public ArrayList<historyRowModel> selectHistory(int startIndex,int endIndex){
         ArrayList<historyRowModel> tempmodel = new ArrayList<>();
-        Cursor c = database_instance.rawQuery("SELECT * FROM history ORDER BY date DESC LIMIT "+endIndex+" OFFSET "+startIndex, null);
+        Cursor c = mDatabaseInstance.rawQuery("SELECT * FROM history ORDER BY date DESC LIMIT "+endIndex+" OFFSET "+startIndex, null);
         if (c.moveToFirst()){
             do {
                 tempmodel.add(new historyRowModel(c.getString(2), c.getString(1),Integer.parseInt(c.getString(0))));
@@ -77,7 +76,7 @@ public class databaseController
 
     public int getLargestHistoryID(){
         int id = 0;
-        Cursor c = database_instance.rawQuery("SELECT max(id) FROM history", null);
+        Cursor c = mDatabaseInstance.rawQuery("SELECT max(id) FROM history", null);
 
         if (c.moveToFirst()){
             do {
@@ -95,7 +94,7 @@ public class databaseController
 
     public int getHistorySize(){
         int id = 0;
-        Cursor c = database_instance.rawQuery("SELECT count(*) FROM history", null);
+        Cursor c = mDatabaseInstance.rawQuery("SELECT count(*) FROM history", null);
 
         if (c.moveToFirst()){
             do {
@@ -113,7 +112,7 @@ public class databaseController
 
     public ArrayList<bookmarkRowModel> selectBookmark(){
         ArrayList<bookmarkRowModel> tempmodel = new ArrayList<>();
-        Cursor c = database_instance.rawQuery("SELECT * FROM bookmark ORDER BY id DESC ", null);
+        Cursor c = mDatabaseInstance.rawQuery("SELECT * FROM bookmark ORDER BY id DESC ", null);
 
         if (c.moveToFirst()){
             do {

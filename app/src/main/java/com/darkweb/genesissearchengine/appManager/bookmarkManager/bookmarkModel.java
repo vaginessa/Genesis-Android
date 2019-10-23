@@ -6,21 +6,21 @@ class bookmarkModel
 {
     /*Private Variables*/
 
-    private ArrayList<bookmarkRowModel> model_list = new ArrayList<>();
+    private ArrayList<bookmarkRowModel> mModelList = new ArrayList<>();
 
     /*Initializations*/
 
     void setList(ArrayList<bookmarkRowModel> model)
     {
-        model_list = model;
+        mModelList = model;
     }
     ArrayList<bookmarkRowModel> getList()
     {
-        return model_list;
+        return mModelList;
     }
     private void removeFromMainList(int index)
     {
-        model_list.remove(index);
+        mModelList.remove(index);
     }
 
     void onManualClear(int index){
@@ -28,7 +28,7 @@ class bookmarkModel
     }
 
     void clearList(){
-        model_list.clear();
+        mModelList.clear();
     }
 
 

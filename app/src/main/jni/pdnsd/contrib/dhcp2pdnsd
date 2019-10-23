@@ -3,7 +3,7 @@
 # dhcp2pdnsd       Start/Stop DHCP to DNS update script
 #
 # chkconfig: 345 96 99
-# description: DHCP to DNS update script
+# mDescription: DHCP to DNS update script
 # processname: dhcp2pdnsd.pl
 #
 # $Id: dhcp2pdnsd,v 1.1 2001/03/25 20:01:34 tmm Exp $

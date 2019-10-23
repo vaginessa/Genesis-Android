@@ -2,7 +2,8 @@ package com.darkweb.genesissearchengine.appManager;
 
 import com.darkweb.genesissearchengine.appManager.bookmarkManager.bookmarkController;
 import com.darkweb.genesissearchengine.appManager.historyManager.historyController;
-import com.darkweb.genesissearchengine.appManager.home_activity.homeController;
+import com.darkweb.genesissearchengine.appManager.homeManager.homeController;
+import com.darkweb.genesissearchengine.appManager.tabManager.tabController;
 
 public class activityContextManager
 {
@@ -18,6 +19,7 @@ public class activityContextManager
     private historyController history_controller;
     private bookmarkController bookmark_controller;
     private homeController home_controller;
+    private tabController tab_controller;
 
     /*Initialization*/
 
@@ -32,16 +34,25 @@ public class activityContextManager
     public void setHistoryController(historyController history_controller){
         this.history_controller = history_controller;
     }
+
     public bookmarkController getBookmarkController(){
         return bookmark_controller;
     }
     public void setBookmarkController(bookmarkController bookmark_controller){
         this.bookmark_controller = bookmark_controller;
     }
+
     public homeController getHomeController(){
         return home_controller;
     }
     public void setHomeController(homeController home_controller){
         this.home_controller = home_controller;
+    }
+
+    public tabController getTabController(){
+        return tab_controller;
+    }
+    public void setTabController(tabController tab_controller){
+        this.tab_controller = tab_controller;
     }
 }

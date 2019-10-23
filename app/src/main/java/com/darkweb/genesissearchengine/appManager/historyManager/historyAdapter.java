@@ -8,23 +8,25 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.strings;
+import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.example.myapplication.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class historyAdapter extends RecyclerView.Adapter<historyAdapter.listViewHolder>
 {
     /*Private Variables*/
 
-    private ArrayList<historyRowModel> model_list;
-    private ArrayList<historyRowModel> temp_model_list;
-    private eventObserver.eventListener event;
-    private String filter = strings.emptyStr;
+    private ArrayList<historyRowModel> mModelList;
+    private ArrayList<historyRowModel> tempModelList;
+    private eventObserver.eventListener mEvent;
+    private String filter = strings.EMPTY_STR;
 
-    historyAdapter(ArrayList<historyRowModel> model_list, eventObserver.eventListener event) {
-        this.model_list = model_list;
-        this.event = event;
-        temp_model_list = new ArrayList<>();
+    historyAdapter(ArrayList<historyRowModel> mModelList, eventObserver.eventListener mEvent) {
+        this.mModelList = mModelList;
+        this.mEvent = mEvent;
+        tempModelList = new ArrayList<>();
     }
 
     /*Initializations*/
@@ -39,13 +41,13 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.listView
     @Override
     public void onBindViewHolder(@NonNull historyAdapter.listViewHolder holder, int position)
     {
-        holder.bindListView(temp_model_list.get(position));
-        clearMessageItem(holder.messageButton,position);
+        holder.bindListView(tempModelList.get(position));
+        clearMessageItem(holder.mMessageButton,position);
     }
 
     @Override
     public int getItemCount() {
-        return temp_model_list.size();
+        return tempModelList.size();
     }
 
     /*Listeners*/
@@ -54,7 +56,7 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.listView
     {
         itemView.setOnClickListener(v ->
         {
-            event.invokeObserver(url,enums.history_eventType.url_triggered);
+            mEvent.invokeObserver(Collections.singletonList(url),enums.etype.url_triggered);
         });
     }
 
@@ -62,13 +64,13 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.listView
     {
         clearButton.setOnClickListener(v ->
         {
-            if(temp_model_list.size()>index){
-                int index_temp = temp_model_list.get(index).getId();
-                event.invokeObserver(temp_model_list.get(index).getHeader(),enums.history_eventType.url_clear_at);
-                event.invokeObserver(model_list.get(index_temp).getId(),enums.history_eventType.remove_from_database);
-                event.invokeObserver(temp_model_list.get(index).getId(),enums.history_eventType.url_clear);
+            if(tempModelList.size()>index){
+                int index_temp = tempModelList.get(index).getmId();
+                mEvent.invokeObserver(Collections.singletonList(tempModelList.get(index).getmHeader()),enums.etype.url_clear_at);
+                mEvent.invokeObserver(Collections.singletonList(mModelList.get(index_temp).getmId()),enums.etype.remove_from_database);
+                mEvent.invokeObserver(Collections.singletonList(tempModelList.get(index).getmId()),enums.etype.url_clear);
                 invokeFilter(false);
-                event.invokeObserver(index,enums.history_eventType.is_empty);
+                mEvent.invokeObserver(Collections.singletonList(index),enums.etype.is_empty);
             }
         });
     }
@@ -77,11 +79,11 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.listView
 
     class listViewHolder extends RecyclerView.ViewHolder
     {
-        TextView heaaderText;
-        TextView descriptionText;
-        ImageButton messageButton;
-        ImageView empty_message;
-        LinearLayout itemContainer;
+        TextView mHeaaderText;
+        TextView mDescriptionText;
+        ImageButton mMessageButton;
+        ImageView mEmptyMessage;
+        LinearLayout mItemContainer;
 
         listViewHolder(View itemView) {
             super(itemView);
@@ -89,18 +91,18 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.listView
 
         void bindListView(historyRowModel model) {
 
-            heaaderText = itemView.findViewById(R.id.header);
-            descriptionText = itemView.findViewById(R.id.description);
-            itemContainer = itemView.findViewById(R.id.item_container);
+            mHeaaderText = itemView.findViewById(R.id.mHeader);
+            mDescriptionText = itemView.findViewById(R.id.mDescription);
+            mItemContainer = itemView.findViewById(R.id.item_container);
 
-            String header = model.getHeader();
+            String header = model.getmHeader();
 
-            descriptionText.setText(model.getDescription());
-            heaaderText.setText(model.getHeader());
-            messageButton = itemView.findViewById(R.id.message_button);
-            empty_message = itemView.findViewById(R.id.empty_list);
+            mDescriptionText.setText(model.getmDescription());
+            mHeaaderText.setText(model.getmHeader());
+            mMessageButton = itemView.findViewById(R.id.message_button);
+            mEmptyMessage = itemView.findViewById(R.id.empty_list);
 
-            setItemViewOnClickListener(itemContainer,model.getId(),header);
+            setItemViewOnClickListener(mItemContainer,model.getmId(),header);
         }
     }
 
@@ -109,11 +111,11 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.listView
     }
 
     void invokeFilter(boolean notify){
-        temp_model_list.clear();
-        for(int counter=0;counter<model_list.size();counter++){
-            if(model_list.get(counter).getHeader().contains(filter)){
-                historyRowModel model = model_list.get(counter);
-                temp_model_list.add(new historyRowModel(model.getHeader(),model.getDescription(),counter));
+        tempModelList.clear();
+        for(int counter = 0; counter< mModelList.size(); counter++){
+            if(mModelList.get(counter).getmHeader().contains(filter)){
+                historyRowModel model = mModelList.get(counter);
+                tempModelList.add(new historyRowModel(model.getmHeader(),model.getmDescription(),counter));
             }
         }
 

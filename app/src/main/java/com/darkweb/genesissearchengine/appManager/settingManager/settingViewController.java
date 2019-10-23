@@ -1,13 +1,10 @@
 package com.darkweb.genesissearchengine.appManager.settingManager;
 
 import android.os.Build;
-import android.text.InputFilter;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -17,128 +14,145 @@ import androidx.core.content.ContextCompat;
 
 import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.status;
+import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.example.myapplication.R;
 
-import static com.darkweb.genesissearchengine.constants.status.history_status;
-import static com.darkweb.genesissearchengine.constants.status.java_status;
+import static com.darkweb.genesissearchengine.constants.status.sHistoryStatus;
+import static com.darkweb.genesissearchengine.constants.status.sJavaStatus;
 
 class settingViewController
 {
     /*Private Variables*/
 
-    private eventObserver.eventListener event;
-    private AppCompatActivity context;
+    private eventObserver.eventListener mEvent;
+    private AppCompatActivity mContext;
 
-    private Spinner search;
-    private Spinner javascript;
-    private Spinner history;
-    private Spinner font_adjustable;
-    private SeekBar font_size;
-    private TextView font_size_percentage;
+    private Spinner mSearch;
+    private Spinner mJavaScript;
+    private Spinner mHistory;
+    private Spinner mCookies;
+    private Spinner mFontAdjustable;
+    private SeekBar mFontSize;
+    private TextView mFontSizePercentage;
 
     /*Initializations*/
 
-    settingViewController(Spinner search, Spinner javascript, Spinner history,SeekBar font_size,Spinner font_adjustable,TextView font_size_percentage, settingController app_context, String currentSearchEngine, eventObserver.eventListener event,AppCompatActivity context)
+    settingViewController(Spinner mSearch, Spinner mJavaScript, Spinner mHistory, SeekBar mFontSize, Spinner mFontAdjustable, TextView mFontSizePercentage, settingController mContext, eventObserver.eventListener mEvent, AppCompatActivity context, Spinner mCookies)
     {
-        this.font_size_percentage = font_size_percentage;
-        this.search = search;
-        this.javascript = javascript;
-        this.history = history;
-        this.font_adjustable = font_adjustable;
-        this.font_size = font_size;
+        this.mFontSizePercentage = mFontSizePercentage;
+        this.mSearch = mSearch;
+        this.mJavaScript = mJavaScript;
+        this.mHistory = mHistory;
+        this.mFontAdjustable = mFontAdjustable;
+        this.mFontSize = mFontSize;
+        this.mCookies = mCookies;
 
-        this.event = event;
-        this.context = context;
+        this.mEvent = mEvent;
+        this.mContext = mContext;
 
         initViews();
         initJavascript();
         initHistory();
         initSearchEngine();
         initFontAdjustable();
+        initCookies();
         initFontSize();
         initPostUI();
     }
 
     private void initPostUI(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = context.getWindow();
+            Window window = mContext.getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
-                window.setStatusBarColor(context.getResources().getColor(R.color.blue_dark));
+                window.setStatusBarColor(mContext.getResources().getColor(R.color.blue_dark));
             }
             else {
-                context.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);//  set status text dark
-                context.getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.white));
+                mContext.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);//  set status text dark
+                mContext.getWindow().setStatusBarColor(ContextCompat.getColor(mContext, R.color.white));
             }
         }
     }
 
     private void initViews()
     {
-        search.setDropDownVerticalOffset(15);
-        search.setDropDownHorizontalOffset(-15);
-        javascript.setDropDownVerticalOffset(15);
-        javascript.setDropDownHorizontalOffset(-15);
-        history.setDropDownVerticalOffset(15);
-        history.setDropDownHorizontalOffset(-15);
+        mSearch.setDropDownVerticalOffset(15);
+        mSearch.setDropDownHorizontalOffset(-15);
+        mJavaScript.setDropDownVerticalOffset(15);
+        mJavaScript.setDropDownHorizontalOffset(-15);
+        mHistory.setDropDownVerticalOffset(15);
+        mHistory.setDropDownHorizontalOffset(-15);
+        mCookies.setDropDownVerticalOffset(15);
+        mCookies.setDropDownHorizontalOffset(-15);
     }
 
     private void initJavascript()
     {
-        if (java_status)
+        if (sJavaStatus)
         {
-            javascript.setSelection(0);
+            mJavaScript.setSelection(0);
         }
         else
         {
-            javascript.setSelection(1);
+            mJavaScript.setSelection(1);
         }
     }
 
     private void initHistory()
     {
-        if (history_status)
+        if (sHistoryStatus)
         {
-            history.setSelection(0);
+            mHistory.setSelection(0);
         }
         else
         {
-            history.setSelection(1);
+            mHistory.setSelection(1);
+        }
+    }
+
+    private void initCookies()
+    {
+        if (status.sCookieStatus)
+        {
+            mCookies.setSelection(0);
+        }
+        else
+        {
+            mCookies.setSelection(1);
         }
     }
 
     private void initFontAdjustable()
     {
-        if (status.fontAdjustable)
+        if (status.sFontAdjustable)
         {
-            font_adjustable.setSelection(0);
+            mFontAdjustable.setSelection(0);
         }
         else
         {
-            font_adjustable.setSelection(1);
+            mFontAdjustable.setSelection(1);
         }
     }
 
     private void initFontSize()
     {
-        font_size.setProgress((int)status.fontSize);
-        updatePercentage(font_size.getProgress());
+        mFontSize.setProgress((int)status.sFontSize);
+        updatePercentage(mFontSize.getProgress());
     }
 
-    @SuppressWarnings("unchecked")
     private void initSearchEngine()
     {
-        search.setSelection(getEngineIndex());
+        mSearch.setSelection(getEngineIndex());
     }
 
     /*External Helper Methods*/
 
     private int getEngineIndex(){
-        if(status.search_status.equals(constants.backendGenesis)){
+        if(status.sSearchStatus.equals(constants.BACKEND_GENESIS_URL)){
             return 0;
         }
-        else if(status.search_status.equals(constants.backendGoogle)){
+        else if(status.sSearchStatus.equals(constants.BACKEND_GOOGLE_URL)){
             return 1;
         }
         else
@@ -146,9 +160,8 @@ class settingViewController
     }
 
     void updatePercentage(int font_size){
-        int percentage = font_size;
 
-        Log.i("asd"," | Percentage:"+status.fontSize);
-        font_size_percentage.setText("Adjust Font" + " " + percentage+"%");
+        Log.i("asd"," | Percentage:"+status.sFontSize);
+        mFontSizePercentage.setText("Adjust Font" + " " + font_size +"%");
     }
 }

@@ -37,9 +37,18 @@
     <string name="settings_font_title" translatable="false">Font Settings</string>
     <string name="adjust_font" translatable="false">Adjust Font</string>
     <string name="manual_font" translatable="false">Manual Font</string>
+    <string name="settings_cookies" translatable="false">Cookie Settings</string>
+    <string name="cookie" translatable="false">Cookies</string>
 
     <!-- List View -->
     <string name="listview_clear" translatable="false">Clear</string>
+
+    <!-- Orbot View -->
+    <string name="orbot_header" translatable="false">Proxy Settings</string>
+    <string name="orbot_desc" translatable="false">Genesis Browser connects you to the Tor Network run by thousands of volunteers around the world! Can these options help you</string>
+    <string name="orbot_option_title" translatable="false">Internet is censored here</string>
+    <string name="orbot_option_desc" translatable="false">Bypass Firewall</string>
+    <string name="warning_slow_speed" translatable="false">Bridges causes internet to run very slow. Use them only if internet is censored in your country or Tor network is blocked</string>
 
     <!-- Splash -->
     <string name="gateway_info" translatable="false">Enable Gateway</string>

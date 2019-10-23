@@ -2,25 +2,25 @@ package com.darkweb.genesissearchengine.appManager.historyManager;
 
 import java.util.ArrayList;
 
-public class historyModel
+class historyModel
 {
     /*Private Variables*/
 
-    private ArrayList<historyRowModel> model_list = new ArrayList<>();
+    private ArrayList<historyRowModel> mModelList = new ArrayList<>();
 
     /*Initializations*/
 
     void setList(ArrayList<historyRowModel> model)
     {
-        model_list = model;
+        mModelList = model;
     }
     ArrayList<historyRowModel> getList()
     {
-        return model_list;
+        return mModelList;
     }
     private void removeFromMainList(int index)
     {
-        model_list.remove(index);
+        mModelList.remove(index);
     }
 
     void onManualClear(int index){
@@ -28,7 +28,7 @@ public class historyModel
     }
 
     void clearList(){
-        model_list.clear();
+        mModelList.clear();
     }
 
 

@@ -4,27 +4,27 @@ public class historyRowModel
 {
     /*Private Variables*/
 
-    private int id;
-    private String header;
-    private String description;
+    private int mId;
+    private String mHeader;
+    private String mDescription;
 
     /*Initializations*/
 
-    public historyRowModel(String header, String description,int id) {
-        this.id = id;
-        this.header = header;
-        this.description = description;
+    public historyRowModel(String mHeader, String mDescription,int mId) {
+        this.mId = mId;
+        this.mHeader = mHeader;
+        this.mDescription = mDescription;
     }
 
     /*Variable Getters*/
 
-    public String getHeader() {
-        return header;
+    public String getmHeader() {
+        return mHeader;
     }
-    public String getDescription() {
-        return description;
+    String getmDescription() {
+        return mDescription;
     }
-    public int getId() {
-        return id;
+    public int getmId() {
+        return mId;
     }
 }

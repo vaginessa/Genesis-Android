@@ -127,11 +127,11 @@ gcc)
 ## The second -e expression handles DOS-style file names with drive letters.
   sed -e 's/^[^:]*: / /' \
       -e 's/^['$alpha']:\/[^:]*: / /' < "$tmpdepfile" >> "$depfile"
-## This next piece of magic avoids the `deleted header file' problem.
-## The problem is that when a header file which appears in a .P file
+## This next piece of magic avoids the `deleted mHeader file' problem.
+## The problem is that when a mHeader file which appears in a .P file
 ## is deleted, the dependency causes make to die (because there is
-## typically no way to rebuild the header).  We avoid this by adding
-## dummy dependencies for each header file.  Too bad gcc doesn't do
+## typically no way to rebuild the mHeader).  We avoid this by adding
+## dummy dependencies for each mHeader file.  Too bad gcc doesn't do
 ## this for us directly.
   tr ' ' '
 ' < "$tmpdepfile" |
@@ -181,7 +181,7 @@ sgi)
 ' ' ' >> $depfile
     echo >> $depfile
 
-    # The second pass generates a dummy entry for each header file.
+    # The second pass generates a dummy entry for each mHeader file.
     tr ' ' '
 ' < "$tmpdepfile" \
    | sed -e 's/^.*\.o://' -e 's/#.*$//' -e '/^$/ d' -e 's/$/:/' \

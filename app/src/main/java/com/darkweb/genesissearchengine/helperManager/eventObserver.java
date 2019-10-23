@@ -1,4 +1,4 @@
-package com.darkweb.genesissearchengine.appManager.launcherManager;
+package com.darkweb.genesissearchengine.helperManager;
 
 import com.darkweb.genesissearchengine.constants.enums;
 
@@ -8,6 +8,6 @@ public class eventObserver
 {
     public interface eventListener
     {
-        void invokeObserver(List<Object> data, enums.home_eventType e_type);
+        void invokeObserver(List<Object> data, enums.etype event_type);
     }
 }

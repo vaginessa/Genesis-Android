@@ -33,7 +33,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.darkweb.genesissearchengine.pluginManager.PathUtil;
+import com.darkweb.genesissearchengine.helperManager.PathUtil;
 
 import java.net.URISyntaxException;
 import java.text.ParseException;
@@ -49,8 +49,8 @@ import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSession.PermissionDelegate.MediaSource;
 import org.mozilla.geckoview.SlowScriptResponse;
 
-final class BasicGeckoViewPrompt implements GeckoSession.PromptDelegate {
-    protected static final String LOGTAG = "BasicGeckoViewPrompt";
+final class geckoPromptView implements GeckoSession.PromptDelegate {
+    protected static final String LOGTAG = "geckoPromptView";
 
     private final Activity mActivity;
     public int filePickerRequestCode = 1;
@@ -58,7 +58,7 @@ final class BasicGeckoViewPrompt implements GeckoSession.PromptDelegate {
     private GeckoResult<PromptResponse> mFileResponse;
     private FilePrompt mFilePrompt;
 
-    public BasicGeckoViewPrompt(final Activity activity) {
+    public geckoPromptView(final Activity activity) {
         mActivity = activity;
     }
 

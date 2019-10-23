@@ -18,63 +18,63 @@ import com.example.myapplication.R;
 class bookmarkViewController
 {
     /*Private Variables*/
-    private AppCompatActivity context;
+    private AppCompatActivity mContext;
 
-    private ImageView emptyListNotifier;
-    private EditText searchBar;
-    private RecyclerView listView;
-    private Button clearButton;
+    private ImageView mEmptyListNotifier;
+    private EditText mSearchBar;
+    private RecyclerView mListView;
+    private Button mClearButton;
 
     /*Initializations*/
 
-    bookmarkViewController(ImageView emptyListNotifier, EditText searchBar, RecyclerView listView, Button clearButton,AppCompatActivity context)
+    bookmarkViewController(ImageView mEmptyListNotifier, EditText mSearchBar, RecyclerView mListView, Button mClearButton,AppCompatActivity mContext)
     {
-        this.context = context;
-        this.emptyListNotifier = emptyListNotifier;
-        this.searchBar = searchBar;
-        this.listView = listView;
-        this.clearButton = clearButton;
+        this.mContext = mContext;
+        this.mEmptyListNotifier = mEmptyListNotifier;
+        this.mSearchBar = mSearchBar;
+        this.mListView = mListView;
+        this.mClearButton = mClearButton;
 
         initPostUI();
     }
 
     private void initPostUI(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = context.getWindow();
+            Window window = mContext.getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
-                window.setStatusBarColor(context.getResources().getColor(R.color.blue_dark));
+                window.setStatusBarColor(mContext.getResources().getColor(R.color.blue_dark));
             }
             else {
-                context.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);//  set status text dark
-                context.getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.white));
+                mContext.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);//  set status text dark
+                mContext.getWindow().setStatusBarColor(ContextCompat.getColor(mContext, R.color.white));
             }
         }
     }
 
     void updateIfListEmpty(int size,int duration){
         if(size>0){
-            emptyListNotifier.animate().setDuration(duration).alpha(0f);
-            clearButton.animate().setDuration(duration).alpha(1f);
+            mEmptyListNotifier.animate().setDuration(duration).alpha(0f);
+            mClearButton.animate().setDuration(duration).alpha(1f);
         }
         else {
-            emptyListNotifier.animate().setDuration(duration).alpha(1f);
-            clearButton.animate().setDuration(duration).alpha(0f);
+            mEmptyListNotifier.animate().setDuration(duration).alpha(1f);
+            mClearButton.animate().setDuration(duration).alpha(0f);
         }
     }
 
     void removeFromList(int index)
     {
-        listView.getAdapter().notifyItemRemoved(index);
-        listView.getAdapter().notifyItemRangeChanged(index, listView.getAdapter().getItemCount());
+        mListView.getAdapter().notifyItemRemoved(index);
+        mListView.getAdapter().notifyItemRangeChanged(index, mListView.getAdapter().getItemCount());
     }
 
     void clearList(){
-        listView.getAdapter().notifyDataSetChanged();
-        updateIfListEmpty(listView.getAdapter().getItemCount(),300);
-        searchBar.clearFocus();
-        searchBar.setText(strings.emptyStr);
+        mListView.getAdapter().notifyDataSetChanged();
+        updateIfListEmpty(mListView.getAdapter().getItemCount(),300);
+        mSearchBar.clearFocus();
+        mSearchBar.setText(strings.EMPTY_STR);
     }
 
 }

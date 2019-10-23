@@ -1,4 +1,4 @@
-package com.darkweb.genesissearchengine.pluginManager;
+package com.darkweb.genesissearchengine.helperManager;
 
 import android.annotation.SuppressLint;
 import android.content.ContentUris;

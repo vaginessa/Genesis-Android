@@ -4,33 +4,32 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 class firebaseManager
 {
     /*Private Variables*/
 
-    private AppCompatActivity app_context;
-    private eventObserver.eventListener event;
+    private AppCompatActivity mAppContext;
     private FirebaseAnalytics mFirebaseAnalytics;
 
     /*Initializations*/
 
     firebaseManager(AppCompatActivity app_context, eventObserver.eventListener event){
-        this.app_context = app_context;
-        this.event = event;
+        this.mAppContext = app_context;
 
         initialize();
     }
 
     public void initialize()
     {
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(app_context.getApplicationContext());
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(mAppContext.getApplicationContext());
     }
 
     /*Helper Methods*/
 
-    void logEvent(String value, String id)
+    void logEvent(String value)
     {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, value);

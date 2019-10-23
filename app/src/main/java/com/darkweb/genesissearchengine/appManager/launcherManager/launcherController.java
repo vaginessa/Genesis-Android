@@ -1,52 +1,63 @@
-package com.darkweb.genesissearchengine.appManager.homeManager;
+package com.darkweb.genesissearchengine.appManager.launcherManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Build;
 import android.os.Bundle;
-import android.view.Window;
-import android.view.WindowManager;
 
+import com.darkweb.genesissearchengine.appManager.homeManager.homeController;
 import com.darkweb.genesissearchengine.constants.constants;
+import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.strings;
+import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.darkweb.genesissearchengine.helperManager.helperMethod;
 import com.darkweb.genesissearchengine.pluginManager.pluginController;
 import com.example.myapplication.R;
 
-public class launcherActivity extends AppCompatActivity
-{
-    boolean isStarted = false;
+import java.util.List;
 
-    /*Start Application*/
+public class launcherController extends AppCompatActivity
+{
+    /*Private Variables*/
+    private launcherViewController mLauncherViewController;
+    private boolean mIsStarted = false;
+
+    /*Initializations*/
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.invalid_setup_view);
-        initPostUI();
-        helperMethod.openActivity(homeController.class, constants.list_history, this,false);
+
+        initViews();
+        helperMethod.openActivity(homeController.class, constants.LIST_HISTORY, this,false);
     }
 
-    /*Restart on Low Memory*/
+    private void initViews(){
+        mLauncherViewController = new launcherViewController(this,new launcherViewCallback());
+    }
+
+    /*Activity State Manager*/
     @Override
     public void onResume()
     {
-        if(isStarted){
-            helperMethod.openActivity(homeController.class, constants.list_history, this,false);
-            pluginController.getInstance().logEvent(strings.app_restarted);
+        if(mIsStarted){
+            helperMethod.openActivity(homeController.class, constants.LIST_HISTORY, this,false);
+            pluginController.getInstance().logEvent(strings.APP_RESTARTED);
         }
         else {
-            isStarted = true;
+            mIsStarted = true;
         }
         super.onResume();
     }
 
-    /*Initialize Background*/
-    private void initPostUI(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(getResources().getColor(R.color.ease_blue));
+    /*Initializations Callbacks*/
+
+    public class launcherViewCallback implements eventObserver.eventListener
+    {
+        @Override
+        public void invokeObserver(List<Object> data, enums.etype e_type)
+        {
+
         }
     }
 

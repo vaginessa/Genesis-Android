@@ -13,9 +13,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.strings;
+import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.example.myapplication.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.listViewHolder>
 {
@@ -24,7 +26,7 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.listVi
     private ArrayList<bookmarkRowModel> model_list;
     private ArrayList<bookmarkRowModel> temp_model_list;
     private eventObserver.eventListener event;
-    private String filter = strings.emptyStr;
+    private String filter = strings.EMPTY_STR;
 
     bookmarkAdapter(ArrayList<bookmarkRowModel> model_list, eventObserver.eventListener event) {
         this.model_list = model_list;
@@ -59,7 +61,7 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.listVi
     {
         itemView.setOnClickListener(v ->
         {
-            event.invokeObserver(url,enums.bookmark_eventType.url_triggered);
+            event.invokeObserver(Collections.singletonList(url),enums.etype.url_triggered);
         });
     }
 
@@ -68,10 +70,10 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.listVi
         clearButton.setOnClickListener(v ->
         {
             if(temp_model_list.size()>index){
-                event.invokeObserver(model_list.get(temp_model_list.get(index).getId()).getId(),enums.bookmark_eventType.remove_from_database);
-                event.invokeObserver(temp_model_list.get(index).getId(),enums.bookmark_eventType.url_clear);
+                event.invokeObserver(Collections.singletonList(model_list.get(temp_model_list.get(index).getmId()).getmId()),enums.etype.remove_from_database);
+                event.invokeObserver(Collections.singletonList(temp_model_list.get(index).getmId()),enums.etype.url_clear);
                 invokeFilter(false);
-                event.invokeObserver(index,enums.bookmark_eventType.is_empty);
+                event.invokeObserver(Collections.singletonList(index),enums.etype.is_empty);
             }
         });
     }
@@ -92,14 +94,14 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.listVi
 
         void bindListView(bookmarkRowModel model) {
 
-            heaaderText = itemView.findViewById(R.id.header);
-            descriptionText = itemView.findViewById(R.id.description);
+            heaaderText = itemView.findViewById(R.id.mHeader);
+            descriptionText = itemView.findViewById(R.id.mDescription);
             itemContainer = itemView.findViewById(R.id.item_container);
 
-            String header = model.getHeader();
+            String header = model.getmHeader();
 
-            descriptionText.setText(model.getHeader());
-            heaaderText.setText(model.getDescription());
+            descriptionText.setText(model.getmHeader());
+            heaaderText.setText(model.getmDescription());
             messageButton = itemView.findViewById(R.id.message_button);
             empty_message = itemView.findViewById(R.id.empty_list);
 
@@ -114,9 +116,9 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.listVi
     void invokeFilter(boolean notify){
         temp_model_list.clear();
         for(int counter=0;counter<model_list.size();counter++){
-            if(model_list.get(counter).getHeader().contains(filter) || model_list.get(counter).getDescription().contains(filter)){
+            if(model_list.get(counter).getmHeader().contains(filter) || model_list.get(counter).getmDescription().contains(filter)){
                 bookmarkRowModel model = model_list.get(counter);
-                temp_model_list.add(new bookmarkRowModel(model.getHeader(),model.getDescription(),counter));
+                temp_model_list.add(new bookmarkRowModel(model.getmHeader(),model.getmDescription(),counter));
             }
         }
 

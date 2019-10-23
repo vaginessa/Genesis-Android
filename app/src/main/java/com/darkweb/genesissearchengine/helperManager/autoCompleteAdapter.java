@@ -1,4 +1,4 @@
-package com.darkweb.genesissearchengine.appManager.homeManager;
+package com.darkweb.genesissearchengine.helperManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-import com.darkweb.genesissearchengine.helperMethod;
+import com.darkweb.genesissearchengine.helperManager.helperMethod;
 import com.example.myapplication.R;
 
 public class autoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
@@ -31,7 +31,7 @@ public class autoCompleteAdapter extends ArrayAdapter<String> implements Filtera
             return getResultCount;
     }
 
-    autoCompleteAdapter(Context context, int resource, int textViewResourceId, List<String> objects) {
+    public autoCompleteAdapter(Context context, int resource, int textViewResourceId, List<String> objects) {
 
         super(context, resource, textViewResourceId, objects);
         fullList = (ArrayList<String>) objects;

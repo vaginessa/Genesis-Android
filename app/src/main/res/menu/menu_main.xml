@@ -3,13 +3,22 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="example.javatpoint.com.optionmenu.MainActivity">
 
-    <group android:id="@+id/group_0" >
-        <item  android:id="@+id/menu2"
-                android:title="Tor Banned | Enable Gateway"
+    <group android:id="@+id/group_3" >
+        <item  android:id="@+id/menu10"
+                android:title="New Tabs                                    "
                 app:showAsAction="always"
                 android:icon="@android:drawable/btn_star"/>
+        <item  android:id="@+id/menu12"
+                android:title="Close Tab                            "
+                app:showAsAction="always"/>
+        <item  android:id="@+id/menu11"
+                android:title="Open Recent Tabs                            "
+                app:showAsAction="always"
+                android:icon="@android:drawable/btn_star"/>
+    </group>
+    <group android:id="@+id/group_0" >
         <item  android:id="@+id/menu9"
-                android:title="Location"
+                android:title="Location                                    "
                 app:showAsAction="always"
                 android:icon="@android:drawable/btn_star"/>
     </group>

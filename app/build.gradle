@@ -111,15 +111,15 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:2.0.0-beta2'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
-    implementation 'com.google.android.material:material:1.1.0-alpha10'
+    implementation 'com.google.android.material:material:1.1.0-beta01'
     implementation 'androidx.preference:preference:1.1.0'
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support:appcompat-v7:28.0.0'
 
     /*Firefox ABI Splits*/
-    x86Implementation     "org.mozilla.geckoview:geckoview-${geckoviewChannel}:${geckoviewVersion}"
-    x86_64Implementation  "org.mozilla.geckoview:geckoview-${geckoviewChannel}:${geckoviewVersion}"
-    armImplementation     "org.mozilla.geckoview:geckoview-${geckoviewChannel}:${geckoviewVersion}"
+    x86Implementation "org.mozilla.geckoview:geckoview-${geckoviewChannel}:${geckoviewVersion}"
+    x86_64Implementation "org.mozilla.geckoview:geckoview-${geckoviewChannel}:${geckoviewVersion}"
+    armImplementation "org.mozilla.geckoview:geckoview-${geckoviewChannel}:${geckoviewVersion}"
     aarch64Implementation "org.mozilla.geckoview:geckoview-${geckoviewChannel}:${geckoviewVersion}"
 
     /*Alert Dialog*/
@@ -135,19 +135,13 @@ dependencies {
     /*Proxy Manager*/
     implementation 'org.jetbrains:annotations:15.0'
     implementation 'com.google.firebase:firebase-core:17.2.0'
-
-    /*Onion Proxy*/
     implementation 'org.torproject:tor-android-binary:0.4.1.5-rc'
     implementation 'info.pluggabletransports.aptds:apt-dispatch-library:1.0.7'
     implementation 'info.pluggabletransports.aptds:apt-meek-obfs4-legacy:1.0.7'
     implementation 'info.pluggabletransports.aptds:jsocksAndroid:1.0.4'
-
-    implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.jaredrummler:android-shell:1.0.0'
-    implementation fileTree(dir: 'libs', include: ['.so'])
-    testImplementation 'junit:junit:4.12'
-
     implementation 'com.offbynull.portmapper:portmapper:2.0.5'
+
 }
 
 apply plugin: 'com.android.application'

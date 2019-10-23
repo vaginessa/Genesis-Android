@@ -5,117 +5,118 @@ import com.darkweb.genesissearchengine.constants.keys;
 import com.darkweb.genesissearchengine.constants.status;
 import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.dataManager.dataController;
+import com.darkweb.genesissearchengine.helperManager.eventObserver;
 
-public class settingModel
+import java.util.Collections;
+
+class settingModel
 {
     /*Variable Declaration*/
 
-    private eventObserver.eventListener event;
+    private eventObserver.eventListener mEvent;
+
+    private String mSearchStatus = strings.EMPTY_STR;
+    private boolean mCookieStatus = false;
+    private boolean mJavaStatus = false;
+    private boolean mHistoryStatus = true;
+    private boolean mFontAdjustable = true;
+    private float mFontSize = 1;
 
     /*Initializations*/
 
-    settingModel(eventObserver.eventListener event){
+    settingModel(eventObserver.eventListener mEvent){
         init_status();
-        this.event = event;
+        this.mEvent = mEvent;
     }
 
     /*Helper Methods*/
 
     private void init_status()
     {
-        search_status = status.search_status;
-        history_status = status.history_status;
-        java_status = status.java_status;
+        mSearchStatus = status.sSearchStatus;
+        mHistoryStatus = status.sHistoryStatus;
+        mJavaStatus = status.sJavaStatus;
+        mCookieStatus = status.sCookieStatus;
     }
 
     /*Changed Status*/
 
-    private String search_status = strings.emptyStr;
-    private boolean java_status = false;
-    private boolean history_status = true;
-    private boolean font_adjustable = true;
-    private float font_size = 1;
-
     String getSearchStatus(){
-        return search_status;
+        return mSearchStatus;
     }
 
-    public boolean getJavaStatus(){
-        return java_status;
-    }
-
-    public boolean getHistoryStatus(){
-        return history_status;
-    }
-
-    float getFontSize(){
-        return this.font_size;
+    void setCookieStatus(boolean cookie_status){
+        this.mCookieStatus = cookie_status;
     }
 
     void setSearchStatus(String search_status){
-        this.search_status = search_status;
+        this.mSearchStatus = search_status;
     }
 
     void setFontSize(float font_size){
-        this.font_size = font_size;
+        this.mFontSize = font_size;
     }
 
     void setAdjustableStatus(boolean font_status){
-        this.font_adjustable = font_status;
+        this.mFontAdjustable = font_status;
     }
 
 
     void setJavaStatus(boolean java_status){
-        this.java_status = java_status;
+        this.mJavaStatus = java_status;
     }
 
     void setHistoryStatus(boolean history_status){
-        this.history_status = history_status;
+        this.mHistoryStatus = history_status;
     }
 
     void onCloseView()
     {
-        if(!status.search_status.equals(search_status))
+        if(!status.sSearchStatus.equals(mSearchStatus))
         {
-            event.invokeObserver(search_status, enums.eventType.update_searcn);
+            mEvent.invokeObserver(Collections.singletonList(mSearchStatus), enums.etype.update_searcn);
         }
-        if(status.java_status != java_status)
+        if(status.sJavaStatus != mJavaStatus)
         {
-            event.invokeObserver(java_status, enums.eventType.update_javascript);
+            mEvent.invokeObserver(Collections.singletonList(mJavaStatus), enums.etype.update_javascript);
         }
-        if(status.history_status != history_status)
+        if(status.sHistoryStatus != mHistoryStatus)
         {
-            event.invokeObserver(history_status, enums.eventType.update_history);
-            event.invokeObserver(java_status, enums.eventType.update_javascript);
+            status.sHistoryStatus = mHistoryStatus;
+            mEvent.invokeObserver(Collections.singletonList(mHistoryStatus), enums.etype.update_history);
         }
-        if(status.fontAdjustable != font_adjustable)
+        if(status.sFontAdjustable != mFontAdjustable)
         {
-            dataController.getInstance().setBool(keys.font_adjustable,font_adjustable);
-            dataController.getInstance().setInt(keys.font_size,100);
+            dataController.getInstance().setBool(keys.FONT_ADJUSTABLE, mFontAdjustable);
+            dataController.getInstance().setInt(keys.FONT_SIZE,100);
 
-            status.fontAdjustable = font_adjustable;
-            status.fontSize = 100;
-            font_size = 100;
+            status.sFontAdjustable = mFontAdjustable;
+            status.sFontSize = 100;
+            mFontSize = 100;
 
-            event.invokeObserver(font_size, enums.eventType.update_font_adjustable);
+            mEvent.invokeObserver(Collections.singletonList(mFontSize), enums.etype.update_font_adjustable);
         }
-        if(status.fontSize != font_size)
+        if(status.sFontSize != mFontSize)
         {
-            if(font_size<=0){
-                font_size = 1;
+            if(mFontSize <=0){
+                mFontSize = 1;
             }
 
-            dataController.getInstance().setInt(keys.font_size,(int)font_size);
-            dataController.getInstance().setBool(keys.font_adjustable,false);
+            dataController.getInstance().setInt(keys.FONT_SIZE,(int) mFontSize);
+            dataController.getInstance().setBool(keys.FONT_ADJUSTABLE,false);
 
-            status.fontSize = font_size;
-            status.fontAdjustable = false;
-            font_adjustable = false;
+            status.sFontSize = mFontSize;
+            status.sFontAdjustable = false;
+            mFontAdjustable = false;
 
-            event.invokeObserver(font_size, enums.eventType.update_font_size);
+            mEvent.invokeObserver(Collections.singletonList(mFontSize), enums.etype.update_font_size);
         }
-
-        event.invokeObserver(history_status, enums.eventType.close_view);
+        if(status.sCookieStatus != mCookieStatus)
+        {
+            status.sCookieStatus = mCookieStatus;
+            dataController.getInstance().setBool(keys.COOKIE_ADJUSTABLE,status.sCookieStatus);
+        }
+        mEvent.invokeObserver(Collections.singletonList(mHistoryStatus), enums.etype.close_view);
     }
 
 }
