@@ -28,7 +28,7 @@
                             android:layout_marginStart="10dp"
                             android:layout_marginBottom="0dp"
                             android:layout_marginTop="12dp"
-                            android:id="@+id/home"
+                            android:id="@+id/newButton"
                             android:onClick="onNavigationBackPressed"
                             android:scaleType="fitCenter"
                             android:tint="@color/black"

@@ -43,87 +43,6 @@
 
     </FrameLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/requestFailure"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0"
-            android:background="@color/white"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-        <ImageButton
-                android:id="@+id/errorBack"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white_darker"
-                android:contentDescription="@string/todo"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-                android:id="@+id/editText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="74dp"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:text="@string/errorTiyle"
-                android:textAlignment="viewStart"
-                android:textColor="@color/text_color_v1"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="TextViewEdits" />
-
-        <Button
-                android:id="@+id/reloadButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="36dp"
-                android:background="@xml/reload_default_state"
-                android:bottomLeftRadius="10dp"
-                android:bottomRightRadius="10dp"
-                android:radius="1dp"
-                android:onClick="onReload"
-                android:text="@string/reload"
-                android:textColor="@color/black"
-                android:topLeftRadius="10dp"
-                android:topRightRadius="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.498"
-                app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-                android:id="@+id/textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="120dp"
-                android:layout_marginEnd="10dp"
-                android:text="@string/internetErrorMessage"
-                android:textColor="@color/text_color_v1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-                android:layout_width="150dp"
-                android:layout_height="0dp"
-                android:layout_marginTop="35dp"
-                android:layout_marginBottom="35dp"
-                android:contentDescription="@string/todo"
-                app:layout_constraintBottom_toTopOf="@+id/reloadButton"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView"
-                app:srcCompat="@drawable/icon_interneticon" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
     <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="71dp"
@@ -155,25 +74,25 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:ignore="RtlHardcoded,UselessParent">
 
-                <ImageButton
-                        android:id="@+id/home"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+                <Button
+                        android:id="@+id/newButtonInvoke"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
                         android:layout_marginStart="10dp"
-                        android:layout_marginTop="14dp"
+                        android:layout_marginTop="7.5dp"
+                        android:text="1"
                         android:layout_marginBottom="0dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:background="@xml/search_back_default"
                         android:contentDescription="@string/todo"
                         android:scaleType="fitCenter"
-                        android:onClick="onHomeButton"
-                        android:src="@drawable/icon_homeicon"
+                        android:onClick="onOpenTabView"
                         android:tint="@color/black" />
 
                 <AutoCompleteTextView
                         android:id="@+id/search"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="5dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="0dp"
                         android:layout_marginBottom="8dp"
@@ -258,10 +177,10 @@
                 android:alpha="0"
                 android:layout_marginTop="55.7dp"
                 android:progress="50"
+                android:max="10000"
                 android:progressDrawable="@xml/gradient_progress"
                 android:scaleY="0.7"
                 app:layout_constraintTop_toTopOf="parent" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/splashScreen"
                 android:layout_width="match_parent"

@@ -11,7 +11,7 @@ public class status
     /*Settings Status*/
 
     public static String sTorLogsStatus = strings.EMPTY_STR;
-    public static String sSearchStatus = constants.BACKEND_GENESIS_URL;
+    public static String sSearchStatus = constants.BACKEND_DUCK_DUCK_GO_URL;
     public static boolean sJavaStatus = true;
     public static boolean sHistoryStatus = true;
     public static boolean sGateway = false;

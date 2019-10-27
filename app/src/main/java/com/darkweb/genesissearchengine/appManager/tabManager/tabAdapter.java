@@ -50,7 +50,7 @@ public class tabAdapter extends RecyclerView.Adapter<tabAdapter.listViewHolder>
     public void onBindViewHolder(@NonNull tabAdapter.listViewHolder holder, int position)
     {
         holder.bindListView(mTempModelList.get(position));
-        clearMessageItem(holder.messageButton,position);
+        clearMessageItem(holder.messageButton,position,holder.data_model);
         clearMessageItemContainer(holder.itemContainer,position,holder.data_model);
     }
 
@@ -61,15 +61,15 @@ public class tabAdapter extends RecyclerView.Adapter<tabAdapter.listViewHolder>
 
     /*Listeners*/
 
-    private void clearMessageItem(ImageButton clearButton, int index)
+    private void clearMessageItem(ImageButton clearButton, int index,tabRowModel model)
     {
         clearButton.setOnClickListener(v ->
         {
             if(mTempModelList.size()>index){
-                mEvent.invokeObserver(Collections.singletonList(mModelList.get(mTempModelList.get(index).getmId()).getmId()),enums.etype.remove_from_database);
                 mEvent.invokeObserver(Collections.singletonList(mTempModelList.get(index).getmId()),enums.etype.url_clear);
                 invokeFilter(false);
                 mEvent.invokeObserver(Collections.singletonList(index),enums.etype.is_empty);
+                model.getSession().closeSession();
             }
         });
     }
@@ -79,10 +79,7 @@ public class tabAdapter extends RecyclerView.Adapter<tabAdapter.listViewHolder>
         clearButton.setOnClickListener(v ->
         {
             if(mTempModelList.size()>index){
-                mEvent.invokeObserver(Collections.singletonList(mModelList.get(mTempModelList.get(index).getmId()).getmId()),enums.etype.remove_from_database);
-                mEvent.invokeObserver(Collections.singletonList(mTempModelList.get(index).getmId()),enums.etype.url_clear);
                 invokeFilter(false);
-                mEvent.invokeObserver(Collections.singletonList(index),enums.etype.is_empty);
                 mEvent.invokeObserver(Collections.singletonList(model),enums.etype.url_triggered);
             }
         });
@@ -97,9 +94,7 @@ public class tabAdapter extends RecyclerView.Adapter<tabAdapter.listViewHolder>
         ImageButton messageButton;
         ImageView empty_message;
         LinearLayout itemContainer;
-        GeckoSession session;
         tabRowModel data_model;
-        int mProgress;
 
         listViewHolder(View itemView) {
             super(itemView);
@@ -111,13 +106,11 @@ public class tabAdapter extends RecyclerView.Adapter<tabAdapter.listViewHolder>
             descriptionText = itemView.findViewById(R.id.mDescription);
             itemContainer = itemView.findViewById(R.id.item_container);
 
-            descriptionText.setText(model.getmDescription());
-            heaaderText.setText(model.getmHeader());
+            descriptionText.setText(model.getSession().getCurrentURL());
+            heaaderText.setText(model.getSession().getTitle());
             messageButton = itemView.findViewById(R.id.message_button);
             empty_message = itemView.findViewById(R.id.empty_list);
-            mProgress = model.getProgress();
             data_model = model;
-            session = model.getmSession();
         }
     }
 
@@ -128,9 +121,9 @@ public class tabAdapter extends RecyclerView.Adapter<tabAdapter.listViewHolder>
     void invokeFilter(boolean notify){
         mTempModelList.clear();
         for(int counter = 0; counter< mModelList.size(); counter++){
-            if(mModelList.get(counter).getmHeader().contains(filter) || mModelList.get(counter).getmDescription().contains(filter)){
+            if(mModelList.get(counter).getSession().getTitle().contains(filter) || mModelList.get(counter).getSession().getCurrentURL().contains(filter)){
                 tabRowModel model = mModelList.get(counter);
-                mTempModelList.add(new tabRowModel(model.getmSession(),counter,model.getmHeader(),model.getmDescription(),model.getProgress()));
+                mTempModelList.add(new tabRowModel(model.getSession(),counter));
             }
         }
 

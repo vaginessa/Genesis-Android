@@ -1424,11 +1424,15 @@ public class TorService extends Service implements TorServiceConstants, OrbotCon
     private void sendCallbackLogMessage (String logMessage)
     {
         
-        Intent intent = new Intent(LOCAL_ACTION_LOG);
+          Intent intent = new Intent(LOCAL_ACTION_LOG);
           // You can also include some extra data.
           intent.putExtra(LOCAL_EXTRA_LOG, logMessage);
 	      intent.putExtra(EXTRA_STATUS, mCurrentStatus);
           status.sTorLogsStatus = logMessage;
+
+          if(logMessage.contains("100%")){
+              status.sIsTorInitialized = true;
+          }
 
           LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
@@ -1530,7 +1534,6 @@ public class TorService extends Service implements TorServiceConstants, OrbotCon
                         logNotice(context.getString(R.string.network_connectivity_is_good_waking_tor_up_));
                         showToolbarNotification(getString(R.string.status_activated),NOTIFY_ID,R.drawable.ic_stat_tor);
                     }
-                    status.sIsTorInitialized = mConnectivity;
                 }
                 catch (IOException e) {
                     e.printStackTrace();

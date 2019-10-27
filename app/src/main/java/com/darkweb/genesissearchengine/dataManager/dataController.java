@@ -7,6 +7,7 @@ import com.darkweb.genesissearchengine.appManager.bookmarkManager.bookmarkRowMod
 import com.darkweb.genesissearchengine.appManager.databaseManager.databaseController;
 import com.darkweb.genesissearchengine.appManager.historyManager.historyController;
 import com.darkweb.genesissearchengine.appManager.historyManager.historyRowModel;
+import com.darkweb.genesissearchengine.appManager.homeManager.geckoSession;
 import com.darkweb.genesissearchengine.appManager.tabManager.tabRowModel;
 import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.status;
@@ -122,16 +123,19 @@ public class dataController
     public ArrayList<tabRowModel> getTab(){
         return mPreferencesModel.getTab();
     }
-    public void addTab(String url, String title, GeckoSession session,int progress){
-        mPreferencesModel.addTabs(url,title,session,progress);
+    public void addTab(geckoSession mSession){
+        mPreferencesModel.addTabs(mSession);
     }
     public void clearTabs(){
         mPreferencesModel.clearTab();
     }
-    public void closeTab(GeckoSession session){
+    public void closeTab(geckoSession session){
         mPreferencesModel.closeTab(session);
     }
     public tabRowModel getCurrentTab(){
         return mPreferencesModel.getCurrentTab();
+    }
+    public int getTotalTabs(){
+        return mPreferencesModel.getTotalTabs();
     }
 }

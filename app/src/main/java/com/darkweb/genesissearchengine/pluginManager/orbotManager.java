@@ -4,7 +4,6 @@ import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import com.darkweb.genesissearchengine.constants.*;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
-
 import org.mozilla.gecko.PrefsHelper;
 import org.torproject.android.service.TorService;
 import org.torproject.android.service.util.Prefs;
@@ -44,33 +43,66 @@ class orbotManager
 
     /*------------------------------------------------------- POST TASK HANDLER -------------------------------------------------------*/
 
-    void setProxy(boolean tor_status,boolean is_genesis){
-        if(is_genesis){
-            PrefsHelper.setPref(keys.PROXY_TYPE, 0);
-            PrefsHelper.setPref(keys.PROXY_SOCKS,null);
-            PrefsHelper.setPref(keys.PROXY_SOCKS_PORT, null);
-            PrefsHelper.setPref(keys.PROXY_SOCKS_VERSION,null);
-            PrefsHelper.setPref(keys.PROXY_SOCKS_REMOTE_DNS,null);
-        }
-        else if(tor_status){
-            PrefsHelper.setPref(keys.PROXY_TYPE, 1);
-            PrefsHelper.setPref(keys.PROXY_SOCKS,constants.PROXY_SOCKS);
-            PrefsHelper.setPref(keys.PROXY_SOCKS_PORT, constants.PROXY_SOCKS_PORT);
-            PrefsHelper.setPref(keys.PROXY_SOCKS_VERSION,constants.PROXY_SOCKS_VERSION);
-            PrefsHelper.setPref(keys.PROXY_SOCKS_REMOTE_DNS,constants.PROXY_SOCKS_REMOTE_DNS);
-        }
+    void setProxy(){
     }
 
     private void initializeProxy()
     {
-        PrefsHelper.setPref(keys.PROXY_TYPE, 0);
-        PrefsHelper.setPref(keys.PROXY_CACHE,constants.PROXY_CACHE);
-        PrefsHelper.setPref(keys.PROXY_MEMORY,constants.PROXY_MEMORY);
-        PrefsHelper.setPref(keys.PROXY_SOCKS_COOKIES,status.sCookieStatus);
+        setProxyPrefs();
+        setPrivacyPrefs();
+        setCipherSuites();
+        setJavascriptEnabled ();
+    }
+
+    private void setProxyPrefs ()
+    {
+        PrefsHelper.setPref("network.proxy.type",1); //manual proxy settings
+        PrefsHelper.setPref("network.proxy.http","localhost"); //manual proxy settings
+        PrefsHelper.setPref("network.proxy.http_port",8118); //manual proxy settings
+        PrefsHelper.setPref("network.proxy.socks","localhost"); //manual proxy settings
+        PrefsHelper.setPref("network.proxy.socks_port",9050); //manual proxy settings
+        PrefsHelper.setPref("network.proxy.socks_version",5); //manual proxy settings
+    }
+
+    private void setPrivacyPrefs ()
+    {
+        PrefsHelper.setPref("browser.cache.disk.enable",false);
+        PrefsHelper.setPref("browser.cache.memory.enable",true);
         PrefsHelper.setPref(keys.PROXY_USER_AGENT_OVERRIDE, constants.PROXY_USER_AGENT_OVERRIDE);
-        PrefsHelper.setPref(keys.PROXY_DO_NOT_TRACK_HEADER_ENABLED,constants.PROXY_DO_NOT_TRACK_HEADER_ENABLED);
-        PrefsHelper.setPref(keys.PROXY_DO_NOT_TRACK_HEADER_VALUE,constants.PROXY_DO_NOT_TRACK_HEADER_VALUE);
-        PrefsHelper.setPref(keys.PROXY_DISK_CAPACITY,constants.DISK_CAPACITY);
+        PrefsHelper.setPref("browser.cache.disk.capacity",0);
+        PrefsHelper.setPref("privacy.clearOnShutdown.cache",status.sHistoryStatus);
+        PrefsHelper.setPref("privacy.clearOnShutdown.cookies",!status.sCookieStatus);
+        PrefsHelper.setPref("privacy.clearOnShutdown.downloads",status.sHistoryStatus);
+        PrefsHelper.setPref("privacy.clearOnShutdown.formdata",status.sHistoryStatus);
+        PrefsHelper.setPref("privacy.clearOnShutdown.history",status.sHistoryStatus);
+        PrefsHelper.setPref("privacy.clearOnShutdown.offlineApps",status.sHistoryStatus);
+        PrefsHelper.setPref("privacy.clearOnShutdown.passwords",status.sHistoryStatus);
+        PrefsHelper.setPref("privacy.clearOnShutdown.sessions",status.sHistoryStatus);
+        PrefsHelper.setPref("privacy.clearOnShutdown.siteSettings",status.sHistoryStatus);
+        PrefsHelper.setPref("privacy.donottrackheader.enabled",false);
+        PrefsHelper.setPref("privacy.donottrackheader.value",1);
+        PrefsHelper.setPref("network.cookie.cookieBehavior", status.sCookieStatus);
+        PrefsHelper.setPref("network.http.sendRefererHeader", 0);
+        PrefsHelper.setPref("security.OCSP.require", true);
+        PrefsHelper.setPref("security.checkloaduri",true);
+        PrefsHelper.setPref("security.mixed_content.block_display_content", true);
+        PrefsHelper.setPref("media.peerconnection.enabled",false); //webrtc disabled
+    }
+
+    private void setCipherSuites ()
+    {
+        PrefsHelper.setPref("security.ssl3.ecdh_ecdsa_rc4_128_sha",false);
+        PrefsHelper.setPref("security.ssl3.ecdh_rsa_rc4_128_sha",false);
+        PrefsHelper.setPref("security.ssl3.ecdhe_ecdsa_rc4_128_sha",false);
+        PrefsHelper.setPref("security.ssl3.ecdhe_rsa_rc4_128_sha",false);
+        PrefsHelper.setPref("security.ssl3.rsa_rc4_128_md5",false);
+        PrefsHelper.setPref("security.ssl3.rsa_rc4_128_sha",false);
+    }
+
+
+    private void setJavascriptEnabled ()
+    {
+        PrefsHelper.setPref("javascript.enabled", status.sJavaStatus);
     }
 
     String getLogs()

@@ -131,6 +131,12 @@ public class tabController extends AppCompatActivity
         }
     }
 
+    public void onNewTabInvoked(View view)
+    {
+        mHomeController.onNewTab();
+        finish();
+    }
+
     @Override
     public void onResume()
     {
@@ -155,7 +161,8 @@ public class tabController extends AppCompatActivity
             if(e_type.equals(enums.etype.url_triggered)){
                 tabRowModel model = (tabRowModel)data.get(0);
                 pluginController.getInstance().logEvent(strings.TAB_TRIGGERED);
-                mHomeController.onLoadTab(model.getmSession(),model.getmHeader(),model.getmDescription(),true,model.getProgress());
+                mHomeController.onLoadTab(model.getSession());
+
                 finish();
             }
             else if(e_type.equals(enums.etype.url_clear)){
@@ -165,6 +172,7 @@ public class tabController extends AppCompatActivity
                 mtabViewController.removeFromList((int)data.get(0));
                 mtabViewController.updateIfListEmpty(mListModel.getList().size(),300);
             }
+            mHomeController.initTabCount();
         }
 
     }

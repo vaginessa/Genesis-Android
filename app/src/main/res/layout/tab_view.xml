@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        tools:context="com.darkweb.genesissearchengine.appManager.historyManager.historyController">
+        tools:context="com.darkweb.genesissearchengine.appManager.tabManager.tabController">
 
     <LinearLayout
             android:layout_width="match_parent"
@@ -21,7 +21,7 @@
             tools:ignore="RtlHardcoded,UselessParent">
 
         <ImageButton
-                android:id="@+id/home"
+                android:id="@+id/newButton"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginStart="10dp"
@@ -45,7 +45,7 @@
                 android:layout_weight="1"
                 android:background="@xml/search_back_default"
                 android:ems="10"
-                android:hint="@string/SearchHint"
+                android:hint="Search Tabs"
                 android:importantForAutofill="no"
                 android:inputType="textNoSuggestions"
                 android:maxLines="1"
@@ -57,6 +57,22 @@
                 android:textCursorDrawable="@xml/search_cursor_state"
                 android:textSize="15sp"
                 tools:targetApi="o" />
+
+                <Button
+                        android:id="@+id/newTab"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginTop="7dp"
+                        android:layout_marginBottom="0dp"
+                        android:text="+1"
+                        android:background="@xml/search_back_default"
+                        android:contentDescription="@string/todo"
+                        android:onClick="onNewTabInvoked"
+                        android:scaleType="fitCenter"
+                        android:tint="@color/black" />
+
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

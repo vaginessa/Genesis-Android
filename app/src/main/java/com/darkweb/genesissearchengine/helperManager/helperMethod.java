@@ -32,10 +32,16 @@ import androidx.core.content.ContextCompat;
 import com.darkweb.genesissearchengine.constants.keys;
 import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.example.myapplication.BuildConfig;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION;
@@ -45,6 +51,27 @@ public class helperMethod
     /*Helper Methods General*/
 
     public static String completeURL(String url){
+
+        URL weburl = null;
+        try
+        {
+            weburl = new URL(url);
+            URLConnection result = weburl.openConnection();
+
+            if (result instanceof HttpsURLConnection) {
+
+            }
+            else if (result instanceof HttpURLConnection) {
+                // http
+            }
+            else {
+                // null or something bad happened
+            }
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
         if(!url.startsWith("www.")&& !url.startsWith("http://")&& !url.startsWith("https://")){
             url = ""+url;
         }

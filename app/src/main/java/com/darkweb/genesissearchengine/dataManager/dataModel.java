@@ -7,12 +7,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.darkweb.genesissearchengine.appManager.bookmarkManager.bookmarkRowModel;
 import com.darkweb.genesissearchengine.appManager.databaseManager.databaseController;
 import com.darkweb.genesissearchengine.appManager.historyManager.historyRowModel;
+import com.darkweb.genesissearchengine.appManager.homeManager.geckoSession;
 import com.darkweb.genesissearchengine.appManager.tabManager.tabRowModel;
 import com.darkweb.genesissearchengine.constants.constants;
-import com.darkweb.genesissearchengine.constants.strings;
-
-import org.mozilla.geckoview.GeckoSession;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,7 +26,7 @@ class dataModel
     private ArrayList<bookmarkRowModel> mBookmarks = new ArrayList<>();
     private ArrayList<tabRowModel> mTabs = new ArrayList<>();
     private ArrayList<String> mSuggestions = new ArrayList<>();
-    private Map<String, Boolean> mHistoryCache = new HashMap<String, Boolean>();
+    private Map<String, Boolean> mHistoryCache = new HashMap<>();
 
     private int mMaxHistoryId = 0;
     private int mHistorySize = 0;
@@ -117,7 +114,8 @@ class dataModel
         mHistory.add(0,new historyRowModel(url,date, mMaxHistoryId));
         mHistoryCache.put(url,true);
     }
-    public ArrayList<historyRowModel> getmHistory() {
+
+    ArrayList<historyRowModel> getmHistory() {
         return mHistory;
     }
     void setMaxHistoryID(int max_history_id){
@@ -180,17 +178,8 @@ class dataModel
 
     /*List Tabs*/
 
-    int addTabs(String url, String title, GeckoSession session,int progress){
-        if(title.equals(strings.EMPTY_STR)){
-            if(!url.contains("about:blank")){
-                title = "Fetching...";
-            }else {
-                title = "New Tab";
-            }
-        }
-
-        mTabs.add(0,new tabRowModel(session, mTabs.size()-1,title,url,progress));
-        return mTabs.size()-1;
+    void addTabs(geckoSession mSession){
+        mTabs.add(0,new tabRowModel(mSession,mTabs.size()));
     }
     ArrayList<tabRowModel> getTab(){
         return mTabs;
@@ -198,20 +187,12 @@ class dataModel
     void clearTab() {
         mTabs.clear();
     }
-    void closeTab(GeckoSession session) {
+    void closeTab(geckoSession mSession) {
         for(int counter = 0; counter< mTabs.size(); counter++){
-            if(mTabs.get(counter).getmSession().equals(session))
+            if(mTabs.get(counter).getSession().getSessionID()==mSession.getSessionID())
             {
                 mTabs.remove(counter);
                 break;
-            }
-        }
-    }
-    void updateTab(GeckoSession session,String title){
-        for(int counter = 0; counter< mTabs.size(); counter++){
-            if(mTabs.get(counter).getmSession().equals(session))
-            {
-                mTabs.get(counter).setmHeader(title);
             }
         }
     }
@@ -222,6 +203,10 @@ class dataModel
         else {
             return null;
         }
+    }
+
+    int getTotalTabs(){
+        return mTabs.size();
     }
 
     /*List Suggestion*/

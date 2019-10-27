@@ -102,8 +102,8 @@ public class pluginController
     public boolean isOrbotRunning(){
         return orbotManager.getInstance().isOrbotRunning();
     }
-    public void setProxy(boolean status,boolean is_genesis){
-        orbotManager.getInstance().setProxy(status,is_genesis);
+    public void setProxy(){
+        orbotManager.getInstance().setProxy();
     }
     public String orbotLogs(){
         return orbotManager.getInstance().getLogs();

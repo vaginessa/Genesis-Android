@@ -23,7 +23,7 @@ class homeModel
             boolean isUrlValid = Patterns.WEB_URL.matcher(updateUrl).matches();
             if(isUrlValid && host.getHost().replace("www.","").contains("."))
             {
-                return updateUrl;
+                return null;
             }
         }
 
