@@ -173,8 +173,8 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     }
 
     public void onLoadTab(geckoSession mTempSession){
-        onSaveCurrentTab(mGeckoClient.getSession());
         dataController.getInstance().closeTab(mTempSession);
+        onSaveCurrentTab(mTempSession);
         mGeckoView.releaseSession();
         mGeckoClient.initSession(mTempSession);
         mHomeViewController.onUpdateSearchBar(mTempSession.getCurrentURL());
@@ -273,10 +273,12 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     public void onOpenMenuItem(View view){
         pluginController.getInstance().logEvent(strings.MENU_INVOKED);
         status.sIsAppStarted = true;
-        mHomeViewController.onClearSelections(false);
-        mHomeViewController.onOpenMenu(view);
         pluginController.getInstance().onResetMessage();
-        helperMethod.hideKeyboard(this);
+        mHomeViewController.onOpenMenu(view);
+        mGeckoView.clearFocus();
+        if(mGeckoView.hasFocus()){
+            helperMethod.hideKeyboard(this);
+        }
     }
 
     @Override

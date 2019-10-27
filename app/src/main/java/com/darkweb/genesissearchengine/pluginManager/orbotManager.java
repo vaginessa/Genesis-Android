@@ -43,22 +43,25 @@ class orbotManager
 
     /*------------------------------------------------------- POST TASK HANDLER -------------------------------------------------------*/
 
+
+    private boolean isCompleted = false;
     void setProxy(){
+        //initializeProxy ();
     }
 
     private void initializeProxy()
     {
-        setProxyPrefs();
-        setPrivacyPrefs();
-        setCipherSuites();
-        setJavascriptEnabled ();
+        //setProxyPrefs();
+        //setPrivacyPrefs();
+        //setCipherSuites();
+        //setJavascriptEnabled ();
     }
 
     private void setProxyPrefs ()
     {
         PrefsHelper.setPref("network.proxy.type",1); //manual proxy settings
         PrefsHelper.setPref("network.proxy.http","localhost"); //manual proxy settings
-        PrefsHelper.setPref("network.proxy.http_port",8118); //manual proxy settings
+        PrefsHelper.setPref("network.proxy.http_port",9050                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ); //manual proxy settings
         PrefsHelper.setPref("network.proxy.socks","localhost"); //manual proxy settings
         PrefsHelper.setPref("network.proxy.socks_port",9050); //manual proxy settings
         PrefsHelper.setPref("network.proxy.socks_version",5); //manual proxy settings
@@ -81,7 +84,7 @@ class orbotManager
         PrefsHelper.setPref("privacy.clearOnShutdown.siteSettings",status.sHistoryStatus);
         PrefsHelper.setPref("privacy.donottrackheader.enabled",false);
         PrefsHelper.setPref("privacy.donottrackheader.value",1);
-        PrefsHelper.setPref("network.cookie.cookieBehavior", status.sCookieStatus);
+        PrefsHelper.setPref("network.cookie.cookieBehavior", status.sCookieStatus ? 1 : 0);
         PrefsHelper.setPref("network.http.sendRefererHeader", 0);
         PrefsHelper.setPref("security.OCSP.require", true);
         PrefsHelper.setPref("security.checkloaduri",true);

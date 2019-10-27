@@ -44,7 +44,6 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
 
     @Override
     public void onPageStart(@NonNull GeckoSession var1, @NonNull String var2) {
-        Log.i("VAR2","VAR2");
     }
 
     @Override
@@ -156,11 +155,11 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
         return mSessionID;
     }
 
-    public void exitFullScreen(){
-
+    void exitScreen(){
+        this.exitFullScreen();
     }
 
-    public boolean getFullScreenStatus(){
+    boolean getFullScreenStatus(){
         return mFullScreen;
     }
 

@@ -77,7 +77,7 @@ class geckoClients
     }
 
     void exitFullScreen(){
-        mSession.exitFullScreen();
+        mSession.exitScreen();
     }
 
     void onForwardPressed(){

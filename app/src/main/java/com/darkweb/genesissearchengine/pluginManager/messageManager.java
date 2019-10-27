@@ -139,26 +139,24 @@ class messageManager
         final EditText input = new EditText(app_context);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         input.setText("");
-        input.setBackground(ContextCompat.getDrawable(app_context, R.xml.search_back_default));
+        input.setBackground(ContextCompat.getDrawable(app_context, R.xml.search_back_default_popup));
         input.setPadding(40, 15, 40, 15);
         input.setHeight(80);
         input.setTextSize(17);
-        input.setHint("Enter Bookmark Title");
+        input.setHint("Title...");
 
-        popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.ALERT)
+        popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .setHeaderView(input)
                 .onDismissListener(dialog -> is_popup_open = false)
                 .setMessage("Bookmark URL | " + data + "\n")
-                .addButton(strings.BOOKMARK_URL_BT_1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
+                .addButton(strings.BOOKMARK_URL_BT_1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.END, (tempDialog, which) ->
                 {
                     event.invokeObserver(Collections.singletonList(data.replace("genesis.onion","boogle.store")+"split"+input.getText().toString()), enums.etype.bookmark);
 
                     tempDialog.dismiss();
-                })
-                .addButton(strings.BOOKMARK_URL_BT_2, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
-                        tempDialog.dismiss());
+                });
     }
 
     private void clearHistory()
@@ -169,28 +167,11 @@ class messageManager
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .onDismissListener(dialog -> is_popup_open = false)
                 .setMessage(strings.CLEAR_HISTORY_DESC)
-                .addButton(strings.CLEAR_HISTORY_BT_1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
+                .addButton(strings.CLEAR_HISTORY_BT_1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.END, (tempDialog, which) ->
                 {
                     event.invokeObserver(null, enums.etype.clear_history);
                     tempDialog.dismiss();
-                })
-                .addButton(strings.CLEAR_HISTORY_BT_2, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) -> tempDialog.dismiss());
-    }
-
-    private void clearTab()
-    {
-        popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                .setTitle(strings.CLEAR_HISTORY_TITLE)
-                .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
-                .setTextColor(app_context.getResources().getColor(R.color.black))
-                .onDismissListener(dialog -> is_popup_open = false)
-                .setMessage(strings.CLEAR_HISTORY_DESC)
-                .addButton(strings.CLEAR_HISTORY_BT_1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
-                {
-                    event.invokeObserver(null, enums.etype.clear_history);
-                    tempDialog.dismiss();
-                })
-                .addButton(strings.CLEAR_HISTORY_BT_2, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) -> tempDialog.dismiss());
+                });
     }
 
     private void clearBookmark()
@@ -201,12 +182,11 @@ class messageManager
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .onDismissListener(dialog -> is_popup_open = false)
                 .setMessage(strings.clear_bookmark_desc)
-                .addButton(strings.clear_bookmark_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
+                .addButton(strings.clear_bookmark_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.END, (tempDialog, which) ->
                 {
                     event.invokeObserver(null, enums.etype.clear_bookmark);
                     tempDialog.dismiss();
-                })
-                .addButton(strings.clear_bookmark_bt2, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) -> tempDialog.dismiss());
+                });
     }
 
     private void reportURL()

@@ -47,14 +47,14 @@ public class strings
     public static final String BOOKMARK_URL_BT_1 = "Bookmark";
     public static final String BOOKMARK_URL_BT_2 = "Dismiss";
 
-    public static final String CLEAR_HISTORY_TITLE = "Warning | Clear History";
-    public static final String CLEAR_HISTORY_DESC = "You are about to clear your history if you are sure please continue\n";
-    public static final String CLEAR_HISTORY_BT_1 = "Clear History";
+    public static final String CLEAR_HISTORY_TITLE = "Clear site storage?";
+    public static final String CLEAR_HISTORY_DESC = "This will clear data for all sites";
+    public static final String CLEAR_HISTORY_BT_1 = "Clear";
     public static final String CLEAR_HISTORY_BT_2 = "Dismiss";
 
-    public static final String clear_bookmark_title = "Warning | Clear Bookmark";
-    public static final String clear_bookmark_desc = "You are about to clear your bookmarks if you are sure please continue\n";
-    public static final String clear_bookmark_bt1 = "Clear bookmark";
+    public static final String clear_bookmark_title = "Clear site bookmark?";
+    public static final String clear_bookmark_desc = "This will clear data for all saved sites\n";
+    public static final String clear_bookmark_bt1 = "Clear";
     public static final String clear_bookmark_bt2 = "Dismiss";
 
     public static final String DOWNLOAD_TITLE = "Download Notification";

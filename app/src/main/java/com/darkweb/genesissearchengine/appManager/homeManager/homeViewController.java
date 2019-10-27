@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -430,7 +431,7 @@ class homeViewController
         }
         else {
             progressBarReset();
-            helperMethod.hideKeyboard(mContext);
+            //helperMethod.hideKeyboard(mContext);
         }
     }
     private void setProgressAnimate(ProgressBar pb, int progressTo)
@@ -450,7 +451,7 @@ class homeViewController
             if(!loading_status || value==100){
                 setProgressAnimate(mProgressBar,100);
                 mProgressBar.animate().setStartDelay(400).alpha(0).withEndAction((() -> progressBarReset()));
-                helperMethod.hideKeyboard(mContext);
+                //helperMethod.hideKeyboard(mContext);
             }
         }, 100);
     }

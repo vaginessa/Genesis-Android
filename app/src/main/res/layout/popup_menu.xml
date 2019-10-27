@@ -78,7 +78,7 @@
             <Button
                     android:id="@+id/menu11"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
+                    android:layout_height="50dp"
                     android:background="@xml/side_item"
                     android:gravity="left|center_vertical"
                     android:onClick="onMenuItemInvoked"
@@ -89,7 +89,7 @@
             <Button
                     android:id="@+id/menu10"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
+                    android:layout_height="50dp"
                     android:background="@xml/side_item"
                     android:gravity="left|center_vertical"
                     android:onClick="onMenuItemInvoked"
@@ -100,7 +100,7 @@
             <Button
                     android:id="@+id/menu9"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
+                    android:layout_height="50dp"
                     android:background="@xml/side_item"
                     android:gravity="left|center_vertical"
                     android:onClick="onMenuItemInvoked"
@@ -117,7 +117,7 @@
             <Button
                     android:id="@+id/menu8"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
+                    android:layout_height="50dp"
                     android:background="@xml/side_item"
                     android:gravity="left|center_vertical"
                     android:onClick="onMenuItemInvoked"
@@ -128,7 +128,7 @@
             <Button
                     android:id="@+id/menu7"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
+                    android:layout_height="50dp"
                     android:background="@xml/side_item"
                     android:gravity="left|center_vertical"
                     android:onClick="onMenuItemInvoked"
@@ -139,7 +139,7 @@
             <Button
                     android:id="@+id/menu6"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
+                    android:layout_height="50dp"
                     android:background="@xml/side_item"
                     android:gravity="left|center_vertical"
                     android:onClick="onMenuItemInvoked"
@@ -156,7 +156,7 @@
             <Button
                     android:id="@+id/menu5"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
+                    android:layout_height="50dp"
                     android:background="@xml/side_item"
                     android:gravity="left|center_vertical"
                     android:onClick="onMenuItemInvoked"
@@ -167,7 +167,7 @@
             <Button
                     android:id="@+id/menu4"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
+                    android:layout_height="50dp"
                     android:background="@xml/side_item"
                     android:gravity="left|center_vertical"
                     android:onClick="onMenuItemInvoked"
@@ -184,7 +184,7 @@
             <Button
                     android:id="@+id/menu3"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
+                    android:layout_height="50dp"
                     android:background="@xml/side_item"
                     android:gravity="left|center_vertical"
                     android:onClick="onMenuItemInvoked"
@@ -195,7 +195,7 @@
             <Button
                     android:id="@+id/menu2"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
+                    android:layout_height="50dp"
                     android:background="@xml/side_item"
                     android:gravity="left|center_vertical"
                     android:onClick="onMenuItemInvoked"
@@ -206,7 +206,7 @@
             <Button
                     android:id="@+id/menu1"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
+                    android:layout_height="50dp"
                     android:background="@xml/side_item_bottom"
                     android:gravity="left|center_vertical"
                     android:onClick="onMenuItemInvoked"
