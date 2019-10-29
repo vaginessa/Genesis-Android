@@ -28,7 +28,7 @@ public class pluginController
     /*Private Variables*/
 
     private static pluginController ourInstance = new pluginController();
-    private homeController home_controller;
+    private homeController mHomeController;
 
     /*Initializations*/
 
@@ -47,10 +47,10 @@ public class pluginController
 
     private void instanceObjectInitialization()
     {
-        home_controller = activityContextManager.getInstance().getHomeController();
+        mHomeController = activityContextManager.getInstance().getHomeController();
         mContextManager = activityContextManager.getInstance();
 
-        mAdManager = new adManager(getAppContext(),new admobCallback(),home_controller.getBannerAd());
+        mAdManager = new adManager(getAppContext(),new admobCallback(), mHomeController.getBannerAd());
         mAnalyticManager = new analyticManager(getAppContext(),new analyticCallback());
         getAppContext().startService(new Intent(getAppContext(), exitManager.class));
         mFabricManager = new fabricManager(getAppContext(),new fabricCallback());
@@ -66,7 +66,7 @@ public class pluginController
 
     private AppCompatActivity getAppContext()
     {
-        return home_controller;
+        return mHomeController;
     }
     public boolean isInitialized(){
         return mIsInitialized;
@@ -161,7 +161,7 @@ public class pluginController
         {
             if(event_type.equals(enums.etype.welcome))
             {
-                home_controller.onLoadURL(data.get(0).toString());
+                mHomeController.onLoadURL(data.get(0).toString());
             }
             else if(event_type.equals(enums.etype.cancel_welcome)){
                 dataController.getInstance().setBool(keys.IS_WELCOME_ENABLED,false);
@@ -169,10 +169,10 @@ public class pluginController
             else if(event_type.equals(enums.etype.reload)){
                 if(orbotManager.getInstance().isOrbotRunning())
                 {
-                    home_controller.onReload(null);
+                    mHomeController.onReload(null);
                 }
                 else {
-                    mMessageManager.createMessage(home_controller,data.get(0).toString(),enums.etype.start_orbot);
+                    mMessageManager.createMessage(mHomeController,data.get(0).toString(),enums.etype.start_orbot);
                 }
             }
             else if(event_type.equals(enums.etype.clear_history)){
@@ -196,22 +196,26 @@ public class pluginController
                 dataController.getInstance().setBool(keys.IS_APP_RATED,true);
             }
             else if(event_type.equals(enums.etype.download_file)){
-                home_controller.onDownloadFile();
+                mHomeController.onDownloadFile();
             }
             else if(event_type.equals(enums.etype.download_file_manual)){
-                home_controller.onManualDownload(data.get(0).toString());
+                mHomeController.onManualDownload(data.get(0).toString());
             }
             else if(event_type.equals(enums.etype.connect_vpn)){
                 boolean status = (boolean)data.get(0);
             }
             else if(event_type.equals(enums.etype.open_link_new_tab)){
-                home_controller.onOpenLinkNewTab(data.get(0).toString());
+                mHomeController.onOpenLinkNewTab(data.get(0).toString());
             }
             else if(event_type.equals(enums.etype.open_link_current_tab)){
-                home_controller.onLoadURL(data.get(0).toString());
+                mHomeController.onLoadURL(data.get(0).toString());
             }
             else if(event_type.equals(enums.etype.copy_link)){
                 helperMethod.copyURL(data.get(0).toString(),mContextManager.getHomeController());
+            }
+            else if(event_type.equals(enums.etype.clear_tab)){
+                dataController.getInstance().clearTabs();
+                activityContextManager.getInstance().getTabController().finish();
             }
         }
     }

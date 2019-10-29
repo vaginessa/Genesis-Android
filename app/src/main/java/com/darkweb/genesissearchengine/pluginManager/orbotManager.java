@@ -43,15 +43,14 @@ class orbotManager
 
     /*------------------------------------------------------- POST TASK HANDLER -------------------------------------------------------*/
 
-
-    private boolean isCompleted = false;
     void setProxy(){
-        //initializeProxy ();
+        initializeProxy();
     }
 
     private void initializeProxy()
     {
-        //setProxyPrefs();
+        status.sIsTorInitialized = true;
+        setProxyPrefs();
         //setPrivacyPrefs();
         //setCipherSuites();
         //setJavascriptEnabled ();
@@ -60,11 +59,14 @@ class orbotManager
     private void setProxyPrefs ()
     {
         PrefsHelper.setPref("network.proxy.type",1); //manual proxy settings
+
         PrefsHelper.setPref("network.proxy.http","localhost"); //manual proxy settings
-        PrefsHelper.setPref("network.proxy.http_port",9050                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ); //manual proxy settings
+        PrefsHelper.setPref("network.proxy.http_port",8118); //manual proxy settings
+
         PrefsHelper.setPref("network.proxy.socks","localhost"); //manual proxy settings
         PrefsHelper.setPref("network.proxy.socks_port",9050); //manual proxy settings
         PrefsHelper.setPref("network.proxy.socks_version",5); //manual proxy settings
+
     }
 
     private void setPrivacyPrefs ()

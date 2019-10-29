@@ -158,7 +158,7 @@ public class bookmarkController extends AppCompatActivity
         public void invokeObserver(List<Object> data, enums.etype e_type)
         {
             if(e_type.equals(enums.etype.url_triggered)){
-                String url_temp = helperMethod.completeURL(data.toString());
+                String url_temp = helperMethod.completeURL(data.get(0).toString());
                 pluginController.getInstance().logEvent(strings.BOOKMARK_TRIGGERED);
                 mHomeController.onLoadURL(url_temp);
                 finish();

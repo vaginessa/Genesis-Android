@@ -185,7 +185,13 @@ class dataModel
         return mTabs;
     }
     void clearTab() {
-        mTabs.clear();
+        for(int counter = 1; counter< mTabs.size(); counter++){
+            mTabs.get(counter).getSession().stop();
+            mTabs.remove(counter);
+        }
+        if(mTabs.size()>0){
+            mTabs.get(0).getSession().closeSession();
+        }
     }
     void closeTab(geckoSession mSession) {
         for(int counter = 0; counter< mTabs.size(); counter++){

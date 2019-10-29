@@ -1,5 +1,7 @@
 package com.darkweb.genesissearchengine.helperManager;
 
+import android.webkit.URLUtil;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.mozilla.geckoview.WebRequestError;
@@ -49,7 +51,8 @@ public class errorHandler
             }
         }
 
-        return createErrorPage("CODE : " + categoryToString(category) + " <br>TYPE : " + errorToString(error)).replace("$URL",url);
+        String title = helperMethod.getHost(url);
+        return createErrorPage("CODE : " + categoryToString(category) + " <br>TYPE : " + errorToString(error)).replace("$URL",url).replace("$TITLE",title);
     }
 
     private String errorToString(final int error) {

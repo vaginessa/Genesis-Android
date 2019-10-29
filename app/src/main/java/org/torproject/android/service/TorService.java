@@ -990,6 +990,7 @@ public class TorService extends Service implements TorServiceConstants, OrbotCon
             } else {
 
                 logNotice("Tor started; process id=" + mLastProcessId);
+                status.sIsTorInitialized = true;
                 //showToolbarNotification("Genesis Started", HS_NOTIFY_ID, R.drawable.ic_stat_tor);
                 result = true;
             }
@@ -1429,10 +1430,6 @@ public class TorService extends Service implements TorServiceConstants, OrbotCon
           intent.putExtra(LOCAL_EXTRA_LOG, logMessage);
 	      intent.putExtra(EXTRA_STATUS, mCurrentStatus);
           status.sTorLogsStatus = logMessage;
-
-          if(logMessage.contains("100%")){
-              status.sIsTorInitialized = true;
-          }
 
           LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 

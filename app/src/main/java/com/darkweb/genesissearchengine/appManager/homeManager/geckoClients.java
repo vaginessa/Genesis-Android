@@ -2,21 +2,13 @@ package com.darkweb.genesissearchengine.appManager.homeManager;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Handler;
 import android.util.Log;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.darkweb.genesissearchengine.appManager.activityContextManager;
 import com.darkweb.genesissearchengine.constants.*;
-import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
-import com.darkweb.genesissearchengine.helperManager.helperMethod;
-import com.darkweb.genesissearchengine.pluginManager.pluginController;
-
 import org.mozilla.geckoview.*;
-
-import java.util.Collections;
+import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.darkweb.genesissearchengine.constants.enums.etype.on_handle_external_intent;
@@ -76,7 +68,7 @@ class geckoClients
         return mSession.getFullScreenStatus();
     }
 
-    void exitFullScreen(){
+    void onExitFullScreen(){
         mSession.exitScreen();
     }
 
@@ -93,6 +85,19 @@ class geckoClients
     void onReload(){
         mSession.reload();
     }
+
+    void manual_download(String url){
+        Uri downloadURL = Uri.parse(url);
+        File f = new File(url);
+        String downloadFile = f.getName() != null ? f.getName() : downloadURL.getLastPathSegment();
+        mSession.downloadRequestedFile(downloadURL,downloadFile);
+    }
+
+    void downloadFile()
+    {
+        mSession.downloadRequestedFile();
+    }
+
     /*Session Updates*/
 
     void onUpdateSettings(){
@@ -107,17 +112,15 @@ class geckoClients
         }
     }
 
-    public class geckoViewClientCallback implements eventObserver.eventListener
-    {
+    public class geckoViewClientCallback implements eventObserver.eventListener{
         @Override
         public void invokeObserver(List<Object> data, enums.etype e_type)
         {
             if (mSessionID == (int)data.get(1))
             {
-                Log.i("CSESSION",mSessionID+"___"+e_type);
                 if (e_type.equals(on_handle_external_intent))
                 {
-                    GeckoSession.WebResponseInfo responseInfo = (GeckoSession.WebResponseInfo)data;
+                    GeckoSession.WebResponseInfo responseInfo = (GeckoSession.WebResponseInfo)data.get(0);
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setDataAndTypeAndNormalize(Uri.parse(responseInfo.uri), responseInfo.contentType);
                     context.startActivity(intent);

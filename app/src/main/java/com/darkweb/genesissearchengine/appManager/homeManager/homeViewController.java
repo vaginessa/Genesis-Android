@@ -67,12 +67,13 @@ class homeViewController
     private ImageView mBackSplash;
     private Button mConnectButton;
     private Button mNewTab;
-    private PopupWindow popupWindow;
+    private PopupWindow popupWindow = null;
 
     /*Local Variables*/
     private ValueAnimator mEngineAnimator = null;
     private Handler mProgressHandler = null;
     private Callable<String> mLogs = null;
+    private boolean disableSplash = false;
 
     void initialization(eventObserver.eventListener event,AppCompatActivity context,Button mNewTab, FrameLayout webviewContainer, TextView loadingText, ProgressBar progressBar, AutoCompleteTextView searchbar, ConstraintLayout splashScreen, FloatingActionButton floatingButton, ImageView loading, AdView banner_ads,ArrayList<String> suggestions,ImageView engineLogo,ImageButton gateway_splash,LinearLayout top_bar,GeckoView gecko_view,ImageView backsplash,boolean is_triggered,Button connect_button,ImageButton switch_engine_back){
         this.mContext = context;
@@ -159,19 +160,22 @@ class homeViewController
                     window.setStatusBarColor(mContext.getResources().getColor(R.color.blue_dark));
                 }
                 else {
+                    Log.i("SUPERFUCK:","AS");
                     initStatusBarColor();
                 }
             }
         }
     }
 
+
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void initStatusBarColor() {
         animatedColor oneToTwo = new animatedColor(ContextCompat.getColor(mContext, R.color.ease_blue), ContextCompat.getColor(mContext, R.color.black_blue));
-        animatedColor twoToThree = new animatedColor(ContextCompat.getColor(mContext, R.color.black_blue), ContextCompat.getColor(mContext, R.color.black_blue_dark));
-        animatedColor ThreeToFour = new animatedColor(ContextCompat.getColor(mContext, R.color.black_blue_dark), ContextCompat.getColor(mContext, R.color.white));
+        animatedColor twoToThree = new animatedColor(ContextCompat.getColor(mContext, R.color.ease_blue), ContextCompat.getColor(mContext, R.color.ease_blue_light));
+        animatedColor ThreeToFour = new animatedColor(ContextCompat.getColor(mContext, R.color.ease_blue_light), ContextCompat.getColor(mContext, R.color.white));
 
-        ValueAnimator animator = ObjectAnimator.ofFloat(0f, 1f).setDuration(68);
+        ValueAnimator animator = ObjectAnimator.ofFloat(0f, 1f).setDuration(0);
         animator.addUpdateListener(animation ->
         {
             float v = (float) animation.getAnimatedValue();
@@ -184,7 +188,7 @@ class homeViewController
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                final ValueAnimator animator2 = ObjectAnimator.ofFloat(0f, 1f).setDuration(69);
+                final ValueAnimator animator2 = ObjectAnimator.ofFloat(0f, 1f).setDuration(217);
                 animator2.addUpdateListener(animation1 ->
                 {
                     float v = (float) animation1.getAnimatedValue();
@@ -195,7 +199,7 @@ class homeViewController
                 animator2.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        final ValueAnimator animator3 = ObjectAnimator.ofFloat(0f, 1f).setDuration(68);
+                        final ValueAnimator animator3 = ObjectAnimator.ofFloat(0f, 1f).setDuration(0);
                         animator3.addUpdateListener(animation1 ->
                         {
                             float v = (float) animation1.getAnimatedValue();
@@ -317,9 +321,10 @@ class homeViewController
     }
     private void splashScreenDisable(){
         mTopBar.setAlpha(1);
-        if(mSplashScreen.getVisibility()!=View.GONE)
+        if(!disableSplash)
         {
-            mSplashScreen.animate().setDuration(195).alpha(0).withEndAction((() -> mSplashScreen.setVisibility(View.GONE)));
+            disableSplash = true;
+            mSplashScreen.animate().setDuration(300).alpha(0).withEndAction((() -> mSplashScreen.setVisibility(View.GONE)));
             mEvent.invokeObserver(null, enums.etype.on_init_ads);
             initPostUI(false);
         }
@@ -328,6 +333,11 @@ class homeViewController
     /*-------------------------------------------------------Helper Methods-------------------------------------------------------*/
 
     void onOpenMenu(View view){
+
+        if(popupWindow!=null){
+            popupWindow.dismiss();
+        }
+
         LayoutInflater layoutInflater
                 = (LayoutInflater) mContext
                 .getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -343,6 +353,45 @@ class homeViewController
         View parent = view.getRootView();
         popupWindow.setAnimationStyle(R.style.popup_window_animation);
         popupWindow.showAtLocation(parent, Gravity.TOP|Gravity.END,0,172);
+    }
+
+    void downloadNotification(String message, enums.etype e_type){
+
+        if(popupWindow!=null){
+            popupWindow.dismiss();
+        }
+
+        LayoutInflater layoutInflater
+                = (LayoutInflater) mContext
+                .getSystemService(LAYOUT_INFLATER_SERVICE);
+        final View popupView = layoutInflater.inflate(R.layout.notification_menu, null);
+        popupWindow = new PopupWindow(
+                popupView,
+                ActionMenuView.LayoutParams.MATCH_PARENT,
+                ActionMenuView.LayoutParams.WRAP_CONTENT, true);
+
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setFocusable(true);
+        popupWindow.setBackgroundDrawable(new BitmapDrawable());
+        View parent = mGeckoView.getRootView();
+        popupWindow.setAnimationStyle(R.style.popup_window_animation);
+
+
+        if(message.length()>30){
+            message = message.substring(message.length()-20);
+        }
+
+        TextView notification_message = popupView.findViewById(R.id.notification_message);
+        notification_message.setText(message);
+
+        Button btn = popupView.findViewById(R.id.notification_event);
+        btn.setOnClickListener(v ->
+        {
+            mEvent.invokeObserver(Collections.singletonList(status.sSearchStatus), e_type);
+            popupWindow.dismiss();
+        });
+
+        popupWindow.showAtLocation(parent, Gravity.BOTTOM|Gravity.START,0,-10);
     }
 
     void closeMenu(){
@@ -399,48 +448,40 @@ class homeViewController
         mLoadingText.setText(log);
     }
     void progressBarReset(){
-        mProgressBar.animate().alpha(0);
-        mProgressBar.setProgress(0);
         mProgressBar.setProgress(5);
+        mProgressBar.setVisibility(View.INVISIBLE);
     }
 
     void onProgressBarUpdate(int value,boolean loading_status){
-
-        if(value==0)
-        {
-            progressReVerify(value,loading_status);
-        }
-        else if(mSplashScreen.getVisibility() == View.GONE)
-        {
-            status.sIsAppStarted = true;
-
-            if(mProgressBar.getVisibility()==View.INVISIBLE)
-            {
-                mProgressBar.setProgress(5);
-            }
-            else
-            {
-                if(value==100){
-                    progressReVerify(value,loading_status);
-                }else {
-                    setProgressAnimate(mProgressBar,value);
-                }
-            }
-            mProgressBar.setVisibility(View.VISIBLE);
-            mProgressBar.setAlpha(1);
+        if(value==100){
+            mProgressBar.animate().setStartDelay(450).alpha(0);
         }
         else {
-            progressBarReset();
-            //helperMethod.hideKeyboard(mContext);
+            mProgressBar.animate().setStartDelay(0).alpha(1);
         }
+        setProgressAnimate(mProgressBar,value);
     }
+
+    private ObjectAnimator animation = null;
     private void setProgressAnimate(ProgressBar pb, int progressTo)
     {
-        ObjectAnimator animation = ObjectAnimator.ofInt(pb, "progress", pb.getProgress(), progressTo * 100);
-        animation.setDuration(500);
+        int progress = 500;
+        if((progressTo * 100)<mProgressBar.getProgress()){
+            progress = 0;
+        }
+
+        if(animation!=null){
+            animation.removeAllListeners();
+            animation.end();
+            animation.cancel();
+        }
+
+        animation = ObjectAnimator.ofInt(pb, "progress", pb.getProgress(), progressTo * 100);
+        animation.setDuration(progress);
         animation.setInterpolator(new DecelerateInterpolator());
         animation.start();
     }
+
     private void progressReVerify(int value,boolean loading_status){
         if(mProgressHandler !=null){
             mProgressHandler.removeCallbacksAndMessages(null);
@@ -450,7 +491,7 @@ class homeViewController
         {
             if(!loading_status || value==100){
                 setProgressAnimate(mProgressBar,100);
-                mProgressBar.animate().setStartDelay(400).alpha(0).withEndAction((() -> progressBarReset()));
+                mProgressBar.animate().setStartDelay(200).alpha(0).withEndAction((() -> progressBarReset()));
                 //helperMethod.hideKeyboard(mContext);
             }
         }, 100);

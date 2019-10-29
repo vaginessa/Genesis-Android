@@ -133,7 +133,7 @@ public class helperMethod
     }
 
 
-    public static String getHost(String link){
+    static String getHost(String link){
         URL url;
         try
         {

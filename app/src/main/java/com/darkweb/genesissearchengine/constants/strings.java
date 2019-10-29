@@ -3,9 +3,8 @@ package com.darkweb.genesissearchengine.constants;
 public class strings
 {
     /*Orbot Manager*/
-
-    public static final String WELCOME_MESSAGE_TITLE = "Welcome | Deep Web Gateway";
-    public static final String WELCOME_MESSAGE_DESC = "\nWelcome to Deep Web | Dark Web Gateway. This application provide you a platform to Search and Open Dark Web urls.\n\nHere are few Suggestions\n";
+    public static final String WELCOME_MESSAGE_TITLE = "Welcome | Hidden  Web Gateway";
+    public static final String WELCOME_MESSAGE_DESC = "This application provide you a platform to Search and Open Hidden Web urls.Here are few Suggestions\n";
     public static final String WELCOME_MESSAGE_BT_1 = "Deep Web Online Market";
     public static final String WELCOME_MESSAGE_BT_2 = "Leaked Documents and Books";
     public static final String WELCOME_MESSAGE_BT_3 = "Dark Web News and Articles";
@@ -52,6 +51,10 @@ public class strings
     public static final String CLEAR_HISTORY_BT_1 = "Clear";
     public static final String CLEAR_HISTORY_BT_2 = "Dismiss";
 
+    public static final String CLEAR_TAB_TITLE = "Clear open tabs?";
+    public static final String CLEAR_TAB_DESC = "This will clear all stored tabs";
+    public static final String CLEAR_TAB_BT_1 = "Clear";
+
     public static final String clear_bookmark_title = "Clear site bookmark?";
     public static final String clear_bookmark_desc = "This will clear data for all saved sites\n";
     public static final String clear_bookmark_bt1 = "Clear";
@@ -59,7 +62,7 @@ public class strings
 
     public static final String DOWNLOAD_TITLE = "Download Notification";
     public static final String DOWNLOAD_LONG_PRESS_TITLE = "File Notification";
-    public static final String DOWNLOAD_LONG_PRESS_MESSAGE = "File Description | ";
+    public static final String DOWNLOAD_LONG_PRESS_MESSAGE = "File | ";
     public static final String DOWNLOAD_MESSAGE = "Download File | ";
     public static final String DOWNLOAD_POSITIVE = "Download";
     public static final String DOWNLOAD_NEGATIVE = "Dismiss";
@@ -68,8 +71,17 @@ public class strings
     public static final String LONG_URL_MESSAGE = "URL Description";
     public static final String LONG_URL_OPTION_1 = "Open In New Tab";
     public static final String LONG_URL_OPTION_2 = "Open In Current Tab";
-    public static final String LONG_URL_OPTION_3 = "Copy Link";
-    public static final String LONG_URL_OPTION_4 = "Dismiss";
+    public static final String LONG_URL_OPTION_3 = "Copy to Clipboard";
+    public static final String LONG_URL_OPTION_4 = "Download this file";
+
+    public static final String LONG_URL_FULL_MESSAGE = "URL Description";
+    public static final String LONG_URL_FULL_OPTION_1 = "Open url in new tab";
+    public static final String LONG_URL_FULL_OPTION_2 = "Open url in current tab";
+    public static final String LONG_URL_FULL_OPTION_3 = "Copy url to clipboard";
+    public static final String LONG_URL_FULL_OPTION_4 = "Open image in new tab";
+    public static final String LONG_URL_FULL_OPTION_5 = "Open image current tab";
+    public static final String LONG_URL_FULL_OPTION_6 = "Copy image to clipboard";
+    public static final String LONG_URL_FULL_OPTION_7 = "Download image file";
 
     public static final String BANNED_TITLE = "Is Tor Bannned In Your Country?";
     public static final String BANNED_DESC = "Enable free GATEWAY to tunnel through banned configuration | Use it only if tor is banned in your country";

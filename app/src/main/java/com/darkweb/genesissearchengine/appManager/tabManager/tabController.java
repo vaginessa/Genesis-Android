@@ -115,10 +115,7 @@ public class tabController extends AppCompatActivity
     }
 
     public void onclearDataTrigger(View view){
-        mListModel.clearList();
-        ((tabAdapter) mListView.getAdapter()).invokeFilter(true );
-        mtabViewController.clearList();
-        dataController.getInstance().clearTabs();
+        pluginController.getInstance().MessageManagerHandler(this,"",enums.etype.clear_tab);
     }
 
     @Override
@@ -161,8 +158,7 @@ public class tabController extends AppCompatActivity
             if(e_type.equals(enums.etype.url_triggered)){
                 tabRowModel model = (tabRowModel)data.get(0);
                 pluginController.getInstance().logEvent(strings.TAB_TRIGGERED);
-                mHomeController.onLoadTab(model.getSession());
-
+                mHomeController.onLoadTab(model.getSession(),false);
                 finish();
             }
             else if(e_type.equals(enums.etype.url_clear)){
@@ -171,6 +167,10 @@ public class tabController extends AppCompatActivity
             else if(e_type.equals(enums.etype.is_empty)){
                 mtabViewController.removeFromList((int)data.get(0));
                 mtabViewController.updateIfListEmpty(mListModel.getList().size(),300);
+
+                if(dataController.getInstance().getTotalTabs()<1){
+                    finish();
+                }
             }
             mHomeController.initTabCount();
         }

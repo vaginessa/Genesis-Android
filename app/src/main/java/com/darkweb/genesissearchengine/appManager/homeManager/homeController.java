@@ -1,14 +1,20 @@
 package com.darkweb.genesissearchengine.appManager.homeManager;
 
 import android.annotation.SuppressLint;
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentCallbacks2;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.URLUtil;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -167,20 +173,21 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     }
 
     public void onLoadURL(String url){
-        //mGeckoClient.setCurrentURL(url);
         mHomeViewController.onClearSelections(true);
         mGeckoClient.loadURL(url);
     }
 
-    public void onLoadTab(geckoSession mTempSession){
-        dataController.getInstance().closeTab(mTempSession);
-        onSaveCurrentTab(mTempSession);
+    public void onLoadTab(geckoSession mTempSession,boolean isSessionClosed){
+        if(!isSessionClosed){
+            dataController.getInstance().closeTab(mTempSession);
+            onSaveCurrentTab(mTempSession);
+        }
         mGeckoView.releaseSession();
         mGeckoClient.initSession(mTempSession);
         mHomeViewController.onUpdateSearchBar(mTempSession.getCurrentURL());
 
         if(mTempSession.getProgress()>0 && mTempSession.getProgress()<100){
-            mHomeViewController.onProgressBarUpdate(mTempSession.getProgress(),false);
+            mHomeViewController.onProgressBarUpdate(mTempSession.getProgress(),mGeckoClient.getSession().getProgress()>0);
         }else {
             mHomeViewController.progressBarReset();
         }
@@ -189,8 +196,33 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
     /*-------------------------------------------------------USER EVENTS-------------------------------------------------------*/
 
+    private BroadcastReceiver downloadStatus = new BroadcastReceiver()
+    {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+
+            DownloadManager dMgr = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+            Cursor c= dMgr.query(new DownloadManager.Query().setFilterById(id));
+
+            if(c.moveToFirst()){
+                String url = c.getString(c.getColumnIndex(DownloadManager.COLUMN_URI));
+                onNotificationInvoked(URLUtil.guessFileName(url, null, null), enums.etype.download_folder);
+            }
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(downloadStatus);
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     private void initializeLocalEventHandlers() {
+
+        registerReceiver(downloadStatus,new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
         mSearchbar.setOnEditorActionListener((v, actionId, event) ->
         {
@@ -268,6 +300,11 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
     public void onOpenTabView(View view){
         helperMethod.openActivity(tabController.class, constants.LIST_HISTORY, homeController.this,true);
+        //onNotificationInvoked("askjdhkjasdhkjashdkjasdhajssuper_man.jpg",enums.etype.download_folder);
+    }
+
+    public void onNotificationInvoked(String message,enums.etype e_type){
+        mHomeViewController.downloadNotification(message,e_type);
     }
 
     public void onOpenMenuItem(View view){
@@ -290,7 +327,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             mHomeViewController.onClearSelections(true);
         }
         else {
-            mGeckoClient.exitFullScreen();
+            mGeckoClient.onExitFullScreen();
         }
     }
 
@@ -387,11 +424,11 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     }
 
     public void onDownloadFile(){
-        //mGeckoClient.downloadFile();
+        mGeckoClient.downloadFile();
     }
 
     public void onManualDownload(String url){
-        //mGeckoClient.manual_download(url);
+        mGeckoClient.manual_download(url);
     }
 
     public AdView getBannerAd()
@@ -410,7 +447,6 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     }
 
     public void onOpenLinkNewTab(String url){
-        onSaveCurrentTab(mGeckoClient.getSession());
         initializeGeckoView();
         mHomeViewController.progressBarReset();
         mHomeViewController.onNewTab(false);
@@ -427,7 +463,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         dataController.getInstance().closeTab(session);
         tabRowModel model = dataController.getInstance().getCurrentTab();
         if(model!=null){
-            onLoadTab(session);
+            onLoadTab(model.getSession(),true);
         }
         else {
             onNewTab();
@@ -443,6 +479,10 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
     /*-------------------------------------------------------CALLBACKS-------------------------------------------------------*/
 
+    public void onOpenDownloadFolder(View view){
+        helperMethod.openDownloadFolder(homeController.this);
+    }
+
     public void onMenuItemInvoked(View view){
         int menuId = view.getId();
         if (menuId == R.id.menu11) {
@@ -454,10 +494,10 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             onCloseCurrentTab(mGeckoClient.getSession());
         }
         else if (menuId == R.id.menu9) {
-            helperMethod.openActivity(tabController.class,constants.LIST_BOOKMARK, homeController.this,true);
+            helperMethod.openActivity(tabController.class, constants.LIST_HISTORY, homeController.this,true);
         }
         else if (menuId == R.id.menu8) {
-            helperMethod.openDownloadFolder(homeController.this);
+            onOpenDownloadFolder(null);
         }
         else if (menuId == R.id.menu7) {
             helperMethod.openActivity(historyController.class, constants.LIST_HISTORY, homeController.this,true);
@@ -509,6 +549,10 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         @Override
         public void invokeObserver(List<Object> data, enums.etype e_type)
         {
+           if(e_type.equals(enums.etype.download_folder))
+           {
+               onOpenDownloadFolder(null);
+           }
            if(e_type.equals(enums.etype.on_init_ads))
            {
                pluginController.getInstance().initializeBannerAds();
@@ -530,7 +574,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         public void invokeObserver(List<Object> data, enums.etype e_type)
         {
             if(e_type.equals(enums.etype.progress_update)){
-                mHomeViewController.onProgressBarUpdate((int)data.get(0), true);
+                mHomeViewController.onProgressBarUpdate((int)data.get(0), mGeckoClient.getSession().getProgress()>0);
             }
             else if(e_type.equals(enums.etype.on_url_load)){
                 mHomeViewController.onUpdateSearchBar(data.get(0).toString());
@@ -578,6 +622,9 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                 boolean status = (Boolean)data.get(0);
                 mHomeViewController.onFullScreenUpdate(status);
             }
+            else if(e_type.equals(enums.etype.on_long_press_with_link)){
+                 pluginController.getInstance().MessageManagerHandler(homeController.this,data.get(2).toString()+"_"+data.get(0).toString(),enums.etype.on_long_press_with_link);
+            }
             else if(e_type.equals(enums.etype.on_long_press)){
                 pluginController.getInstance().MessageManagerHandler(homeController.this,data.get(0).toString(),enums.etype.download_file_long_press);
             }
@@ -590,10 +637,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             else if(e_type.equals(enums.etype.on_close_sesson)){
                 onCloseCurrentTab(mGeckoClient.getSession());
             }
-
         }
     }
-
-
 }
 

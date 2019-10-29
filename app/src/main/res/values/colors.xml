@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="blue">#0066FF</color>
+
+    4d88ff
+    <color name="ease_blue_light">#fdfeff</color>
     <color name="ease_blue">#4d88ff</color>
     <color name="cursor_blue">#3385ff</color>
     <color name="text_color_highlight_v1">#b3d1ff</color>

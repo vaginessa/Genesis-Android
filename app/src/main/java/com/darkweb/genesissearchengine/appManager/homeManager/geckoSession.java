@@ -1,12 +1,18 @@
 package com.darkweb.genesissearchengine.appManager.homeManager;
 
+import android.content.ActivityNotFoundException;
+import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
+import android.webkit.URLUtil;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.appcompat.app.AppCompatActivity;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.strings;
+import com.darkweb.genesissearchengine.helperManager.downloadFileService;
 import com.darkweb.genesissearchengine.helperManager.errorHandler;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import org.mozilla.geckoview.AllowOrDeny;
@@ -27,6 +33,7 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
     private String mCurrentTitle = strings.EMPTY_STR;
     private String mCurrentURL = strings.EMPTY_STR;
     private AppCompatActivity mContext;
+    private geckoDownloadManager mDownloadManager;
 
     geckoSession(eventObserver.eventListener event,int mSessionID,AppCompatActivity mContext){
 
@@ -36,6 +43,7 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
         setHistoryDelegate(this);
         setNavigationDelegate(this);
         setContentDelegate(this);
+        mDownloadManager = new geckoDownloadManager();
 
         this.event = event;
     }
@@ -44,13 +52,16 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
 
     @Override
     public void onPageStart(@NonNull GeckoSession var1, @NonNull String var2) {
+        mProgress = 5;
     }
 
     @Override
     public void onProgressChange(@NonNull GeckoSession session, int progress)
     {
-        mProgress = progress;
-        event.invokeObserver(Arrays.asList(progress,mSessionID), enums.etype.progress_update);
+        if(!mFullScreen){
+            mProgress = progress;
+            event.invokeObserver(Arrays.asList(mProgress,mSessionID), enums.etype.progress_update);
+        }
     }
 
     /*History Delegate*/
@@ -78,6 +89,7 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
             return GeckoResult.fromValue(AllowOrDeny.DENY);
         }
         else {
+            event.invokeObserver(Arrays.asList(mProgress,mSessionID), enums.etype.start_proxy);
             return GeckoResult.fromValue(AllowOrDeny.ALLOW);
         }
     }
@@ -103,12 +115,21 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
     /*Content Delegate*/
     @Override
     public void onExternalResponse(@NonNull GeckoSession session, @NonNull GeckoSession.WebResponseInfo response) {
-        event.invokeObserver(Arrays.asList(response,mSessionID), enums.etype.on_handle_external_intent);
+        try {
+            event.invokeObserver(Arrays.asList(response,mSessionID), enums.etype.on_handle_external_intent);
+        } catch (ActivityNotFoundException e) {
+            mDownloadManager.downloadFile(response,this,mContext,event);
+            stop();
+        }
     }
 
     @UiThread
     public void onTitleChange(@NonNull GeckoSession var1, @Nullable String var2) {
-        mCurrentTitle = var2;
+        if(var2.equals(strings.EMPTY_STR)){
+            mCurrentTitle = URLUtil.guessFileName(mCurrentURL, null, null);
+        }else {
+            mCurrentTitle = var2;
+        }
     }
 
     @Override
@@ -118,15 +139,34 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
     }
 
     public void onContextMenu(@NonNull GeckoSession var1, int var2, int var3, @NonNull GeckoSession.ContentDelegate.ContextElement var4) {
+
         if(var4.type==1){
-            event.invokeObserver(Arrays.asList(var4.srcUri,mSessionID), enums.etype.on_long_press);
+            if(var4.linkUri!=null){
+                event.invokeObserver(Arrays.asList(var4.srcUri,mSessionID,var4.linkUri), enums.etype.on_long_press_with_link);
+            }
+            else {
+                event.invokeObserver(Arrays.asList(var4.srcUri,mSessionID), enums.etype.on_long_press);
+            }
         }
         else if(var4.type==0){
             event.invokeObserver(Arrays.asList(var4.linkUri,mSessionID), enums.etype.on_long_press_url);
         }
     }
 
+    /*Download Manager*/
+
+    void downloadRequestedFile()
+    {
+        mContext.startService(downloadFileService.getDownloadService(mContext, mDownloadManager.getDownloadURL()+"__"+mDownloadManager.getDownloadFile(), Environment.DIRECTORY_DOWNLOADS));
+    }
+
+    void downloadRequestedFile(Uri downloadURL,String downloadFile)
+    {
+        mContext.startService(downloadFileService.getDownloadService(mContext, downloadURL+"__"+downloadFile, Environment.DIRECTORY_DOWNLOADS));
+    }
+
     /*Helper Methods*/
+
     public String getCurrentURL(){
         return mCurrentURL;
     }
