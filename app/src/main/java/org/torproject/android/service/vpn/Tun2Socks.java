@@ -134,11 +134,11 @@ public class Tun2Socks
 
     public static boolean checkIsAllowed (int protocol, String sourceAddr, int sourcePort, String destAddr, int destPort) {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-        {
-            return isAllowedQ(protocol, sourceAddr, sourcePort, destAddr, destPort);
-        }
-        else
+        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+        //{
+        //    return isAllowedQ(protocol, sourceAddr, sourcePort, destAddr, destPort);
+        //}
+        //else
             return isAllowed(protocol, sourceAddr, sourcePort, destAddr, destPort);
     }
 
@@ -154,7 +154,7 @@ public class Tun2Socks
             return true;
     }
 
-    @TargetApi(Build.VERSION_CODES.Q)
+    //@TargetApi(Build.VERSION_CODES.Q)
     public static boolean isAllowedQ (int protocol, String sourceAddr, int sourcePort, String destAddr, int destPort) {
         ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(CONNECTIVITY_SERVICE);
         if (cm == null)
@@ -163,8 +163,8 @@ public class Tun2Socks
         InetSocketAddress local = new InetSocketAddress(sourceAddr, sourcePort);
         InetSocketAddress remote = new InetSocketAddress(destAddr, destPort);
 
-        int uid = cm.getConnectionOwnerUid(protocol, local, remote);
-        return mAppUidBlacklist.containsKey(uid);
+        //int uid = cm.getConnectionOwnerUid(protocol, local, remote);
+        return mAppUidBlacklist.containsKey(0);
     }
 
     public static void setBlacklist(HashMap<Integer,String> appUidBlacklist)

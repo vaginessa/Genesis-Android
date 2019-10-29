@@ -2,10 +2,10 @@
   on Unix domain sockets, like passing file descriptors from one process to
   another.
 
-  Programs that uses this library should include the ancillary.h mHeader file.
+  Programs that uses this library should include the ancillary.h header file.
   Nothing else is required.
 
-  All functions of this library require the following mHeader:
+  All functions of this library require the following header:
 
 	#include <ancillary.h>
 

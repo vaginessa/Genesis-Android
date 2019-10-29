@@ -4,7 +4,7 @@
 #
 # Starts the Proxy DNS Daemon
 #
-# mDescription: Proxy DNS Daemon
+# description: Proxy DNS Daemon
 # processname: pdnsd
 # config: /etc/pdnsd.conf
 # distribution: Slackware

@@ -23,9 +23,9 @@
     project.ext.firefox_channel = "nightly"
 
 /*Application Preferences*/
-    project.ext.compileSdkVersion = 29
+    project.ext.compileSdkVersion = 28
     project.ext.minSdkVersion = 21
-    project.ext.targetSdkVersion = 29
+    project.ext.targetSdkVersion = 28
     project.ext.versionCode = 126
     project.ext.versionName = "126.0"
     project.ext.applicationId = "com.darkweb.genesissearchengine"

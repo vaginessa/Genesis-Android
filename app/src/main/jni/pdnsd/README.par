@@ -43,7 +43,7 @@ version because the (compressed) patch file is barely smaller than the
 (compressed) tar archive.
 
 Here follows a list of some of changes in version 1.2 from a user's perspective.
-For a more technical mDescription of some of the changes in the code see the ChangeLog.
+For a more technical description of some of the changes in the code see the ChangeLog.
 For a short history about recent releases have a look at NEWS or doc/html/index.html.
 
 - First of all, two potentially rather nasty bugs have been fixed in the code

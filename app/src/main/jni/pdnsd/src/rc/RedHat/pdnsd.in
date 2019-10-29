@@ -6,7 +6,7 @@
 # Modified by Paul Rombouts, 2003
 #
 # chkconfig: 2345 11 89
-# mDescription: Proxy DNS Daemon
+# description: Proxy DNS Daemon
 # processname: pdnsd
 # config: /etc/pdnsd.conf
 

@@ -451,7 +451,7 @@ elif test "$threadlib" = linuxthreads2 -o "$threadlib" = LinuxThreads2 -o "$thre
 	AC_DEFINE(THREADLIB_LINUXTHREADS2)
 fi
 
-dnl Checks for mHeader files.
+dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(fcntl.h malloc.h sys/ioctl.h sys/time.h syslog.h unistd.h)

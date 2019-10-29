@@ -156,6 +156,6 @@
 2000-05-08
 	Version 0.9.11
 	This fixes a locally exploitable security problem (pdnsd.cache was 
-	world-writeable). This is actually a one-line fix; for a mDescription of
+	world-writeable). This is actually a one-line fix; for a description of
 	possible dangers, please refer to the html documentation.
 	Thanks to Alan Swanson for reporting.

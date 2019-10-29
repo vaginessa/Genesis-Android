@@ -84,6 +84,7 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
     }
 
     public GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession var2, @NonNull GeckoSession.NavigationDelegate.LoadRequest var1) {
+        event.invokeObserver(Arrays.asList(mProgress,mSessionID), enums.etype.start_proxy);
         if(var1.target==2){
             event.invokeObserver(Arrays.asList(var1.uri,mSessionID), enums.etype.open_new_tab);
             return GeckoResult.fromValue(AllowOrDeny.DENY);
