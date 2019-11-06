@@ -19,28 +19,65 @@ class geckoClients
 
     private geckoSession mSession = null;
     private GeckoRuntime mRuntime = null;
+    private GeckoRuntimeSettings.Builder mGeckoRuntime;
     private int mSessionID=0;
 
     private eventObserver.eventListener event;
     private AppCompatActivity context;
 
+    int e=0;
     void initialize(GeckoView geckoView, AppCompatActivity Context,eventObserver.eventListener event,String searchEngine,AppCompatActivity context)
     {
+
         this.context = context;
         this.event = event;
         mSessionID += 1;
+
         mSession = new geckoSession(new geckoViewClientCallback(),mSessionID,context);
-        mRuntime = GeckoRuntime.getDefault(Context);
-        mRuntime.getSettings().setAutomaticFontSizeAdjustment(status.sFontAdjustable);
+        runtimeSettings(context);
         mSession.open(mRuntime);
         mSession.getSettings().setUseTrackingProtection(true);
+        mSession.getSettings().setAllowJavascript(status.sJavaStatus);
         mSession.setPromptDelegate(new geckoPromptView(context));
-
         mSession.setTitle("New Tab");
         geckoView.releaseSession();
         geckoView.setSession(mSession);
         onUpdateFont();
+
     }
+
+    private void runtimeSettings(AppCompatActivity context){
+        if(mRuntime==null){
+            mRuntime = GeckoRuntime.getDefault(context);
+            mRuntime.getSettings().getContentBlocking().setCookieBehavior(getCookiesBehaviour());
+            mRuntime.getSettings().setAutomaticFontSizeAdjustment(status.sFontAdjustable);
+        }
+    }
+
+    private int getCookiesBehaviour(){
+        if(status.sCookieStatus){
+            return 0;
+        }
+        else {
+            return 2;
+        }
+    }
+
+    void updateCookies(){
+        if(status.sCookieStatus){
+            mRuntime.getSettings().getContentBlocking().setCookieBehavior(getCookiesBehaviour());
+        }
+        else {
+            mRuntime.getSettings().getContentBlocking().setCookieBehavior(getCookiesBehaviour());
+        }
+        onReload();
+    }
+
+    void onClose(){
+        if(mRuntime!=null){
+            mRuntime.shutdown();
+        }
+     }
 
     void initSession(geckoSession mSession){
         this.mSession = mSession;
@@ -51,18 +88,34 @@ class geckoClients
         return mSession;
     }
 
+    void updateJavascript(){
+        mSession.getSettings().setAllowJavascript(status.sJavaStatus);
+        if(status.sJavaStatus){
+           mSession.reload();
+        }
+    }
+
     void loadURL(String url){
         mSession.loadUri(url);
     }
 
     void onBackPressed(boolean isFinishAllowed){
         if(mSession.canGoBack()){
-            mSession.goBack();
+            mSession.goBackSession();
         }
         else if(isFinishAllowed){
             event.invokeObserver(null, enums.etype.back_list_empty);
         }
     }
+
+    boolean canGoBack(){
+        return mSession.canGoBack();
+    }
+
+    boolean canGoForward(){
+        return mSession.canGoForward();
+    }
+
 
     boolean getFullScreenStatus(){
         return mSession.getFullScreenStatus();
@@ -74,7 +127,7 @@ class geckoClients
 
     void onForwardPressed(){
         if(mSession.canGoForward()){
-            mSession.goForward();
+            mSession.goForwardSession();
         }
     }
 

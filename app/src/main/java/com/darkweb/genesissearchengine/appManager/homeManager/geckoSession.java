@@ -3,6 +3,7 @@ package com.darkweb.genesissearchengine.appManager.homeManager;
 import android.content.ActivityNotFoundException;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.webkit.URLUtil;
 
@@ -35,6 +36,9 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
     private AppCompatActivity mContext;
     private geckoDownloadManager mDownloadManager;
 
+    /*Temp Variables*/
+    private GeckoSession.HistoryDelegate.HistoryList mHistoryList = null;
+
     geckoSession(eventObserver.eventListener event,int mSessionID,AppCompatActivity mContext){
 
         this.mContext = mContext;
@@ -52,7 +56,15 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
 
     @Override
     public void onPageStart(@NonNull GeckoSession var1, @NonNull String var2) {
-        mProgress = 5;
+        if(!var2.equals("about:blank")){
+            mProgress = 5;
+        }
+    }
+
+    @UiThread
+    public void onPageStop(@NonNull GeckoSession var1, boolean var2) {
+        Log.i("SUPPFE1",var2+"");
+        //event.invokeObserver(Arrays.asList(100,mSessionID), enums.etype.progress_update);
     }
 
     @Override
@@ -62,6 +74,7 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
             mProgress = progress;
             event.invokeObserver(Arrays.asList(mProgress,mSessionID), enums.etype.progress_update);
         }
+        Log.i("SUPPFE2",progress+"");
     }
 
     /*History Delegate*/
@@ -74,23 +87,36 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
         return null;
     }
 
+    @UiThread
+    public void onHistoryStateChange(@NonNull GeckoSession var1, @NonNull GeckoSession.HistoryDelegate.HistoryList var2) {
+        mHistoryList = var2;
+    }
+
     /*Navigation Delegate*/
     public void onLocationChange(@NonNull GeckoSession var1, @Nullable String var2) {
         mCurrentURL = var2;
         if (var2 != null && !var2.equals("about:blank"))
         {
+            event.invokeObserver(Arrays.asList(mCurrentURL,mSessionID), enums.etype.start_proxy);
+            event.invokeObserver(Arrays.asList(mCurrentURL,mSessionID), enums.etype.search_update);
             event.invokeObserver(Arrays.asList(null,mSessionID), enums.etype.on_page_loaded);
         }
     }
 
+    @Override
+    public void loadData(@NonNull byte[] var1, @Nullable String var2) {
+    }
+
     public GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession var2, @NonNull GeckoSession.NavigationDelegate.LoadRequest var1) {
-        event.invokeObserver(Arrays.asList(mProgress,mSessionID), enums.etype.start_proxy);
-        if(var1.target==2){
+        if(var1.uri.equals("about:blank")){
+            return GeckoResult.fromValue(AllowOrDeny.DENY);
+        }
+        else if(var1.target==2){
             event.invokeObserver(Arrays.asList(var1.uri,mSessionID), enums.etype.open_new_tab);
             return GeckoResult.fromValue(AllowOrDeny.DENY);
         }
         else {
-            event.invokeObserver(Arrays.asList(mProgress,mSessionID), enums.etype.start_proxy);
+            event.invokeObserver(Arrays.asList(var1.uri,mSessionID), enums.etype.start_proxy);
             return GeckoResult.fromValue(AllowOrDeny.ALLOW);
         }
     }
@@ -176,7 +202,7 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
         return mCurrentTitle;
     }
 
-    public int getProgress(){
+    int getProgress(){
         return mProgress;
     }
 
@@ -206,6 +232,23 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
 
     public void closeSession(){
         event.invokeObserver(Arrays.asList(null,mSessionID), enums.etype.on_close_sesson);
+    }
+
+    void goBackSession(){
+        event.invokeObserver(Arrays.asList(mHistoryList.get(mHistoryList.getCurrentIndex()-1).getUri(),mSessionID), enums.etype.start_proxy);
+        new Handler().postDelayed(() ->
+        {
+            goBack();
+        }, 100);
+
+    }
+
+    void goForwardSession(){
+        event.invokeObserver(Arrays.asList(mHistoryList.get(mHistoryList.getCurrentIndex()+1),mSessionID), enums.etype.start_proxy);
+        new Handler().postDelayed(() ->
+        {
+            goForward();
+        }, 100);
     }
 
 }

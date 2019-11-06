@@ -15,7 +15,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="56dp"
             android:alpha="0"
-            android:background="@color/button_gray"
+            android:background="@color/float_white"
             ads:adSize="SMART_BANNER"
             ads:adUnitId="ca-app-pub-5074525529134731/7816565677"
             ads:layout_constraintEnd_toEndOf="parent"
@@ -103,8 +103,8 @@
                         android:dropDownSelector="@xml/rouned_corner"
                         android:ems="10"
                         android:hint="@string/SearchHintMain"
+                        android:inputType="textPhonetic"
                         android:importantForAutofill="no"
-                        android:inputType="textNoSuggestions"
                         android:maxLines="1"
                         android:paddingLeft="12dp"
                         android:paddingRight="15dp"
@@ -169,18 +169,22 @@
     <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-        <ProgressBar
+        <com.darkweb.genesissearchengine.widget.AnimatedProgressBar
                 android:id="@+id/progressBar"
-                style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
+                style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="3.5dp"
                 android:alpha="0"
+                android:progressDrawable="@xml/photon_progressbar"
+                app:shiftDuration="@integer/progress_shift_duration"
+                app:wrapShiftDrawable="true"
                 android:layout_marginTop="55.7dp"
                 android:progress="50"
                 android:max="10000"
-                android:progressDrawable="@xml/gradient_progress"
                 android:scaleY="0.7"
+                tools:progress="50"
                 app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/splashScreen"
                 android:layout_width="match_parent"

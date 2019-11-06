@@ -23,6 +23,7 @@ import com.example.myapplication.R;
 
 import java.util.List;
 
+import static com.darkweb.genesissearchengine.constants.status.sCookieStatus;
 import static com.darkweb.genesissearchengine.constants.status.sHistoryStatus;
 import static com.darkweb.genesissearchengine.constants.status.sJavaStatus;
 
@@ -209,7 +210,7 @@ public class settingController extends AppCompatActivity
             }
             else if(e_type == enums.etype.update_javascript){
                 status.sJavaStatus = (boolean)data.get(0);
-                mHomeController.onloadSettings();
+                mHomeController.onUpdateJavascript();
                 dataController.getInstance().setBool(keys.JAVA_SCRIPT, status.sJavaStatus);
             }
             else if(e_type == enums.etype.update_history){
@@ -218,6 +219,11 @@ public class settingController extends AppCompatActivity
             }
             else if(e_type == enums.etype.update_font_adjustable || e_type == enums.etype.update_font_size){
                 mHomeController.onLoadFont();
+            }
+            else if(e_type == enums.etype.update_cookies){
+                sCookieStatus = (boolean)data.get(0);
+                dataController.getInstance().setBool(keys.COOKIE_ADJUSTABLE, sCookieStatus);
+                mHomeController.onUpdateCookies();
             }
             else if(e_type == enums.etype.close_view){
                 finish();

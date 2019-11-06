@@ -149,6 +149,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 
     implementation 'com.offbynull.portmapper:portmapper:2.0.5'
+    implementation project(':orbotservice')
+
 }
 
 apply plugin: 'com.android.application'

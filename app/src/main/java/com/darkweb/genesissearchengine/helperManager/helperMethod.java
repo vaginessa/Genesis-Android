@@ -200,6 +200,10 @@ public class helperMethod
         return (int)(px / context.getResources().getDisplayMetrics().density);
     }
 
+    public static int pxFromDp(int dp){
+        return   (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+
     public static int getScreenHeight(AppCompatActivity context) {
         Display display = context.getWindowManager().getDefaultDisplay();
         Point size = new Point();

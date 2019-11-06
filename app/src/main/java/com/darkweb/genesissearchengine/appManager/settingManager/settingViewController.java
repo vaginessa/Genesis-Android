@@ -161,6 +161,6 @@ class settingViewController
 
     void updatePercentage(int font_size){
 
-        mFontSizePercentage.setText("Adjust Font" + " " + font_size +"%");
+        mFontSizePercentage.setText("Custom Font" + " " + font_size +"%");
     }
 }

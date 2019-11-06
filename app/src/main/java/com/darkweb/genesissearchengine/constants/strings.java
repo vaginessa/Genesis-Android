@@ -68,7 +68,7 @@ public class strings
     public static final String DOWNLOAD_NEGATIVE = "Dismiss";
 
     public static final String LONG_URL_TITLE = "URL Notification";
-    public static final String LONG_URL_MESSAGE = "URL Description";
+    public static final String LONG_URL_MESSAGE = "Link";
     public static final String LONG_URL_OPTION_1 = "Open In New Tab";
     public static final String LONG_URL_OPTION_2 = "Open In Current Tab";
     public static final String LONG_URL_OPTION_3 = "Copy to Clipboard";

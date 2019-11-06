@@ -115,6 +115,7 @@ class settingModel
         {
             status.sCookieStatus = mCookieStatus;
             dataController.getInstance().setBool(keys.COOKIE_ADJUSTABLE,status.sCookieStatus);
+            mEvent.invokeObserver(Collections.singletonList(mCookieStatus), enums.etype.update_cookies);
         }
         mEvent.invokeObserver(Collections.singletonList(mHistoryStatus), enums.etype.close_view);
     }

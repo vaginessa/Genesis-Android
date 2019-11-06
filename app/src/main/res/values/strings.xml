@@ -35,8 +35,8 @@
     <string name="settings_javascript" translatable="false">Javascript</string>
     <string name="settings_clear_history" translatable="false">Auto Clear History</string>
     <string name="settings_font_title" translatable="false">Font Settings</string>
-    <string name="adjust_font" translatable="false">Adjust Font</string>
-    <string name="manual_font" translatable="false">Manual Font</string>
+    <string name="adjust_font" translatable="false">Customized Font</string>
+    <string name="manual_font" translatable="false">Auto Adjust Font</string>
     <string name="settings_cookies" translatable="false">Cookie Settings</string>
     <string name="cookie" translatable="false">Cookies</string>
 

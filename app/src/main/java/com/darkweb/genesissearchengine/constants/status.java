@@ -10,13 +10,11 @@ public class status
 
     /*Settings Status*/
 
-    public static String sTorLogsStatus = strings.EMPTY_STR;
-    public static String sSearchStatus = constants.BACKEND_DUCK_DUCK_GO_URL;
+    public static String sSearchStatus = constants.BACKEND_GENESIS_URL;
     public static boolean sJavaStatus = true;
     public static boolean sHistoryStatus = true;
     public static boolean sGateway = false;
     public static boolean sIsAppPaused = false;
-    public static boolean sIsTorInitialized = false;
     public static boolean sIsWelcomeEnabled = true;
     public static boolean sIsAppStarted = false;
     public static boolean sIsAppRated = false;

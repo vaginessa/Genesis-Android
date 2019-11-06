@@ -72,7 +72,10 @@ public class pluginController
         return mIsInitialized;
     }
     void proxyManagerExitInvoke(){
+        mHomeController.onClose();
+        orbotManager.getInstance().onClose();
         onResetMessage();
+        //System.exit(1);
     }
 
     /*---------------------------------------------- EXTERNAL REQUEST LISTENER-------------------------------------------------------*/
@@ -92,18 +95,22 @@ public class pluginController
 
     /*Ad Manager*/
     public void initializeBannerAds(){
-        mAdManager.initializeBannerAds();
+        mAdManager.loadAds();
+    }
+
+    public boolean isAdvertLoaded(){
+       return mAdManager.isAdvertLoaded();
     }
 
     /*Onion Proxy Manager*/
     public void initializeOrbot(){
-        orbotManager.getInstance().initializeOrbot();
+        orbotManager.getInstance().startOrbot();
     }
     public boolean isOrbotRunning(){
         return orbotManager.getInstance().isOrbotRunning();
     }
-    public void setProxy(){
-        orbotManager.getInstance().setProxy();
+    public void setProxy(String url){
+        orbotManager.getInstance().setProxy(url);
     }
     public String orbotLogs(){
         return orbotManager.getInstance().getLogs();
@@ -116,7 +123,7 @@ public class pluginController
         @Override
         public void invokeObserver(List<Object> data, enums.etype event_type)
         {
-
+            mHomeController.onSetBannerAdMargin();
         }
     }
 
