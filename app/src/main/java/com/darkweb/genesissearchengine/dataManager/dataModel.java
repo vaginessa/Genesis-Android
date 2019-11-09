@@ -220,6 +220,11 @@ class dataModel
     ArrayList<String> getmSuggestions(){
         return mSuggestions;
     }
+
+    public void clearSuggestion(){
+        mSuggestions.clear();
+    }
+
     void initSuggestions(){
         mSuggestions.add("https://youtube.com");
         mSuggestions.add("https://en.wikipedia.org");

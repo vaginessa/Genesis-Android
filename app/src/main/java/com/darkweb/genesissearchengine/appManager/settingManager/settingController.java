@@ -224,6 +224,7 @@ public class settingController extends AppCompatActivity
                 sCookieStatus = (boolean)data.get(0);
                 dataController.getInstance().setBool(keys.COOKIE_ADJUSTABLE, sCookieStatus);
                 mHomeController.onUpdateCookies();
+                pluginController.getInstance().updateCookiesStatus();
             }
             else if(e_type == enums.etype.close_view){
                 finish();

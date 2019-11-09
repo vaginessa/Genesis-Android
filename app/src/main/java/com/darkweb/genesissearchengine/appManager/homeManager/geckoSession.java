@@ -63,8 +63,6 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
 
     @UiThread
     public void onPageStop(@NonNull GeckoSession var1, boolean var2) {
-        Log.i("SUPPFE1",var2+"");
-        //event.invokeObserver(Arrays.asList(100,mSessionID), enums.etype.progress_update);
     }
 
     @Override
@@ -74,7 +72,6 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
             mProgress = progress;
             event.invokeObserver(Arrays.asList(mProgress,mSessionID), enums.etype.progress_update);
         }
-        Log.i("SUPPFE2",progress+"");
     }
 
     /*History Delegate*/
@@ -108,7 +105,11 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
     }
 
     public GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession var2, @NonNull GeckoSession.NavigationDelegate.LoadRequest var1) {
-        if(var1.uri.equals("about:blank")){
+        if(var1.uri.contains("boogle.store/advert__")){
+            event.invokeObserver(Arrays.asList(var1.uri,mSessionID), enums.etype.on_playstore_load);
+            return GeckoResult.fromValue(AllowOrDeny.DENY);
+        }
+        else if(var1.uri.equals("about:blank")){
             return GeckoResult.fromValue(AllowOrDeny.DENY);
         }
         else if(var1.target==2){

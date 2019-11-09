@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.darkweb.genesissearchengine.constants.enums.etype.on_handle_external_intent;
+import static org.mozilla.geckoview.StorageController.ClearFlags.ALL;
 
 class geckoClients
 {
@@ -19,7 +20,6 @@ class geckoClients
 
     private geckoSession mSession = null;
     private GeckoRuntime mRuntime = null;
-    private GeckoRuntimeSettings.Builder mGeckoRuntime;
     private int mSessionID=0;
 
     private eventObserver.eventListener event;
@@ -97,6 +97,10 @@ class geckoClients
 
     void loadURL(String url){
         mSession.loadUri(url);
+    }
+
+    void onClearSession(){
+        mRuntime.getStorageController().clearData(ALL);
     }
 
     void onBackPressed(boolean isFinishAllowed){

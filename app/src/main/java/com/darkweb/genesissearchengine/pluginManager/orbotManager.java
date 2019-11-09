@@ -1,5 +1,6 @@
 package com.darkweb.genesissearchengine.pluginManager;
 
+import android.content.Context;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import com.darkweb.genesissearchengine.constants.*;
@@ -32,7 +33,8 @@ class orbotManager
         initialize();
     }
 
-    void startOrbot(){
+    void startOrbot(Context context){
+        Prefs.setContext(context);
         Prefs.putBridgesEnabled(status.sGateway);
         mServiceIntent = new Intent(mAppContext, TorService.class);
         mServiceIntent.setAction(ACTION_START);
@@ -107,6 +109,11 @@ class orbotManager
 
     }
 
+    void updateCookiesStatus(){
+        //PrefsHelper.setPref("privacy.clearOnShutdown.cookies",!status.sCookieStatus);
+        //PrefsHelper.setPref("network.cookie.cookieBehavior", status.sCookieStatus ? 1 : 0);
+    }
+
     private void setPrivacyPrefs ()
     {
         PrefsHelper.setPref("browser.cache.disk.enable",false);
@@ -123,8 +130,8 @@ class orbotManager
         PrefsHelper.setPref("privacy.clearOnShutdown.siteSettings",status.sHistoryStatus);
         PrefsHelper.setPref("privacy.donottrackheader.enabled",false);
         PrefsHelper.setPref("privacy.donottrackheader.value",1);
-        // PrefsHelper.setPref("privacy.clearOnShutdown.cookies",!status.sCookieStatus);
-        // PrefsHelper.setPref("network.cookie.cookieBehavior", status.sCookieStatus ? 1 : 0);
+        //PrefsHelper.setPref("privacy.clearOnShutdown.cookies",!status.sCookieStatus);
+        //PrefsHelper.setPref("network.cookie.cookieBehavior", status.sCookieStatus ? 1 : 0);
         PrefsHelper.setPref("network.http.sendRefererHeader", 0);
         PrefsHelper.setPref("security.OCSP.require", true);
         PrefsHelper.setPref("security.checkloaduri",true);

@@ -22,6 +22,8 @@ import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.darkweb.genesissearchengine.helperManager.helperMethod;
 import com.darkweb.genesissearchengine.pluginManager.pluginController;
 import com.example.myapplication.R;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -115,7 +117,7 @@ public class tabController extends AppCompatActivity
     }
 
     public void onclearDataTrigger(View view){
-        pluginController.getInstance().MessageManagerHandler(this,"",enums.etype.clear_tab);
+        pluginController.getInstance().MessageManagerHandler(this, Collections.singletonList(strings.EMPTY_STR),enums.etype.clear_tab);
     }
 
     @Override

@@ -43,8 +43,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoView;
-import org.torproject.android.service.util.Prefs;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -304,11 +305,13 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         String val = ((TextView)view).getText().toString();
         mHomeViewController.onUpdateSearchBar(val);
         mSearchbar.clearFocus();
+        onLoadURL(mSearchbar.getText().toString());
     }
 
     public void onHomeButton(View view){
         pluginController.getInstance().logEvent(strings.HOME_INVOKED);
         onLoadURL(mHomeModel.getSearchEngine());
+        mHomeViewController.onUpdateLogo();
     }
 
     public void onNewTab(){
@@ -375,7 +378,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             }
             else {
                 //mGeckoClient.setRequestedUrl(constants.BACKEND_DUCK_DUCK_GO_URL);
-                pluginController.getInstance().MessageManagerHandler(homeController.this,constants.BACKEND_DUCK_DUCK_GO_URL,enums.etype.start_orbot);
+                pluginController.getInstance().MessageManagerHandler(homeController.this, Collections.singletonList(constants.BACKEND_DUCK_DUCK_GO_URL),enums.etype.start_orbot);
             }
         }
         else
@@ -389,7 +392,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                 onHomeButton(null);
             }
             else {
-                pluginController.getInstance().MessageManagerHandler(homeController.this,constants.BACKEND_GOOGLE_URL,enums.etype.start_orbot);
+                pluginController.getInstance().MessageManagerHandler(homeController.this,Collections.singletonList(constants.BACKEND_GOOGLE_URL),enums.etype.start_orbot);
                 //mGeckoClient.setRequestedUrl(constants.BACKEND_GOOGLE_URL);
             }
         }
@@ -398,24 +401,33 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     /*Activity States*/
 
     public void onReload(View view){
-        //mGeckoClient.loadURL(mGeckoClient.getRequestedURL());
         mHomeViewController.onUpdateLogo();
+    }
+
+    public void onClearSession(){
+        mGeckoClient.onClearSession();
     }
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        pluginController.getInstance().onResetMessage();
 
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mHomeViewController.closeMenu();
-            mHomeViewController.setOrientation(true);
-            mHomeViewController.onSetBannerAdMargin(false,true);
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
-            mHomeViewController.closeMenu();
-            mHomeViewController.setOrientation(false);
-            mHomeViewController.onSetBannerAdMargin(true,pluginController.getInstance().isAdvertLoaded());
-        }
+        pluginController.getInstance().onResetMessage();
+        mHomeViewController.closeMenu();
+
+            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                mHomeViewController.setOrientation(true);
+                if(!mGeckoClient.getFullScreenStatus())
+                {
+                    mHomeViewController.onSetBannerAdMargin(false, true);
+                }
+            } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+                mHomeViewController.setOrientation(false);
+                if(!mGeckoClient.getFullScreenStatus())
+                {
+                    mHomeViewController.onSetBannerAdMargin(true,pluginController.getInstance().isAdvertLoaded());
+                }
+            }
     }
 
     @Override
@@ -450,8 +462,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     }
 
     public void onStartApplication(View view){
-        Prefs.setContext(this);
-        pluginController.getInstance().initializeOrbot();
+        pluginController.getInstance().initializeOrbot(this);
         onInvokeProxyLoading();
         mHomeViewController.initHomePage();
     }
@@ -542,7 +553,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         }
         else if (menuId == R.id.menu5)
         {
-            pluginController.getInstance().MessageManagerHandler(homeController.this, mSearchbar.getText().toString(),enums.etype.bookmark);
+            pluginController.getInstance().MessageManagerHandler(homeController.this, Collections.singletonList(mSearchbar.getText().toString()),enums.etype.bookmark);
         }
         else if (menuId == R.id.menu4)
         {
@@ -589,8 +600,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
            }
            if(e_type.equals(enums.etype.on_init_ads))
            {
-               pluginController.getInstance().initializeBannerAds();
-               mHomeViewController.onSetBannerAdMargin(false,true);
+               mHomeViewController.onSetBannerAdMargin((boolean)data.get(0),pluginController.getInstance().isAdvertLoaded());
            }
            else if(e_type.equals(enums.etype.on_url_load)){
                mHomeViewController.onUpdateLogs("Starting | Genesis Search");
@@ -638,7 +648,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                     Runnable runnable = () ->
                     {
                         if(!status.sIsAppStarted){
-                            pluginController.getInstance().MessageManagerHandler(activityContextManager.getInstance().getHomeController(), strings.EMPTY_STR, enums.etype.welcome);
+                            pluginController.getInstance().MessageManagerHandler(activityContextManager.getInstance().getHomeController(), Collections.singletonList(strings.EMPTY_STR), enums.etype.welcome);
                         }
                         status.sIsAppStarted = true;
                     };
@@ -649,7 +659,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             }
             else if(e_type.equals(enums.etype.rate_application)){
                 dataController.getInstance().setBool(keys.IS_APP_RATED,true);
-                pluginController.getInstance().MessageManagerHandler(activityContextManager.getInstance().getHomeController(), strings.EMPTY_STR, enums.etype.rate_app);
+                pluginController.getInstance().MessageManagerHandler(activityContextManager.getInstance().getHomeController(), Collections.singletonList(strings.EMPTY_STR), enums.etype.rate_app);
             }
             else if(e_type.equals(enums.etype.on_load_error)){
                 mHomeViewController.onPageFinished();
@@ -659,26 +669,29 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                 mHomeViewController.onUpdateSearchBar(data.get(0).toString());
             }
             else if(e_type.equals(enums.etype.download_file_popup)){
-                pluginController.getInstance().MessageManagerHandler(homeController.this,data.get(0).toString(),enums.etype.download_file);
+                pluginController.getInstance().MessageManagerHandler(homeController.this,Collections.singletonList(data.get(0).toString()),enums.etype.download_file);
             }
             else if(e_type.equals(enums.etype.on_full_screen)){
                 boolean status = (Boolean)data.get(0);
                 mHomeViewController.onFullScreenUpdate(status);
             }
             else if(e_type.equals(enums.etype.on_long_press_with_link)){
-                 pluginController.getInstance().MessageManagerHandler(homeController.this,data.get(2).toString()+"_"+data.get(0).toString(),enums.etype.on_long_press_with_link);
+                 pluginController.getInstance().MessageManagerHandler(homeController.this, Arrays.asList(data.get(2).toString(),data.get(0).toString()),enums.etype.on_long_press_with_link);
             }
             else if(e_type.equals(enums.etype.on_long_press)){
-                pluginController.getInstance().MessageManagerHandler(homeController.this,data.get(0).toString(),enums.etype.download_file_long_press);
+                pluginController.getInstance().MessageManagerHandler(homeController.this,Collections.singletonList(data.get(0).toString()),enums.etype.download_file_long_press);
             }
             else if(e_type.equals(enums.etype.on_long_press_url)){
-                pluginController.getInstance().MessageManagerHandler(homeController.this,data.get(0).toString(),enums.etype.on_long_press_url);
+                pluginController.getInstance().MessageManagerHandler(homeController.this,Collections.singletonList(data.get(0).toString()),enums.etype.on_long_press_url);
             }
             else if(e_type.equals(enums.etype.open_new_tab)){
                 onOpenLinkNewTab(data.get(0).toString());
             }
             else if(e_type.equals(enums.etype.on_close_sesson)){
                 onCloseCurrentTab(mGeckoClient.getSession());
+            }
+            else if(e_type.equals(enums.etype.on_playstore_load)){
+                helperMethod.openPlayStore(data.get(0).toString().split("__")[1],homeController.this);
             }
         }
     }

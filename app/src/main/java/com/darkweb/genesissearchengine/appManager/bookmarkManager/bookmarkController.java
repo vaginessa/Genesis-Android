@@ -26,6 +26,7 @@ import com.darkweb.genesissearchengine.helperManager.helperMethod;
 import com.darkweb.genesissearchengine.pluginManager.pluginController;
 import com.example.myapplication.R;
 
+import java.util.Collections;
 import java.util.List;
 
 public class bookmarkController extends AppCompatActivity
@@ -117,7 +118,7 @@ public class bookmarkController extends AppCompatActivity
         this.finish();
     }
     public void onclearDataTrigger(View view){
-        pluginController.getInstance().MessageManagerHandler(this,"",enums.etype.clear_bookmark);
+        pluginController.getInstance().MessageManagerHandler(this, Collections.singletonList(strings.EMPTY_STR),enums.etype.clear_bookmark);
     }
     public void onclearData(){
         mListModel.clearList();

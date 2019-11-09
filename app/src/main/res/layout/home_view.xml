@@ -103,7 +103,7 @@
                         android:dropDownSelector="@xml/rouned_corner"
                         android:ems="10"
                         android:hint="@string/SearchHintMain"
-                        android:inputType="textPhonetic"
+                        android:inputType="textNoSuggestions"
                         android:importantForAutofill="no"
                         android:maxLines="1"
                         android:paddingLeft="12dp"

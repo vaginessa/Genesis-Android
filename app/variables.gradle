@@ -1,18 +1,18 @@
 /*arm versions*/
-    project.ext.arm_vname = '269'
-    project.ext.arm_vcode = 269
+    project.ext.arm_vname = '285'
+    project.ext.arm_vcode = 285
 
 /*aarch versions*/
-    project.ext.aarch_vname = '270'
-    project.ext.aarch_vcode = 270
+    project.ext.aarch_vname = '286'
+    project.ext.aarch_vcode = 286
 
 /*x86 versions*/
-    project.ext.x86_vname = '271'
-    project.ext.x86_vcode = 271
+    project.ext.x86_vname = '287'
+    project.ext.x86_vcode = 287
 
 /*x64 versions*/
-    project.ext.x64_vname = '272'
-    project.ext.x64_vcode = 272
+    project.ext.x64_vname = '288'
+    project.ext.x64_vcode = 288
 
 /*dimension*/
     project.ext.dimen = 'abi'
@@ -26,6 +26,6 @@
     project.ext.compileSdkVersion = 29
     project.ext.minSdkVersion = 21
     project.ext.targetSdkVersion = 29
-    project.ext.versionCode = 126
-    project.ext.versionName = "126.0"
+    project.ext.versionCode = 130
+    project.ext.versionName = "130.0"
     project.ext.applicationId = "com.darkweb.genesissearchengine"

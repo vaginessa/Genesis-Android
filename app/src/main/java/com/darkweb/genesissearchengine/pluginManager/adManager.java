@@ -14,7 +14,8 @@ class adManager
 
     private AppCompatActivity mAppContext;
     private eventObserver.eventListener mEvent;
-    private AdView mBannerAds = null;
+    private AdView mBannerAds;
+    private boolean bannerAdsLoading = false;
     private boolean bannerAdsLoaded = false;
 
     /*Initializations*/
@@ -26,8 +27,8 @@ class adManager
     }
 
     void loadAds(){
-        if(!bannerAdsLoaded){
-            bannerAdsLoaded = true;
+        if(!bannerAdsLoading){
+            bannerAdsLoading = true;
             MobileAds.initialize(mAppContext, constants.ADMOB_KEY);
             mBannerAds.setAlpha(0f);
             initializeBannerAds();
@@ -35,7 +36,7 @@ class adManager
     }
 
     boolean isAdvertLoaded(){
-        return bannerAdsLoaded && !mBannerAds.isLoading();
+        return bannerAdsLoaded;
     }
 
     /*Local Helper Methods*/
@@ -44,6 +45,7 @@ class adManager
             mBannerAds.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
+                bannerAdsLoaded = true;
                 mEvent.invokeObserver(null,null);
             }
 
@@ -72,9 +74,9 @@ class adManager
 
     /*External Helper Methods*/
 
-    void initializeBannerAds(){
+    private void initializeBannerAds(){
 
-        AdRequest request = new AdRequest.Builder().addTestDevice("A4CD13E492226D0727E4030FA17C00BA").build();
+        AdRequest request = new AdRequest.Builder().addTestDevice("635CEDE18D345A98A814121E983166E8").build();
         mBannerAds.loadAd(request);
         admobListeners();
     }

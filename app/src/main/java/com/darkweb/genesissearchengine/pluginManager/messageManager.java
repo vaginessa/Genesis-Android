@@ -12,19 +12,15 @@ import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import com.crowdfire.cfalertdialog.CFAlertDialog;
-import com.darkweb.genesissearchengine.appManager.activityContextManager;
 import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.status;
 import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.example.myapplication.R;
-
 import java.io.File;
 import java.util.Collections;
-
-import static android.graphics.Color.BLUE;
-import static android.graphics.Color.RED;
+import java.util.List;
 
 class messageManager
 {
@@ -32,7 +28,7 @@ class messageManager
 
     private boolean is_popup_open = false;
     private CFAlertDialog.Builder popup_instance;
-    private String data;
+    private List<String> data;
     private boolean isDialogDismissed = true;
 
     private AppCompatActivity app_context;
@@ -156,10 +152,10 @@ class messageManager
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .setHeaderView(input)
                 .onDismissListener(dialog -> is_popup_open = false)
-                .setMessage("Bookmark URL | " + data + "\n")
+                .setMessage("Bookmark URL | " + data.get(0) + "\n")
                 .addButton(strings.BOOKMARK_URL_BT_1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.END, (tempDialog, which) ->
                 {
-                    event.invokeObserver(Collections.singletonList(data.replace("genesis.onion","boogle.store")+"split"+input.getText().toString()), enums.etype.bookmark);
+                    event.invokeObserver(Collections.singletonList(data.get(0).replace("genesis.onion","boogle.store")+"split"+input.getText().toString()), enums.etype.bookmark);
 
                     tempDialog.dismiss();
                 });
@@ -175,7 +171,7 @@ class messageManager
                 .setMessage(strings.CLEAR_HISTORY_DESC)
                 .addButton(strings.CLEAR_HISTORY_BT_1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.END, (tempDialog, which) ->
                 {
-                    event.invokeObserver(null, enums.etype.clear_tab);
+                    event.invokeObserver(null, enums.etype.clear_history);
                     tempDialog.dismiss();
                 });
     }
@@ -225,7 +221,7 @@ class messageManager
                     final Handler handler = new Handler();
                     Runnable runnable = () ->
                     {
-                        createMessage(app_context,strings.EMPTY_STR, enums.etype.reported_success);
+                        createMessage(app_context,Collections.singletonList(strings.EMPTY_STR), enums.etype.reported_success);
                     };
                     handler.postDelayed(runnable, 1000);
 
@@ -253,7 +249,7 @@ class messageManager
                     tempDialog.dismiss();
                     final Handler handler = new Handler();
                     handler.postDelayed(() ->
-                            createMessage(app_context,strings.EMPTY_STR, enums.etype.rate_success), 1000);
+                            createMessage(app_context,Collections.singletonList(strings.EMPTY_STR), enums.etype.rate_success), 1000);
                 });
     }
 
@@ -264,7 +260,7 @@ class messageManager
                 .onDismissListener(dialog -> is_popup_open = false)
                 .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
-                .setMessage(strings.DOWNLOAD_MESSAGE + data)
+                .setMessage(strings.DOWNLOAD_MESSAGE + data.get(0))
                 .addButton(strings.DOWNLOAD_POSITIVE, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.END, (dialog, which) ->
                 {
                     event.invokeObserver(null, enums.etype.download_file);
@@ -275,7 +271,7 @@ class messageManager
     @SuppressLint("ResourceAsColor")
     private void downloadFileLongPress()
     {
-        File f = new File(data);
+        File f = new File(data.get(0));
 
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .onDismissListener(dialog -> is_popup_open = false)
@@ -285,29 +281,29 @@ class messageManager
                 .setTextGravity(Gravity.LEFT)
                 .addButton(strings.LONG_URL_OPTION_4, -1, Color.rgb(242,242,242 ), CFAlertDialog.CFAlertActionStyle.DEFAULT, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
-                    event.invokeObserver(Collections.singletonList(data), enums.etype.download_file_manual);
+                    event.invokeObserver(Collections.singletonList(data.get(0)), enums.etype.download_file_manual);
                     dialog.dismiss();
                 })
                 .addButton(strings.LONG_URL_OPTION_1, -1,  Color.rgb(242,242,242 ), CFAlertDialog.CFAlertActionStyle.DEFAULT, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
-                    event.invokeObserver(Collections.singletonList(data), enums.etype.open_link_new_tab);
+                    event.invokeObserver(Collections.singletonList(data.get(0)), enums.etype.open_link_new_tab);
                     dialog.dismiss();
                 })
                 .addButton(strings.LONG_URL_OPTION_2, -1,  Color.rgb(242,242,242 ), CFAlertDialog.CFAlertActionStyle.DEFAULT, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
-                    event.invokeObserver(Collections.singletonList(data), enums.etype.open_link_current_tab);
+                    event.invokeObserver(Collections.singletonList(data.get(0)), enums.etype.open_link_current_tab);
                     dialog.dismiss();
                 })
                 .addButton(strings.LONG_URL_OPTION_3, -1,  Color.rgb(242,242,242 ), CFAlertDialog.CFAlertActionStyle.DEFAULT, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
-                    event.invokeObserver(Collections.singletonList(data), enums.etype.copy_link);
+                    event.invokeObserver(Collections.singletonList(data.get(0)), enums.etype.copy_link);
                     dialog.dismiss();
                 });
     }
 
     private void openURLLongPress()
     {
-        File f = new File(data);
+        File f = new File(data.get(0));
 
         int size = f.getAbsolutePath().length();
         if(size>200){
@@ -318,29 +314,29 @@ class messageManager
                 .onDismissListener(dialog -> is_popup_open = false)
                 .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
-                .setMessage(strings.LONG_URL_MESSAGE + " | " + data.substring(0,size))
+                .setMessage(strings.LONG_URL_MESSAGE + " | " + data.get(0).substring(0,size))
                 .addButton(strings.LONG_URL_OPTION_1, -1, Color.rgb(242,242,242 ), CFAlertDialog.CFAlertActionStyle.DEFAULT, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
-                    event.invokeObserver(Collections.singletonList(data), enums.etype.open_link_new_tab);
+                    event.invokeObserver(Collections.singletonList(data.get(0)), enums.etype.open_link_new_tab);
                     dialog.dismiss();
                 })
                 .addButton(strings.LONG_URL_OPTION_2, -1, Color.rgb(242,242,242 ), CFAlertDialog.CFAlertActionStyle.DEFAULT, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
-                    event.invokeObserver(Collections.singletonList(data), enums.etype.open_link_current_tab);
+                    event.invokeObserver(Collections.singletonList(data.get(0)), enums.etype.open_link_current_tab);
                     dialog.dismiss();
                 })
                 .addButton(strings.LONG_URL_OPTION_3, -1, Color.rgb(242,242,242 ), CFAlertDialog.CFAlertActionStyle.DEFAULT, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
-                    event.invokeObserver(Collections.singletonList(data), enums.etype.copy_link);
+                    event.invokeObserver(Collections.singletonList(data.get(0)), enums.etype.copy_link);
                     dialog.dismiss();
                 });
     }
 
     private void popupDownloadFull(){
 
-        String url = data.split("_")[0];
-        String file = data.split("_")[1];
-        String data = strings.LONG_URL_MESSAGE;
+        String url = data.get(0);
+        String file = data.get(1);
+        String data_local = strings.LONG_URL_MESSAGE;
 
         File f = new File(file);
         int size = f.getAbsolutePath().length();
@@ -349,10 +345,10 @@ class messageManager
         }
 
         if(!url.equals("")){
-            data = strings.LONG_URL_MESSAGE + " | " + url;
+            data_local = strings.LONG_URL_MESSAGE + " | " + url;
         }
         else if(!file.equals("")){
-            data = strings.LONG_URL_MESSAGE + " | " + file;
+            data_local = strings.LONG_URL_MESSAGE + " | " + file;
         }
 
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
@@ -360,7 +356,7 @@ class messageManager
                 .onDismissListener(dialog -> is_popup_open = false)
                 .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
-                .setMessage(data)
+                .setMessage(data_local)
 
                 .addButton(strings.LONG_URL_FULL_OPTION_1, -1, Color.rgb(242,242,242 ), CFAlertDialog.CFAlertActionStyle.DEFAULT, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
@@ -415,7 +411,7 @@ class messageManager
 
                 final Handler handler = new Handler();
                 handler.postDelayed(() ->
-                        event.invokeObserver(Collections.singletonList(data), enums.etype.reload), 500);
+                        event.invokeObserver(Collections.singletonList(data.get(0)), enums.etype.reload), 500);
 
             });
     }
@@ -430,7 +426,7 @@ class messageManager
                 .setMessage(strings.VERSION_DESC)
                 .addButton(strings.VERSION_BT_1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.END, (tempDialog, which) ->
                 {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(constants.GENESIS_UPDATE_URL + data));
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(constants.GENESIS_UPDATE_URL + data.get(0)));
                     app_context.startActivity(browserIntent);
                 });
     }
@@ -465,7 +461,7 @@ class messageManager
     }
 
     private void startHome(){
-        if(!isDialogDismissed && data==null){
+        if(!isDialogDismissed && data.get(0)==null){
             event.invokeObserver(null, enums.etype.start_home);
         }
         is_popup_open = false;
@@ -480,7 +476,7 @@ class messageManager
 
     /*External Helper Methods*/
 
-    void createMessage(AppCompatActivity app_context,String data, enums.etype type)
+    void createMessage(AppCompatActivity app_context, List<String> data, enums.etype type)
     {
         this.app_context = app_context;
         this.data = data;

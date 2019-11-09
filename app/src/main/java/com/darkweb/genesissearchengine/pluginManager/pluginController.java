@@ -1,5 +1,6 @@
 package com.darkweb.genesissearchengine.pluginManager;
 
+import android.content.Context;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import com.darkweb.genesissearchengine.appManager.activityContextManager;
@@ -11,6 +12,7 @@ import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.darkweb.genesissearchengine.helperManager.helperMethod;
 
+import java.util.Collections;
 import java.util.List;
 
 public class pluginController
@@ -62,6 +64,10 @@ public class pluginController
         orbotManager.getInstance().initialize(context,new orbotCallback());
     }
 
+    public void updateCookiesStatus(){
+        orbotManager.getInstance().updateCookiesStatus();
+    }
+
     /*Helper Methods*/
 
     private AppCompatActivity getAppContext()
@@ -75,13 +81,13 @@ public class pluginController
         mHomeController.onClose();
         orbotManager.getInstance().onClose();
         onResetMessage();
-        //System.exit(1);
+        System.exit(1);
     }
 
     /*---------------------------------------------- EXTERNAL REQUEST LISTENER-------------------------------------------------------*/
 
     /*Message Manager*/
-    public void MessageManagerHandler(AppCompatActivity app_context,String data,enums.etype type){
+    public void MessageManagerHandler(AppCompatActivity app_context,List<String> data,enums.etype type){
         mMessageManager.createMessage(app_context,data,type);
     }
     public void onResetMessage(){
@@ -103,8 +109,8 @@ public class pluginController
     }
 
     /*Onion Proxy Manager*/
-    public void initializeOrbot(){
-        orbotManager.getInstance().startOrbot();
+    public void initializeOrbot(Context context){
+        orbotManager.getInstance().startOrbot(context);
     }
     public boolean isOrbotRunning(){
         return orbotManager.getInstance().isOrbotRunning();
@@ -179,12 +185,15 @@ public class pluginController
                     mHomeController.onReload(null);
                 }
                 else {
-                    mMessageManager.createMessage(mHomeController,data.get(0).toString(),enums.etype.start_orbot);
+                    mMessageManager.createMessage(mHomeController, Collections.singletonList(data.get(0).toString()),enums.etype.start_orbot);
                 }
             }
             else if(event_type.equals(enums.etype.clear_history)){
                 dataController.getInstance().clearHistory();
+                dataController.getInstance().clearSuggestions();
                 mContextManager.getHistoryController().onclearData();
+                mHomeController.onClearSession();
+                dataController.getInstance().clearTabs();
             }
             else if(event_type.equals(enums.etype.clear_bookmark)){
                 dataController.getInstance().clearBookmark();

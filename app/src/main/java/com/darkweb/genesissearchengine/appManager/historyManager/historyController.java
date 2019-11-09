@@ -26,6 +26,7 @@ import com.darkweb.genesissearchengine.pluginManager.pluginController;
 import com.example.myapplication.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class historyController extends AppCompatActivity
@@ -120,13 +121,14 @@ public class historyController extends AppCompatActivity
         this.finish();
     }
     public void onclearDataTrigger(View view){
-        pluginController.getInstance().MessageManagerHandler(this,"",enums.etype.clear_history);
+        pluginController.getInstance().MessageManagerHandler(this, Collections.singletonList(strings.EMPTY_STR),enums.etype.clear_history);
     }
     public void onclearData(){
         mListModel.clearList();
         ((historyAdapter) mListView.getAdapter()).invokeFilter(true );
         mHistoryViewController.clearList();
         databaseController.getInstance().execSQL("delete from history where 1",null);
+        finish();
     }
 
     public void onLoadMoreHostory(View view)

@@ -117,6 +117,9 @@ public class dataController
     public ArrayList<String> getSuggestions(){
         return mPreferencesModel.getmSuggestions();
     }
+    public void clearSuggestions(){
+        mPreferencesModel.clearSuggestion();
+    }
 
     /*Recieving Tabs*/
 

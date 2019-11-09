@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import androidx.annotation.RequiresApi;
@@ -244,6 +245,7 @@ class homeViewController
             mSearchbar.setDropDownBackgroundDrawable(drawable);
         } catch (Exception ignored) {
         }
+        mSearchbar.setInputType(EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
     }
 
     private void initSplashLoading(){
@@ -540,6 +542,7 @@ class homeViewController
         }
     }
 
+    int defaultFlag = 0;
     void onFullScreenUpdate(boolean status){
         int value = !status ? 1 : 0;
 
@@ -548,6 +551,7 @@ class homeViewController
 
         if(status){
             mWebviewContainer.setPadding(0,0,0,0);
+            defaultFlag = mContext.getWindow().getDecorView().getSystemUiVisibility();
             final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -557,6 +561,9 @@ class homeViewController
 
             mContext.getWindow().getDecorView().setSystemUiVisibility(flags);
             mProgressBar.setVisibility(View.GONE);
+
+            mWebviewContainer.setPadding(0,0,0,0);
+            mBannerAds.setVisibility(View.GONE);
         }
         else {
             mWebviewContainer.setPadding(0,helperMethod.dpFromPx(mContext,234),0,0);
@@ -566,14 +573,10 @@ class homeViewController
                 mContext.getWindow().setStatusBarColor(mContext.getResources().getColor(R.color.blue_dark));
             }
 
-            mContext.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            mContext.getWindow().getDecorView().setSystemUiVisibility(defaultFlag);
             mProgressBar.setVisibility(View.VISIBLE);
+            mEvent.invokeObserver(Collections.singletonList(!isLandscape), enums.etype.on_init_ads);
         }
-
-        if(!status){
-            onSetBannerAdMargin(true, pluginController.getInstance().isAdvertLoaded());
-        }
-
     }
 
     void onReDraw(){
