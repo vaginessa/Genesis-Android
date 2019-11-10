@@ -91,6 +91,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_view);
 
+        //status.clearFailureHistory(this);
         if(savedInstanceState != null){
             finish();
         }
@@ -531,9 +532,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     public void onMenuItemInvoked(View view){
         int menuId = view.getId();
         if (menuId == R.id.menu11) {
-            initializeGeckoView();
-            mHomeViewController.progressBarReset();
-            mHomeViewController.onNewTab(true);
+            onNewTab();
         }
         else if (menuId == R.id.menu10) {
             onCloseCurrentTab(mGeckoClient.getSession());

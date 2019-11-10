@@ -55,21 +55,11 @@ class geckoClients
     }
 
     private int getCookiesBehaviour(){
-        if(status.sCookieStatus){
-            return 0;
-        }
-        else {
-            return 2;
-        }
+        return status.sCookieStatus;
     }
 
     void updateCookies(){
-        if(status.sCookieStatus){
-            mRuntime.getSettings().getContentBlocking().setCookieBehavior(getCookiesBehaviour());
-        }
-        else {
-            mRuntime.getSettings().getContentBlocking().setCookieBehavior(getCookiesBehaviour());
-        }
+        mRuntime.getSettings().getContentBlocking().setCookieBehavior(status.sCookieStatus);
         onReload();
     }
 

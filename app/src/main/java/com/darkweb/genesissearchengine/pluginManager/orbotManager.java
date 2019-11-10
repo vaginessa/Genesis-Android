@@ -17,7 +17,7 @@ class orbotManager
 
     /*Private Variables*/
 
-    private AppCompatActivity mAppContext;
+    private Context mAppContext;
     private boolean mLogsStarted = false;
     private Intent mServiceIntent = null;
 
@@ -29,20 +29,16 @@ class orbotManager
     }
 
     public void initialize(AppCompatActivity app_context, eventObserver.eventListener event){
-        this.mAppContext = app_context;
-        initialize();
     }
 
     void startOrbot(Context context){
+        this.mAppContext = context;
         Prefs.setContext(context);
         Prefs.putBridgesEnabled(status.sGateway);
         mServiceIntent = new Intent(mAppContext, TorService.class);
         mServiceIntent.setAction(ACTION_START);
         mAppContext.startService(mServiceIntent);
         initializeProxy();
-    }
-
-    public void initialize(){
     }
 
     /*------------------------------------------------------- POST TASK HANDLER -------------------------------------------------------*/

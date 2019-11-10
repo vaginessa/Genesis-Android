@@ -62,7 +62,7 @@ public class dataController
     }
     public void setInt(String valueKey, int value)
     {
-        mPreferencesModel.setFloat(valueKey, value);
+        mPreferencesModel.setInt(valueKey, value);
     }
 
     /*Recieving Preferences*/
@@ -73,10 +73,16 @@ public class dataController
     public boolean getBool(String valueKey, boolean valueDefault){
         return mPreferencesModel.getBool(valueKey, valueDefault);
     }
+    public int getInt(String valueKey, int valueDefault){
+        return mPreferencesModel.getInt(valueKey, valueDefault);
+    }
     public float getFloat(String valueKey, int valueDefault){
         return mPreferencesModel.getFloat(valueKey, valueDefault);
     }
 
+    public void clearAllPrefs(){
+        mPreferencesModel.clearPrefs();
+    }
     /*Recieving History*/
 
     public ArrayList<historyRowModel> getHistory() {

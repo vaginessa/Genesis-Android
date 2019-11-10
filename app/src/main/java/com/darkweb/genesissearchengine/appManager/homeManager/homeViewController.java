@@ -37,6 +37,7 @@ import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.darkweb.genesissearchengine.helperManager.helperMethod;
 import com.darkweb.genesissearchengine.pluginManager.pluginController;
 import com.example.myapplication.R;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.mozilla.geckoview.GeckoView;
@@ -47,6 +48,7 @@ import java.util.Collections;
 import java.util.concurrent.Callable;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
+import static androidx.appcompat.widget.ListPopupWindow.WRAP_CONTENT;
 
 class homeViewController
 {
@@ -78,6 +80,7 @@ class homeViewController
     private Callable<String> mLogs = null;
     private boolean isLandscape = false;
     private boolean disableSplash = false;
+    private int localBannerHeight = 0;
 
     void initialization(eventObserver.eventListener event,AppCompatActivity context,Button mNewTab, FrameLayout webviewContainer, TextView loadingText, com.darkweb.genesissearchengine.widget.AnimatedProgressBar progressBar, AutoCompleteTextView searchbar, ConstraintLayout splashScreen, FloatingActionButton floatingButton, ImageView loading, AdView banner_ads,ArrayList<String> suggestions,ImageView engineLogo,ImageButton gateway_splash,LinearLayout top_bar,GeckoView gecko_view,ImageView backsplash,boolean is_triggered,Button connect_button,ImageButton switch_engine_back){
         this.mContext = context;
@@ -109,7 +112,8 @@ class homeViewController
     }
 
     private void initTopBar(){
-        mWebviewContainer.setPadding(0,helperMethod.dpFromPx(mContext,234),0,0);
+        ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) mWebviewContainer.getLayoutParams();
+        localBannerHeight = lp.topMargin;
     }
 
     private void initSearchImage(){
@@ -232,16 +236,16 @@ class homeViewController
         autoCompleteAdapter suggestionAdapter = new autoCompleteAdapter(mContext, R.layout.hint_view, R.id.hintCompletionHeader, suggestions);
 
         int width = Math.round(helperMethod.screenWidth());
-        mSearchbar.setThreshold(2);
+        mSearchbar.setThreshold(1);
         mSearchbar.setAdapter(suggestionAdapter);
-        mSearchbar.setDropDownVerticalOffset(22);
-        mSearchbar.setDropDownWidth(Math.round(width*0.95f));
-        mSearchbar.setDropDownHorizontalOffset(Math.round(width*0.114f)*-1);
+        mSearchbar.setDropDownVerticalOffset(helperMethod.pxFromDp(8));
+        mSearchbar.setDropDownWidth(width);
+        mSearchbar.setDropDownHeight(WRAP_CONTENT);
 
         Drawable drawable;
         Resources res = mContext.getResources();
         try {
-            drawable = Drawable.createFromXml(res, res.getXml(R.xml.rouned_corner));
+            drawable = Drawable.createFromXml(res, res.getXml(R.xml.rounded_corner_suggestion));
             mSearchbar.setDropDownBackgroundDrawable(drawable);
         } catch (Exception ignored) {
         }
@@ -446,14 +450,14 @@ class homeViewController
     void onSetBannerAdMargin(boolean status,boolean isAdLoaded){
         if(isAdLoaded){
             final float scale = mContext.getResources().getDisplayMetrics().density;
-            int padding_102dp = (int) (48 * scale + 0.52f);
+            int heightPixels = AdSize.SMART_BANNER.getHeightInPixels(mContext);
 
             if(status && !isLandscape){
-                mWebviewContainer.setPadding(0,padding_102dp+helperMethod.dpFromPx(mContext,234),0,0);
+                mWebviewContainer.setPadding(0,heightPixels,0,0);
                 mBannerAds.setVisibility(View.VISIBLE);
                 mBannerAds.animate().setDuration(500).alpha(1f);
             }else{
-                mWebviewContainer.setPadding(0,padding_102dp+helperMethod.dpFromPx(mContext,38),0,0);
+                mWebviewContainer.setPadding(0,9,0,0);
                 mBannerAds.setVisibility(View.GONE);
             }
         }

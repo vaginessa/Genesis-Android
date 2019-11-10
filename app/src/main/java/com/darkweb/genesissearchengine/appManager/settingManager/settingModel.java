@@ -9,6 +9,8 @@ import com.darkweb.genesissearchengine.helperManager.eventObserver;
 
 import java.util.Collections;
 
+import static org.mozilla.geckoview.ContentBlocking.CookieBehavior.ACCEPT_FIRST_PARTY;
+
 class settingModel
 {
     /*Variable Declaration*/
@@ -16,7 +18,7 @@ class settingModel
     private eventObserver.eventListener mEvent;
 
     private String mSearchStatus = strings.EMPTY_STR;
-    private boolean mCookieStatus = false;
+    private int mCookieStatus = ACCEPT_FIRST_PARTY;
     private boolean mJavaStatus = false;
     private boolean mHistoryStatus = true;
     private boolean mFontAdjustable = true;
@@ -45,7 +47,7 @@ class settingModel
         return mSearchStatus;
     }
 
-    void setCookieStatus(boolean cookie_status){
+    void setCookieStatus(int cookie_status){
         this.mCookieStatus = cookie_status;
     }
 
@@ -114,7 +116,7 @@ class settingModel
         if(status.sCookieStatus != mCookieStatus)
         {
             status.sCookieStatus = mCookieStatus;
-            dataController.getInstance().setBool(keys.COOKIE_ADJUSTABLE,status.sCookieStatus);
+            dataController.getInstance().setInt(keys.COOKIE_ADJUSTABLE,status.sCookieStatus);
             mEvent.invokeObserver(Collections.singletonList(mCookieStatus), enums.etype.update_cookies);
         }
         mEvent.invokeObserver(Collections.singletonList(mHistoryStatus), enums.etype.close_view);

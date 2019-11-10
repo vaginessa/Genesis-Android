@@ -1,6 +1,12 @@
 package com.darkweb.genesissearchengine.constants;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 import com.darkweb.genesissearchengine.dataManager.dataController;
+
+import static org.mozilla.geckoview.ContentBlocking.CookieBehavior.ACCEPT_FIRST_PARTY;
 
 public class status
 {
@@ -19,10 +25,24 @@ public class status
     public static boolean sIsAppStarted = false;
     public static boolean sIsAppRated = false;
     public static boolean sFontAdjustable = true;
-    public static boolean sCookieStatus = false;
+    public static int sCookieStatus = ACCEPT_FIRST_PARTY;
     public static float sFontSize = 1;
 
     /*Initializations*/
+
+    public static void clearFailureHistory(Context context){
+        SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor mEdit = mPrefs.edit();
+
+        int mClearPrefs = mPrefs.getInt(keys.CLEAR_PREFS,0);
+        if(mClearPrefs==0){
+            mEdit.clear();
+            mEdit.commit();
+            mEdit.putInt(keys.CLEAR_PREFS,1);
+            mEdit.commit();
+        }
+
+    }
 
     public static void initStatus()
     {
@@ -34,7 +54,7 @@ public class status
         status.sIsAppRated = dataController.getInstance().getBool(keys.IS_APP_RATED,false);
         status.sFontSize = dataController.getInstance().getFloat(keys.FONT_SIZE,100);
         status.sFontAdjustable = dataController.getInstance().getBool(keys.FONT_ADJUSTABLE,true);
-        status.sCookieStatus = dataController.getInstance().getBool(keys.COOKIE_ADJUSTABLE,false);
+        status.sCookieStatus = dataController.getInstance().getInt(keys.COOKIE_ADJUSTABLE,ACCEPT_FIRST_PARTY);
     }
 
 }

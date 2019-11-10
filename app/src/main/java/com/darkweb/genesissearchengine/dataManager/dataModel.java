@@ -36,6 +36,11 @@ class dataModel
         mEdit = mPrefs.edit();
     }
 
+    void clearPrefs(){
+        mEdit.clear();
+        mEdit.commit();
+    }
+
     /*Prefs Data Model*/
 
     void setString(String valueKey, String value){
@@ -52,6 +57,14 @@ class dataModel
     }
     boolean getBool(String valueKey, boolean valueDefault){
         return mPrefs.getBoolean(valueKey, valueDefault);
+    }
+
+    void setInt(String valueKey, int value){
+        mEdit.putInt(valueKey, value);
+        mEdit.commit();
+    }
+    int getInt(String valueKey, int valueDefault){
+        return mPrefs.getInt(valueKey, valueDefault);
     }
 
     void setFloat(String valueKey, int value){

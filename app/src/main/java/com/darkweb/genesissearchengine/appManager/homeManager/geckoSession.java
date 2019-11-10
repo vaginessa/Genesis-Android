@@ -185,12 +185,16 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
 
     void downloadRequestedFile()
     {
-        mContext.startService(downloadFileService.getDownloadService(mContext, mDownloadManager.getDownloadURL()+"__"+mDownloadManager.getDownloadFile(), Environment.DIRECTORY_DOWNLOADS));
+        if(mDownloadManager.getDownloadURL()!=null && mDownloadManager.getDownloadFile()!=null){
+            mContext.startService(downloadFileService.getDownloadService(mContext, mDownloadManager.getDownloadURL()+"__"+mDownloadManager.getDownloadFile(), Environment.DIRECTORY_DOWNLOADS));
+        }
     }
 
     void downloadRequestedFile(Uri downloadURL,String downloadFile)
     {
-        mContext.startService(downloadFileService.getDownloadService(mContext, downloadURL+"__"+downloadFile, Environment.DIRECTORY_DOWNLOADS));
+        if(downloadURL!=null && downloadFile!=null){
+            mContext.startService(downloadFileService.getDownloadService(mContext, downloadURL + "__" + downloadFile, Environment.DIRECTORY_DOWNLOADS));
+        }
     }
 
     /*Helper Methods*/

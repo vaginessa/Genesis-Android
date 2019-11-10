@@ -149,7 +149,7 @@ public class settingController extends AppCompatActivity
                 }
                 else if(parentView.getId()== R.id.cookies_manager)
                 {
-                    mSettingModel.setCookieStatus(position==0);
+                    mSettingModel.setCookieStatus(position);
                 }
             }
             @Override
@@ -221,8 +221,8 @@ public class settingController extends AppCompatActivity
                 mHomeController.onLoadFont();
             }
             else if(e_type == enums.etype.update_cookies){
-                sCookieStatus = (boolean)data.get(0);
-                dataController.getInstance().setBool(keys.COOKIE_ADJUSTABLE, sCookieStatus);
+                sCookieStatus = (int)data.get(0);
+                dataController.getInstance().setInt(keys.COOKIE_ADJUSTABLE, sCookieStatus);
                 mHomeController.onUpdateCookies();
                 pluginController.getInstance().updateCookiesStatus();
             }

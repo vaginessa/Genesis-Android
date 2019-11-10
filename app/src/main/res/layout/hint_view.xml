@@ -2,32 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:paddingRight="15dp"
-              android:paddingLeft="15dp"
+              android:paddingRight="0dp"
+              android:paddingLeft="0dp"
               android:paddingBottom="0dp"
-              android:background="@color/white"
               android:elevation="0dp"
               android:orientation="vertical">
 
-    <TextView
+    <Button
+            android:background="@xml/side_item_suggestions"
             android:id="@+id/hintCompletionHeader"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="0dp"
+            android:layout_height="match_parent"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:paddingTop="7.5dp"
             android:singleLine="true"
-            android:ellipsize="end"
+            android:textAllCaps="false"
+            android:textAlignment="viewStart"
+            android:textStyle="normal"
             android:onClick="onSuggestionInvoked"
             android:textColor="@color/text_color_v1"
             android:textSize="15.5sp"/>
-
-    <View
-            android:layout_width="match_parent"
-            android:layout_marginBottom="4dp"
-            android:layout_marginTop="15dp"
-            android:layout_height="1dp"
-            android:background="@color/white_dark" />
 
 </LinearLayout>

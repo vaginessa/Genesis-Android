@@ -171,6 +171,7 @@ class messageManager
                 .setMessage(strings.CLEAR_HISTORY_DESC)
                 .addButton(strings.CLEAR_HISTORY_BT_1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.END, (tempDialog, which) ->
                 {
+                    is_popup_open = false;
                     event.invokeObserver(null, enums.etype.clear_history);
                     tempDialog.dismiss();
                 });
@@ -186,6 +187,7 @@ class messageManager
                 .setMessage(strings.CLEAR_TAB_DESC)
                 .addButton(strings.CLEAR_TAB_BT_1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.END, (tempDialog, which) ->
                 {
+                    is_popup_open = false;
                     event.invokeObserver(null, enums.etype.clear_tab);
                     tempDialog.dismiss();
                 });
@@ -201,6 +203,7 @@ class messageManager
                 .setMessage(strings.clear_bookmark_desc)
                 .addButton(strings.clear_bookmark_bt1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.END, (tempDialog, which) ->
                 {
+                    is_popup_open = false;
                     event.invokeObserver(null, enums.etype.clear_bookmark);
                     tempDialog.dismiss();
                 });
@@ -303,9 +306,8 @@ class messageManager
 
     private void openURLLongPress()
     {
-        File f = new File(data.get(0));
 
-        int size = f.getAbsolutePath().length();
+        int size = data.get(0).length();
         if(size>200){
             size = 200;
         }

@@ -27,6 +27,7 @@
     <FrameLayout
             android:id="@+id/webviewContainer"
             android:layout_width="match_parent"
+            android:layout_marginTop="56dp"
             android:layout_height="match_parent">
 
         <org.mozilla.geckoview.GeckoView
@@ -99,9 +100,8 @@
                         android:layout_weight="1"
                         android:background="@xml/search_back_default"
                         android:completionHintView="@layout/hint_view"
-                        android:dropDownHeight="220dp"
-                        android:dropDownSelector="@xml/rouned_corner"
                         android:ems="10"
+                        android:popupElevation="5dp"
                         android:hint="@string/SearchHintMain"
                         android:inputType="textNoSuggestions"
                         android:importantForAutofill="no"

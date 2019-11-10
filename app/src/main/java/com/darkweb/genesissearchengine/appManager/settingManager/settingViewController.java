@@ -19,6 +19,9 @@ import com.example.myapplication.R;
 
 import static com.darkweb.genesissearchengine.constants.status.sHistoryStatus;
 import static com.darkweb.genesissearchengine.constants.status.sJavaStatus;
+import static org.mozilla.geckoview.ContentBlocking.CookieBehavior.ACCEPT_ALL;
+import static org.mozilla.geckoview.ContentBlocking.CookieBehavior.ACCEPT_FIRST_PARTY;
+import static org.mozilla.geckoview.ContentBlocking.CookieBehavior.ACCEPT_NON_TRACKERS;
 
 class settingViewController
 {
@@ -113,14 +116,7 @@ class settingViewController
 
     private void initCookies()
     {
-        if (status.sCookieStatus)
-        {
-            mCookies.setSelection(0);
-        }
-        else
-        {
-            mCookies.setSelection(1);
-        }
+        mCookies.setSelection(status.sCookieStatus);
     }
 
     private void initFontAdjustable()
