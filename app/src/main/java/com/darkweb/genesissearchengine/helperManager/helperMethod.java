@@ -231,9 +231,10 @@ public class helperMethod
         toast.show();
     }
 
-    public static void checkPermissions(AppCompatActivity context) {
+    public static boolean checkPermissions(AppCompatActivity context) {
         String[] permissions = new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
         };
 
         int result;
@@ -246,8 +247,9 @@ public class helperMethod
         }
         if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(context, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 100);
+            return false;
         }
+        return true;
     }
-
 
 }

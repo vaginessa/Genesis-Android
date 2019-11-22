@@ -132,7 +132,7 @@ public class tabController extends AppCompatActivity
 
     public void onNewTabInvoked(View view)
     {
-        mHomeController.onNewTab();
+        mHomeController.onNewTab(false);
         finish();
     }
 
@@ -165,6 +165,7 @@ public class tabController extends AppCompatActivity
             }
             else if(e_type.equals(enums.etype.url_clear)){
                 mListModel.onManualClear((int)data.get(0));
+                mHomeController.initTabCount();
             }
             else if(e_type.equals(enums.etype.is_empty)){
                 mtabViewController.removeFromList((int)data.get(0));
@@ -173,8 +174,8 @@ public class tabController extends AppCompatActivity
                 if(dataController.getInstance().getTotalTabs()<1){
                     finish();
                 }
+                mHomeController.initTabCount();
             }
-            mHomeController.initTabCount();
         }
 
     }

@@ -13,8 +13,6 @@ import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.status;
 
 
-import org.mozilla.geckoview.GeckoSession;
-
 import java.util.ArrayList;
 
 public class dataController
@@ -39,7 +37,6 @@ public class dataController
         mPreferencesModel.initializeBookmarks();
         mPreferencesModel.setMaxHistoryID(databaseController.getInstance().getLargestHistoryID());
         mPreferencesModel.setHistorySize(databaseController.getInstance().getLargestHistoryID());
-        mPreferencesModel.initSuggestions();
     }
     public void initializeListData(){
         if(!status.sHistoryStatus)
@@ -50,6 +47,7 @@ public class dataController
         {
             databaseController.getInstance().execSQL("delete from history where 1",null);
         }
+        mPreferencesModel.initSuggestions();
     }
 
     /*Saving Preferences*/
@@ -88,8 +86,16 @@ public class dataController
     public ArrayList<historyRowModel> getHistory() {
         return mPreferencesModel.getmHistory();
     }
-    public void addHistory(String url) {
+    public void addHistory(String url,String title) {
         mPreferencesModel.addHistory(url);
+        activityContextManager.getInstance().getHomeController().onSuggestionUpdate();
+    }
+    public void updateSuggestionURL(String url,String title) {
+        mPreferencesModel.updateSuggestionURL(url,title);
+        activityContextManager.getInstance().getHomeController().onSuggestionUpdate();
+    }
+    public void addSuggesion(String url,String title) {
+        mPreferencesModel.addSuggenstions(url,title);
         activityContextManager.getInstance().getHomeController().onSuggestionUpdate();
     }
     public void removeHistory(String url){
@@ -97,6 +103,7 @@ public class dataController
     }
     public void clearHistory(){
         mPreferencesModel.clearHistory();
+        activityContextManager.getInstance().getHomeController().onSuggestionUpdate();
     }
     public void loadMoreHistory(){
         ArrayList<historyRowModel> history = databaseController.getInstance().selectHistory(mPreferencesModel.getmHistory().size()-1,constants.MAX_LIST_SIZE);
@@ -120,7 +127,7 @@ public class dataController
 
     /*Recieving Suggestions*/
 
-    public ArrayList<String> getSuggestions(){
+    public ArrayList<historyRowModel> getSuggestions(){
         return mPreferencesModel.getmSuggestions();
     }
     public void clearSuggestions(){

@@ -18,6 +18,7 @@ import com.darkweb.genesissearchengine.constants.status;
 import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
+import com.darkweb.genesissearchengine.helperManager.helperMethod;
 import com.darkweb.genesissearchengine.pluginManager.pluginController;
 import com.example.myapplication.R;
 
@@ -118,9 +119,9 @@ public class settingController extends AppCompatActivity
     @Override
     public void onPause()
     {
-        finish();
         super.onPause();
     }
+
 
     @Override
     public void onBackPressed(){

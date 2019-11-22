@@ -171,9 +171,14 @@ class messageManager
                 .setMessage(strings.CLEAR_HISTORY_DESC)
                 .addButton(strings.CLEAR_HISTORY_BT_1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.END, (tempDialog, which) ->
                 {
-                    is_popup_open = false;
-                    event.invokeObserver(null, enums.etype.clear_history);
                     tempDialog.dismiss();
+                    final Handler handler = new Handler();
+                    Runnable runnable = () ->
+                    {
+                        is_popup_open = false;
+                        event.invokeObserver(null, enums.etype.clear_history);
+                    };
+                    handler.postDelayed(runnable, 250);
                 });
     }
 
@@ -187,9 +192,14 @@ class messageManager
                 .setMessage(strings.CLEAR_TAB_DESC)
                 .addButton(strings.CLEAR_TAB_BT_1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.END, (tempDialog, which) ->
                 {
-                    is_popup_open = false;
-                    event.invokeObserver(null, enums.etype.clear_tab);
                     tempDialog.dismiss();
+                    final Handler handler = new Handler();
+                    Runnable runnable = () ->
+                    {
+                        is_popup_open = false;
+                        event.invokeObserver(null, enums.etype.clear_tab);
+                    };
+                    handler.postDelayed(runnable, 250);
                 });
     }
 
@@ -275,12 +285,20 @@ class messageManager
     private void downloadFileLongPress()
     {
         File f = new File(data.get(0));
+        String name = f.getName();
+        String title = data.get(1);
+
+        int size = name.length();
+        if(size>35){
+            size = 35;
+        }
+
 
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .onDismissListener(dialog -> is_popup_open = false)
                 .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
-                .setMessage(strings.DOWNLOAD_LONG_PRESS_MESSAGE + f.getName())
+                .setMessage(title + f.getName().substring(0,size)+"...")
                 .setTextGravity(Gravity.LEFT)
                 .addButton(strings.LONG_URL_OPTION_4, -1, Color.rgb(242,242,242 ), CFAlertDialog.CFAlertActionStyle.DEFAULT, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
@@ -307,16 +325,18 @@ class messageManager
     private void openURLLongPress()
     {
 
-        int size = data.get(0).length();
-        if(size>200){
-            size = 200;
+        int size = data.get(0).length()-1;
+        String title = data.get(1);
+
+        if(size>35){
+            size = 35;
         }
 
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .onDismissListener(dialog -> is_popup_open = false)
                 .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
-                .setMessage(strings.LONG_URL_MESSAGE + " | " + data.get(0).substring(0,size))
+                .setMessage(title + data.get(0).substring(0,size)+"...")
                 .addButton(strings.LONG_URL_OPTION_1, -1, Color.rgb(242,242,242 ), CFAlertDialog.CFAlertActionStyle.DEFAULT, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
                     event.invokeObserver(Collections.singletonList(data.get(0)), enums.etype.open_link_new_tab);
@@ -338,19 +358,26 @@ class messageManager
 
         String url = data.get(0);
         String file = data.get(1);
+        String title = data.get(2);
+
         String data_local = strings.LONG_URL_MESSAGE;
 
         File f = new File(file);
-        int size = f.getAbsolutePath().length();
-        if(size>200){
-            size = 200;
+        int size = url.length();
+        if(size>35){
+            size = 35;
+        }
+
+        int size1 = file.length();
+        if(size1>35){
+            size1 = 35;
         }
 
         if(!url.equals("")){
-            data_local = strings.LONG_URL_MESSAGE + " | " + url;
+            data_local = title + url.substring(0,size)+"...";
         }
         else if(!file.equals("")){
-            data_local = strings.LONG_URL_MESSAGE + " | " + file;
+            data_local = title + file.substring(0,size1)+"...";
         }
 
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
@@ -413,7 +440,7 @@ class messageManager
 
                 final Handler handler = new Handler();
                 handler.postDelayed(() ->
-                        event.invokeObserver(Collections.singletonList(data.get(0)), enums.etype.reload), 500);
+                        event.invokeObserver(Collections.singletonList(data.get(0)), enums.etype.reload), 250);
 
             });
     }

@@ -33,7 +33,6 @@ class orbotManager
 
     void startOrbot(Context context){
         this.mAppContext = context;
-        Prefs.setContext(context);
         Prefs.putBridgesEnabled(status.sGateway);
         mServiceIntent = new Intent(mAppContext, TorService.class);
         mServiceIntent.setAction(ACTION_START);

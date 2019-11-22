@@ -1,5 +1,6 @@
 package com.darkweb.genesissearchengine.appManager.tabManager;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ public class tabAdapter extends RecyclerView.Adapter<tabAdapter.listViewHolder>
     private ArrayList<tabRowModel> mTempModelList;
     private eventObserver.eventListener mEvent;
     private String filter = strings.EMPTY_STR;
+    private boolean isClosing = false;
 
     tabAdapter(ArrayList<tabRowModel> model_list, eventObserver.eventListener event) {
         this.mModelList = model_list;
@@ -65,11 +67,29 @@ public class tabAdapter extends RecyclerView.Adapter<tabAdapter.listViewHolder>
     {
         clearButton.setOnClickListener(v ->
         {
-            if(mTempModelList.size()>index){
+            if(!isClosing){
+                isClosing = true;
+                int size = mModelList.size();
                 mEvent.invokeObserver(Collections.singletonList(mTempModelList.get(index).getmId()),enums.etype.url_clear);
                 invokeFilter(false);
                 mEvent.invokeObserver(Collections.singletonList(index),enums.etype.is_empty);
                 model.getSession().closeSession();
+
+                if(size>1){
+                    new Thread(){
+                        public void run(){
+                            try
+                            {
+                                sleep(500);
+                                isClosing = false;
+                            }
+                            catch (InterruptedException e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                    }.start();
+                }
             }
         });
     }

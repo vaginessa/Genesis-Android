@@ -2,10 +2,10 @@
     <solid android:color="@color/white"/>
 
     <corners
-            android:bottomLeftRadius="4dp"
-            android:bottomRightRadius="4dp"/>
+            android:bottomLeftRadius="0dp"
+            android:bottomRightRadius="0dp"/>
 
     <padding
-            android:bottom="4dp"/>
+            android:bottom="0dp"/>
 
 </shape>

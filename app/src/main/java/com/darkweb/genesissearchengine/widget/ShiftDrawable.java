@@ -104,7 +104,7 @@ public class ShiftDrawable extends DrawableWrapper {
   private void updateBounds() {
     final Rect b = getBounds();
     final int width = (int) ((float) b.width() * getLevel() / MAX_LEVEL);
-    final float radius = b.height() / 2f;
+    final float radius = b.height() / 2.5f;
     mVisibleRect.set(b.left, b.top, b.left + width, b.height());
 
     // draw round to head of progressbar. I know it looks stupid, don't blame me now.

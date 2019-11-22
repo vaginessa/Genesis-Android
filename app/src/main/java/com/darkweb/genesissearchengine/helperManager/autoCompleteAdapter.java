@@ -1,139 +1,94 @@
 package com.darkweb.genesissearchengine.helperManager;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.TextView;
-
-import com.darkweb.genesissearchengine.helperManager.helperMethod;
+import com.darkweb.genesissearchengine.appManager.historyManager.historyRowModel;
 import com.example.myapplication.R;
 
-public class autoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
+public class autoCompleteAdapter extends ArrayAdapter<historyRowModel> {
+    private final String MY_DEBUG_TAG = "CustomerAdapter";
+    private ArrayList<historyRowModel> items;
+    private ArrayList<historyRowModel> itemsAll;
+    private ArrayList<historyRowModel> suggestions;
+    private int viewResourceId;
 
-    private ArrayList<String> fullList;
-    private ArrayList<String> mOriginalValues;
-    private ArrayFilter mFilter;
-    private int getResultCount=0;
-    private LayoutInflater inflater;
-
-    public int getResultCount()
-    {
-        if(getResultCount>0)
-            return 4;
-        else
-            return getResultCount;
+    public autoCompleteAdapter(Context context, int viewResourceId, ArrayList<historyRowModel> items) {
+        super(context, viewResourceId, items);
+        this.items = items;
+        this.itemsAll = (ArrayList<historyRowModel>) items.clone();
+        this.suggestions = new ArrayList<>();
+        this.viewResourceId = viewResourceId;
     }
 
-    public autoCompleteAdapter(Context context, int resource, int textViewResourceId, List<String> objects) {
-
-        super(context, resource, textViewResourceId, objects);
-        fullList = (ArrayList<String>) objects;
-        mOriginalValues = new ArrayList<String>(fullList);
-        inflater = LayoutInflater.from(context);
-    }
-
-    @Override
-    public int getCount() {
-        return fullList.size();
-    }
-
-    @Override
-    public String getItem(int position) {
-        return fullList.get(position);
-    }
-
-    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        View view = convertView;
-        String item = getItem(position);
-        if (convertView == null) {
-            convertView = view = inflater.inflate(
-                    R.layout.hint_view, null);
+        View v = convertView;
+        if (v == null) {
+            LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            v = vi.inflate(viewResourceId, null);
         }
-        TextView myTv = convertView.findViewById(R.id.hintCompletionHeader);
+        historyRowModel customer = items.get(position);
+        if (customer != null) {
 
-        myTv.setText(helperMethod.urlDesigner(fullList.get(position)));
+            TextView customerNameLabel = v.findViewById(R.id.hintCompletionTitle);
+            TextView myTv = v.findViewById( R.id.hintCompletionUrl);
 
-        String val = fullList.get(position);
-        fullList.remove(position);
-        fullList.add(0,val);
-        return convertView;
+            if (customerNameLabel != null) {
+//              Log.i(MY_DEBUG_TAG, "getView Customer Name:"+customer.getName());
+                customerNameLabel.setText(customer.getmHeader());
+                myTv.setText(customer.getmDescription());
+            }
+        }
+        return v;
     }
 
     @Override
     public Filter getFilter() {
-        if (mFilter == null) {
-            mFilter = new ArrayFilter();
-        }
-        return mFilter;
+        return nameFilter;
     }
 
-
-    private class ArrayFilter extends Filter {
-        private Object lock;
-
+    Filter nameFilter = new Filter() {
         @Override
-        protected FilterResults performFiltering(CharSequence prefix) {
-            FilterResults results = new FilterResults();
-
-            if (mOriginalValues == null) {
-                synchronized (lock) {
-                    mOriginalValues = new ArrayList<String>(fullList);
-                }
-            }
-
-            if (prefix == null || prefix.length() == 0) {
-                synchronized (lock) {
-                    ArrayList<String> list = new ArrayList<String>(mOriginalValues);
-                    results.values = list;
-                    results.count = list.size();
-                }
-            } else {
-                final String prefixString = prefix.toString().toLowerCase();
-
-                ArrayList<String> values = mOriginalValues;
-                int count = values.size();
-
-                ArrayList<String> newValues = new ArrayList<String>(count);
-
-                for (int i = 0; i < count; i++) {
-                    String item = values.get(i);
-                    if (item.toLowerCase().contains(prefixString)) {
-                        newValues.add(item);
-                    }
-
-                }
-
-                results.values = newValues;
-                results.count = newValues.size();
-            }
-
-            getResultCount = results.count;
-            return results;
+        public String convertResultToString(Object resultValue) {
+            String str = ((historyRowModel)(resultValue)).getmHeader();
+            return str;
         }
-
-        @SuppressWarnings("unchecked")
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            if(constraint != null) {
+                suggestions.clear();
+                for (historyRowModel customer : itemsAll) {
+                    if(suggestions.size()>10){
+                        break;
+                    }
+                    if(customer.getmHeader().toLowerCase().contains(constraint.toString().toLowerCase()) || customer.getmDescription().toLowerCase().contains(constraint.toString().toLowerCase())){
+                        suggestions.add(customer);
+                    }
+                }
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = suggestions;
+                filterResults.count = suggestions.size();
+                return filterResults;
+            } else {
+                return new FilterResults();
+            }
+        }
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-
-            if(results.values!=null){
-                fullList = (ArrayList<String>) results.values;
-            }else{
-                fullList = new ArrayList<String>();
-            }
-            if (results.count > 0) {
+            ArrayList<historyRowModel> filteredList = (ArrayList<historyRowModel>) results.values;
+            if(results != null && results.count > 0) {
+                clear();
+                for (historyRowModel c : filteredList) {
+                    add(c);
+                }
                 notifyDataSetChanged();
-            } else {
-                notifyDataSetInvalidated();
             }
         }
-    }
+    };
+
 }

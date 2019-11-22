@@ -2,6 +2,8 @@ package com.darkweb.genesissearchengine.appManager.databaseManager;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.darkweb.genesissearchengine.appManager.bookmarkManager.bookmarkRowModel;
@@ -36,7 +38,12 @@ public class databaseController
         try
         {
             mDatabaseInstance = app_context.openOrCreateDatabase(constants.DATABASE_NAME, MODE_PRIVATE, null);
-            mDatabaseInstance.execSQL("CREATE TABLE IF NOT EXISTS " + "history" + " (id  INT(4) PRIMARY KEY,date VARCHAR,url VARCHAR);");
+
+            mDatabaseInstance.execSQL("CREATE TABLE IF NOT EXISTS " + "history" + " (id  INT(4) PRIMARY KEY,date DATETIME,url VARCHAR,title VARCHAR);");
+            try {
+                mDatabaseInstance.execSQL("ALTER TABLE history ADD COLUMN title VARCHAR default ''");
+            } catch (SQLiteException ignored) {
+            }
             mDatabaseInstance.execSQL("CREATE TABLE IF NOT EXISTS " + "bookmark" + " (id INT(4) PRIMARY KEY,title VARCHAR,url VARCHAR);");
 
         }
@@ -66,7 +73,9 @@ public class databaseController
         Cursor c = mDatabaseInstance.rawQuery("SELECT * FROM history ORDER BY date DESC LIMIT "+endIndex+" OFFSET "+startIndex, null);
         if (c.moveToFirst()){
             do {
-                tempmodel.add(new historyRowModel(c.getString(2), c.getString(1),Integer.parseInt(c.getString(0))));
+                historyRowModel model = new historyRowModel(c.getString(2), c.getString(1),Integer.parseInt(c.getString(0)));
+                tempmodel.add(model);
+                model.updateTitle(c.getString(3));
             } while(c.moveToNext());
         }
         c.close();

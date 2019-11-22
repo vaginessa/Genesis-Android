@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.text.TextUtils;
+
+import com.darkweb.genesissearchengine.constants.status;
+
 import org.torproject.android.service.util.Prefs;
 
 
@@ -15,6 +18,7 @@ public class StartTorReceiver extends BroadcastReceiver implements TorServiceCon
     public void onReceive(Context context, Intent intent) {
         /* sanitize the Intent before forwarding it to TorService */
         Prefs.setContext(context);
+        Prefs.putBridgesEnabled(status.sGateway);
         String action = intent.getAction();
         if (TextUtils.equals(action, ACTION_START)) {
             String packageName = intent.getStringExtra(EXTRA_PACKAGE_NAME);

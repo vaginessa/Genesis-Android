@@ -11,6 +11,7 @@ package org.torproject.android.service;
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.Application;
+import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -272,6 +273,10 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
     @SuppressLint("NewApi")
     protected void showToolbarNotification (String notifyMsg, int notifyType, int icon)
      {
+         KeyguardManager myKM = (KeyguardManager) getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE);
+         if( myKM.inKeyguardRestrictedInputMode()) {
+             return;
+         }
 
          //Reusable code.
          PackageManager pm = getPackageManager();
@@ -298,6 +303,7 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
             mNotifyBuilder.setCategory(Notification.CATEGORY_SERVICE);
 
             mNotifyBuilder.setChannelId(NOTIFICATION_CHANNEL_ID);
+            mNotifyBuilder.setVisibility(NotificationCompat.VISIBILITY_SECRET );
 
 
             Intent intentRefresh = new Intent();
@@ -313,8 +319,12 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
 
         mNotifyBuilder.setContentText(notifyMsg);
         mNotifyBuilder.setSmallIcon(icon);
+        mNotifyBuilder.setVisibility(NotificationCompat.VISIBILITY_SECRET );
 
-        if (notifyType != NOTIFY_ID)
+         //mChannel.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
+
+
+         if (notifyType != NOTIFY_ID)
         {
             mNotifyBuilder.setTicker(notifyMsg);
         }
@@ -342,7 +352,7 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
         }
 
         mNotificationShowing = true;
-     }
+    }
 
 
     /* (non-Javadoc)
@@ -853,6 +863,8 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
 	        killAllDaemons();
 
             SharedPreferences prefs = Prefs.getSharedPrefs(getApplicationContext());
+
+
             String version = prefs.getString(PREF_BINARY_TOR_VERSION_INSTALLED,null);
             logNotice("checking binary version: " + version);
 
@@ -1438,7 +1450,6 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
 
 	      orbot_local_constants.tor_logs_status = logMessage;
           LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-          Log.i("SUPLOGS : ",logMessage);
 
     }
 
@@ -1488,6 +1499,9 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
                 return;
 
             SharedPreferences prefs = Prefs.getSharedPrefs(getApplicationContext());
+
+            if(prefs==null){
+            }
 
             boolean doNetworKSleep = prefs.getBoolean(OrbotConstants.PREF_DISABLE_NETWORK, true);
 
@@ -1820,7 +1834,7 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
         {
 
             case TRIM_MEMORY_BACKGROUND:
-                debug("trim memory requested: app in the background");
+                debug("111111trim memory requested: app in the background");
             return;
 
         /**
@@ -1832,7 +1846,7 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
 
             case TRIM_MEMORY_COMPLETE:
 
-                debug("trim memory requested: cleanup all memory");
+                debug("111111trim memory requested: cleanup all memory");
             return;
         /**
         public static final int TRIM_MEMORY_COMPLETE
@@ -1842,7 +1856,7 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
         */
             case TRIM_MEMORY_MODERATE:
 
-                debug("trim memory requested: clean up some memory");
+                debug("111111trim memory requested: clean up some memory");
             return;
 
         /**
@@ -1854,7 +1868,7 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
 
             case TRIM_MEMORY_RUNNING_CRITICAL:
 
-                debug("trim memory requested: memory on device is very low and critical");
+                debug("111111trim memory requested: memory on device is very low and critical");
             return;
         /**
         public static final int TRIM_MEMORY_RUNNING_CRITICAL
@@ -1865,7 +1879,7 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
 
             case TRIM_MEMORY_RUNNING_LOW:
 
-                debug("trim memory requested: memory on device is running low");
+                debug("111111trim memory requested: memory on device is running low");
             return;
         /**
         public static final int TRIM_MEMORY_RUNNING_LOW
@@ -1875,7 +1889,7 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
         */
             case TRIM_MEMORY_RUNNING_MODERATE:
 
-                debug("trim memory requested: memory on device is moderate");
+                debug("111111trim memory requested: memory on device is moderate");
             return;
         /**
         public static final int TRIM_MEMORY_RUNNING_MODERATE
@@ -1885,7 +1899,7 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
         */
             case TRIM_MEMORY_UI_HIDDEN:
 
-                debug("trim memory requested: app is not showing UI anymore");
+                debug("111111trim memory requested: app is not showing UI anymore");
             return;
 
         /**

@@ -63,6 +63,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
+                <category android:name="android.intent.category.default" />
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>

@@ -193,7 +193,6 @@ public class pluginController
                 dataController.getInstance().clearSuggestions();
                 mContextManager.getHistoryController().onclearData();
                 mHomeController.onClearSession();
-                dataController.getInstance().clearTabs();
             }
             else if(event_type.equals(enums.etype.clear_bookmark)){
                 dataController.getInstance().clearBookmark();
@@ -231,6 +230,7 @@ public class pluginController
             }
             else if(event_type.equals(enums.etype.clear_tab)){
                 dataController.getInstance().clearTabs();
+                mHomeController.initTab();
                 activityContextManager.getInstance().getTabController().finish();
             }
         }

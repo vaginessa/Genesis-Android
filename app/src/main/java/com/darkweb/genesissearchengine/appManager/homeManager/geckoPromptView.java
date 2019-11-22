@@ -33,9 +33,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.darkweb.genesissearchengine.helperManager.PathUtil;
+import com.example.myapplication.R;
 
-import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,10 +49,11 @@ import org.mozilla.geckoview.GeckoSession.PermissionDelegate.MediaSource;
 import org.mozilla.geckoview.SlowScriptResponse;
 
 final class geckoPromptView implements GeckoSession.PromptDelegate {
-    protected static final String LOGTAG = "geckoPromptView";
+    protected static final String LOGTAG = "BasicGeckoViewPrompt";
 
     private final Activity mActivity;
     public int filePickerRequestCode = 1;
+    int test=-1;
     private int mFileType;
     private GeckoResult<PromptResponse> mFileResponse;
     private FilePrompt mFilePrompt;
@@ -194,7 +194,7 @@ final class geckoPromptView implements GeckoSession.PromptDelegate {
         final EditText username;
         if ((flags & AuthPrompt.AuthOptions.Flags.ONLY_PASSWORD) == 0) {
             username = new EditText(builder.getContext());
-            username.setHint("");
+            username.setHint("Username");
             username.setText(prompt.authOptions.username);
             container.addView(username);
         } else {
@@ -202,7 +202,7 @@ final class geckoPromptView implements GeckoSession.PromptDelegate {
         }
 
         final EditText password = new EditText(builder.getContext());
-        password.setHint("");
+        password.setHint("Passowrd");
         password.setText(prompt.authOptions.password);
         password.setInputType(InputType.TYPE_CLASS_TEXT |
                 InputType.TYPE_TEXT_VARIATION_PASSWORD);
@@ -692,7 +692,6 @@ final class geckoPromptView implements GeckoSession.PromptDelegate {
                     }
                 };
         builder.setNegativeButton(android.R.string.cancel, /* listener */ null)
-                .setNeutralButton("Dismiss", listener)
                 .setPositiveButton(android.R.string.ok, listener);
         createStandardDialog(builder, prompt, res).show();
 
@@ -757,6 +756,7 @@ final class geckoPromptView implements GeckoSession.PromptDelegate {
             return GeckoResult.fromValue(prompt.dismiss());
         }
 
+        test = 44;
         return res;
     }
 
@@ -776,22 +776,7 @@ final class geckoPromptView implements GeckoSession.PromptDelegate {
             return;
         }
 
-        Uri uri = data.getData();
-
-        String filePath = null;
-
-        try
-        {
-            filePath = PathUtil.getPath(mActivity.getApplicationContext(),uri);
-        }
-        catch (URISyntaxException e)
-        {
-            filePath = "";
-            e.printStackTrace();
-        }
-
-        uri = Uri.parse("file://"+filePath);
-
+        final Uri uri = data.getData();
         final ClipData clip = data.getClipData();
 
         if (prompt.type == FilePrompt.Type.SINGLE ||
@@ -845,13 +830,13 @@ final class geckoPromptView implements GeckoSession.PromptDelegate {
         }
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(title)
-                .setNegativeButton("Wait", new DialogInterface.OnClickListener() {
+                .setNegativeButton("NEGATIVE", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialog, final int which) {
                         reportAction.complete(SlowScriptResponse.CONTINUE);
                     }
                 })
-                .setPositiveButton("Stop", new DialogInterface.OnClickListener() {
+                .setPositiveButton("POSITIVE", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialog, final int which) {
                         reportAction.complete(SlowScriptResponse.STOP);

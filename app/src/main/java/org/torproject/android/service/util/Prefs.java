@@ -3,6 +3,7 @@ package org.torproject.android.service.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import org.torproject.android.service.OrbotConstants;
 
@@ -21,12 +22,17 @@ public class Prefs {
     private final static String PREF_OPEN_PROXY_ON_ALL_INTERFACES = "pref_open_proxy_on_all_interfaces";
     private final static String PREF_USE_VPN = "pref_vpn";
     private final static String PREF_EXIT_NODES = "pref_exit_nodes";
-    
-    private static SharedPreferences prefs;
+
+    private static SharedPreferences prefs=null;
+    private static Context contextTemp=null;
 
     public static void setContext(Context context) {
-        if (prefs == null)
-            prefs = getSharedPrefs(context);
+        contextTemp = context;
+        prefs = getSharedPrefs(context);
+    }
+
+    public static boolean isTorServiceRunning(){
+        return prefs!=null;
     }
 
     private static void putBoolean(String key, boolean value) {
@@ -113,6 +119,6 @@ public class Prefs {
     }
 
     public static SharedPreferences getSharedPrefs (Context context) {
-        return context.getSharedPreferences(OrbotConstants.PREF_TOR_SHARED_PREFS,0 | Context.MODE_MULTI_PROCESS);
+        return contextTemp.getSharedPreferences(OrbotConstants.PREF_TOR_SHARED_PREFS,0 | Context.MODE_MULTI_PROCESS);
     }
 }

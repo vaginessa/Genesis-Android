@@ -1,28 +1,50 @@
 package com.darkweb.genesissearchengine.appManager.homeManager;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
+import android.content.Intent;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
+import android.util.Base64;
 import android.util.Log;
 import android.webkit.URLUtil;
 
+import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.helperManager.downloadFileService;
 import com.darkweb.genesissearchengine.helperManager.errorHandler;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
+import com.example.myapplication.R;
+
+import org.mozilla.gecko.GeckoSystemStateListener;
+import org.mozilla.gecko.GeckoThread;
+import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.WebRequestError;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
 
-public class geckoSession extends GeckoSession implements GeckoSession.ProgressDelegate, GeckoSession.HistoryDelegate,GeckoSession.NavigationDelegate,GeckoSession.ContentDelegate
+import static org.mozilla.geckoview.GeckoSession.ContentDelegate.ContextElement.TYPE_AUDIO;
+
+public class geckoSession extends GeckoSession implements GeckoSession.PermissionDelegate,GeckoSession.ProgressDelegate, GeckoSession.HistoryDelegate,GeckoSession.NavigationDelegate,GeckoSession.ContentDelegate
 {
     private eventObserver.eventListener event;
 
@@ -32,9 +54,10 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
     private boolean mFullScreen = false;
     private int mProgress = 0;
     private String mCurrentTitle = strings.EMPTY_STR;
-    private String mCurrentURL = strings.EMPTY_STR;
+    private String mCurrentURL = "about:blank";
     private AppCompatActivity mContext;
     private geckoDownloadManager mDownloadManager;
+    private boolean isPageLoading = false;
 
     /*Temp Variables*/
     private GeckoSession.HistoryDelegate.HistoryList mHistoryList = null;
@@ -47,18 +70,34 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
         setHistoryDelegate(this);
         setNavigationDelegate(this);
         setContentDelegate(this);
+        setPromptDelegate(new geckoPromptView(mContext));
         mDownloadManager = new geckoDownloadManager();
+        setPromptDelegate(new geckoPromptView(mContext));
 
         this.event = event;
+    }
+
+    void onFileUploadRequest(int resultCode, Intent data){
+        geckoPromptView mPromptDelegate = (geckoPromptView)getPromptDelegate();
+        mPromptDelegate.onFileCallbackResult(resultCode,data);
     }
 
     /*Progress Delegate*/
 
     @Override
     public void onPageStart(@NonNull GeckoSession var1, @NonNull String var2) {
+        isPageLoading = true;
+        mCurrentURL = "about:blank";
         if(!var2.equals("about:blank")){
             mProgress = 5;
         }
+
+    }
+
+    @AnyThread
+    public void shutdown() {
+        GeckoSystemStateListener.getInstance().shutdown();
+        GeckoThread.forceQuit();
     }
 
     @UiThread
@@ -72,6 +111,10 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
             mProgress = progress;
             event.invokeObserver(Arrays.asList(mProgress,mSessionID), enums.etype.progress_update);
         }
+
+        if(progress>=100){
+            isPageLoading = false;
+        }
     }
 
     /*History Delegate*/
@@ -79,7 +122,8 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
     public GeckoResult<Boolean> onVisited(@NonNull GeckoSession var1, @NonNull String var2, @Nullable String var3, int var4) {
         if(var4==3 || var4==5 || var4==1){
             event.invokeObserver(Arrays.asList(var2,mSessionID), enums.etype.on_url_load);
-            event.invokeObserver(Arrays.asList(var2,mSessionID), enums.etype.on_request_completed);
+            event.invokeObserver(Arrays.asList(var2,mSessionID,mCurrentTitle), enums.etype.on_request_completed);
+            isPageLoading = false;
         }
         return null;
     }
@@ -91,7 +135,13 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
 
     /*Navigation Delegate*/
     public void onLocationChange(@NonNull GeckoSession var1, @Nullable String var2) {
-        mCurrentURL = var2;
+
+        String newUrl = var2.split("#")[0];
+        if(!mCurrentURL.equals("about:blank")){
+            event.invokeObserver(Arrays.asList(mCurrentURL,mSessionID,newUrl), enums.etype.on_update_suggestion_url);
+        }
+        mCurrentURL = newUrl;
+
         if (var2 != null && !var2.equals("about:blank"))
         {
             event.invokeObserver(Arrays.asList(mCurrentURL,mSessionID), enums.etype.start_proxy);
@@ -153,10 +203,9 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
 
     @UiThread
     public void onTitleChange(@NonNull GeckoSession var1, @Nullable String var2) {
-        if(var2.equals(strings.EMPTY_STR)){
-            mCurrentTitle = URLUtil.guessFileName(mCurrentURL, null, null);
-        }else {
+        if(var2!=null && !var2.equals(strings.EMPTY_STR)){
             mCurrentTitle = var2;
+            event.invokeObserver(Arrays.asList(mCurrentURL,mSessionID,mCurrentTitle), enums.etype.on_update_suggestion);
         }
     }
 
@@ -168,16 +217,20 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
 
     public void onContextMenu(@NonNull GeckoSession var1, int var2, int var3, @NonNull GeckoSession.ContentDelegate.ContextElement var4) {
 
-        if(var4.type==1){
+        String title = strings.EMPTY_STR;
+        if(var4.title!=null){
+            title = var4.title;
+        }
+        if(var4.type!=0){
             if(var4.linkUri!=null){
-                event.invokeObserver(Arrays.asList(var4.srcUri,mSessionID,var4.linkUri), enums.etype.on_long_press_with_link);
+                event.invokeObserver(Arrays.asList(var4.srcUri,mSessionID,var4.baseUri,title), enums.etype.on_long_press_with_link);
             }
             else {
-                event.invokeObserver(Arrays.asList(var4.srcUri,mSessionID), enums.etype.on_long_press);
+                event.invokeObserver(Arrays.asList(var4.srcUri,mSessionID,title), enums.etype.on_long_press);
             }
         }
-        else if(var4.type==0){
-            event.invokeObserver(Arrays.asList(var4.linkUri,mSessionID), enums.etype.on_long_press_url);
+        else{
+            event.invokeObserver(Arrays.asList(var4.linkUri,mSessionID,title), enums.etype.on_long_press_url);
         }
     }
 
@@ -186,17 +239,82 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
     void downloadRequestedFile()
     {
         if(mDownloadManager.getDownloadURL()!=null && mDownloadManager.getDownloadFile()!=null){
-            mContext.startService(downloadFileService.getDownloadService(mContext, mDownloadManager.getDownloadURL()+"__"+mDownloadManager.getDownloadFile(), Environment.DIRECTORY_DOWNLOADS));
+            if(!createAndSaveFileFromBase64Url(mDownloadManager.getDownloadURL().toString())){
+                mContext.startService(downloadFileService.getDownloadService(mContext, mDownloadManager.getDownloadURL()+"__"+mDownloadManager.getDownloadFile(), Environment.DIRECTORY_DOWNLOADS));
+            }
         }
     }
 
     void downloadRequestedFile(Uri downloadURL,String downloadFile)
     {
         if(downloadURL!=null && downloadFile!=null){
-            mContext.startService(downloadFileService.getDownloadService(mContext, downloadURL + "__" + downloadFile, Environment.DIRECTORY_DOWNLOADS));
+            if(!createAndSaveFileFromBase64Url(downloadURL.toString())){
+                mContext.startService(downloadFileService.getDownloadService(mContext, downloadURL + "__" + downloadFile, Environment.DIRECTORY_DOWNLOADS));
+            }
         }
     }
 
+    private boolean createAndSaveFileFromBase64Url(String url) {
+
+        if(!url.startsWith("data") && !url.startsWith("blob")){
+            return false;
+        }
+
+        try{
+            File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            String filetype = url.substring(url.indexOf("/") + 1, url.indexOf(";"));
+            String filename = System.currentTimeMillis() + "." + filetype;
+            File file = new File(path, filename);
+            try {
+                if(!path.exists())
+                    path.mkdirs();
+                if(!file.exists())
+                    file.createNewFile();
+
+                String base64EncodedString = url.substring(url.indexOf(",") + 1);
+                byte[] decodedBytes = Base64.decode(base64EncodedString, Base64.DEFAULT);
+                OutputStream os = new FileOutputStream(file);
+                os.write(decodedBytes);
+                os.close();
+
+                //Tell the media scanner about the new file so that it is immediately available to the user.
+                MediaScannerConnection.scanFile(mContext,
+                        new String[]{file.toString()}, null,
+                        new MediaScannerConnection.OnScanCompletedListener() {
+                            public void onScanCompleted(String path, Uri uri) {
+                                Log.i("ExternalStorage", "Scanned " + path + ":");
+                                Log.i("ExternalStorage", "-> uri=" + uri);
+                            }
+                        });
+
+                //Set notification after download complete and add "click to view" action to that
+                String mimetype = url.substring(url.indexOf(":") + 1, url.indexOf("/"));
+                Intent intent = new Intent();
+                intent.setAction(android.content.Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(file), (mimetype + "/*"));
+                PendingIntent pIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
+
+                Notification notification = new NotificationCompat.Builder(mContext)
+                        .setSmallIcon(R.xml.ic_download)
+                        .setContentTitle(filename)
+                        .setContentIntent(pIntent)
+                        .build();
+
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+                int notificationId = 85851;
+                NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.notify(notificationId, notification);
+            } catch (IOException e) {
+            }
+
+            return true;
+        }
+        catch (Exception ignored){
+
+        }
+
+        return true;
+    }
     /*Helper Methods*/
 
     public String getCurrentURL(){
@@ -240,20 +358,40 @@ public class geckoSession extends GeckoSession implements GeckoSession.ProgressD
     }
 
     void goBackSession(){
-        event.invokeObserver(Arrays.asList(mHistoryList.get(mHistoryList.getCurrentIndex()-1).getUri(),mSessionID), enums.etype.start_proxy);
-        new Handler().postDelayed(() ->
-        {
-            goBack();
-        }, 100);
 
+        int index = mHistoryList.getCurrentIndex()-1;
+
+        if(mHistoryList!=null && index>=0 && index<mHistoryList.size()){
+            event.invokeObserver(Arrays.asList(mHistoryList.get(index).getUri(),mSessionID), enums.etype.start_proxy);
+
+            new Handler().postDelayed(() ->
+            {
+                goBack();
+            }, 100);
+        }
     }
 
     void goForwardSession(){
-        event.invokeObserver(Arrays.asList(mHistoryList.get(mHistoryList.getCurrentIndex()+1),mSessionID), enums.etype.start_proxy);
-        new Handler().postDelayed(() ->
-        {
-            goForward();
-        }, 100);
+
+        int index = mHistoryList.getCurrentIndex()+1;
+
+        if(mHistoryList!=null && index>=0 && index<mHistoryList.size()){
+
+            event.invokeObserver(Arrays.asList(mHistoryList.get(index),mSessionID), enums.etype.start_proxy);
+
+            new Handler().postDelayed(() ->
+            {
+                goForward();
+            }, 100);
+        }
+    }
+
+    boolean isLoading(){
+        return isPageLoading;
+    }
+
+    void setLoading(boolean status){
+        isPageLoading = status;
     }
 
 }

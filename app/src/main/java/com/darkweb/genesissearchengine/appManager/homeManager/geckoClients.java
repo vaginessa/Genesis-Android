@@ -1,11 +1,14 @@
 package com.darkweb.genesissearchengine.appManager.homeManager;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import com.darkweb.genesissearchengine.constants.*;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
+import com.darkweb.genesissearchengine.helperManager.helperMethod;
+
 import org.mozilla.geckoview.*;
 import java.io.File;
 import java.util.Arrays;
@@ -38,7 +41,6 @@ class geckoClients
         mSession.open(mRuntime);
         mSession.getSettings().setUseTrackingProtection(true);
         mSession.getSettings().setAllowJavascript(status.sJavaStatus);
-        mSession.setPromptDelegate(new geckoPromptView(context));
         mSession.setTitle("New Tab");
         geckoView.releaseSession();
         geckoView.setSession(mSession);
@@ -65,7 +67,7 @@ class geckoClients
 
     void onClose(){
         if(mRuntime!=null){
-            mRuntime.shutdown();
+            //mRuntime.shutdown();
         }
      }
 
@@ -83,6 +85,14 @@ class geckoClients
         if(status.sJavaStatus){
            mSession.reload();
         }
+    }
+
+    void onUploadRequest(int resultCode,Intent data){
+        mSession.onFileUploadRequest(resultCode,data);
+    }
+
+    void setLoading(boolean status){
+        mSession.setLoading(status);
     }
 
     void loadURL(String url){
@@ -110,6 +120,9 @@ class geckoClients
         return mSession.canGoForward();
     }
 
+    boolean isLoading(){
+        return mSession.isLoading();
+    }
 
     boolean getFullScreenStatus(){
         return mSession.getFullScreenStatus();
@@ -133,16 +146,22 @@ class geckoClients
         mSession.reload();
     }
 
-    void manual_download(String url){
+    void manual_download(String url, AppCompatActivity context){
         Uri downloadURL = Uri.parse(url);
         File f = new File(url);
         String downloadFile = f.getName() != null ? f.getName() : downloadURL.getLastPathSegment();
-        mSession.downloadRequestedFile(downloadURL,downloadFile);
+
+        /*EXTERNAL STORAGE REQUEST*/
+        if(helperMethod.checkPermissions(context)){
+            mSession.downloadRequestedFile(downloadURL,downloadFile);
+        }
     }
 
     void downloadFile()
     {
-        mSession.downloadRequestedFile();
+        if(helperMethod.checkPermissions(context)){
+            mSession.downloadRequestedFile();
+        }
     }
 
     /*Session Updates*/

@@ -10,6 +10,8 @@ import android.os.Environment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.io.File;
+
 public class downloadFileService extends IntentService
 {
     private static final String DOWNLOAD_PATH = "com.spartons.androiddownloadmanager_DownloadSongService_Download_path";
@@ -34,6 +36,16 @@ public class downloadFileService extends IntentService
     }
     private void startDownload(String downloadPath, String destinationPath) {
         String []fn = downloadPath.split("__");
+
+        File folder = Environment.getExternalStorageDirectory();
+        String fileName = Environment.DIRECTORY_DOWNLOADS +"\\"+ fn[1];
+
+        File file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        Uri mDestinationUri = Uri.withAppendedPath(Uri.fromFile(file), fn[1]);
+
+        File myFile = new File(mDestinationUri.getPath());
+        if(myFile.exists())
+            myFile.delete();
 
         Uri uri = Uri.parse(fn[0]); // Path where you want to download file.
         DownloadManager manager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
