@@ -124,9 +124,9 @@ public class historyController extends AppCompatActivity
         pluginController.getInstance().MessageManagerHandler(this, Collections.singletonList(strings.EMPTY_STR),enums.etype.clear_history);
     }
     public void onclearData(){
-        //mListModel.clearList();
-        //((historyAdapter) mListView.getAdapter()).invokeFilter(true );
-        //mHistoryViewController.clearList();
+        mListModel.clearList();
+        ((historyAdapter) mListView.getAdapter()).invokeFilter(true );
+        mHistoryViewController.clearList();
         databaseController.getInstance().execSQL("delete from history where 1",null);
         finish();
     }
@@ -154,6 +154,7 @@ public class historyController extends AppCompatActivity
     @Override
     public void onResume()
     {
+        status.sCurrentActivity = this;
         status.sIsAppPaused = false;
         super.onResume();
     }

@@ -20,9 +20,7 @@ class tabModel
     }
     private void removeFromMainList(int index)
     {
-        if(mModelList.size()>index){
-            mModelList.remove(index);
-        }
+        mModelList.remove(index);
     }
 
     void onManualClear(int index){

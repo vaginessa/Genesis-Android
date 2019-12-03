@@ -3,6 +3,7 @@ package com.darkweb.genesissearchengine.appManager.tabManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -139,6 +140,7 @@ public class tabController extends AppCompatActivity
     @Override
     public void onResume()
     {
+        status.sCurrentActivity = this;
         status.sIsAppPaused = false;
         super.onResume();
     }
@@ -157,6 +159,9 @@ public class tabController extends AppCompatActivity
         @Override
         public void invokeObserver(List<Object> data, enums.etype e_type)
         {
+            if(e_type.equals(enums.etype.clear_recycler)){
+                mListView.getRecycledViewPool().clear();
+            }
             if(e_type.equals(enums.etype.url_triggered)){
                 tabRowModel model = (tabRowModel)data.get(0);
                 pluginController.getInstance().logEvent(strings.TAB_TRIGGERED);
@@ -168,11 +173,15 @@ public class tabController extends AppCompatActivity
                 mHomeController.initTabCount();
             }
             else if(e_type.equals(enums.etype.is_empty)){
+
                 mtabViewController.removeFromList((int)data.get(0));
                 mtabViewController.updateIfListEmpty(mListModel.getList().size(),300);
-
+                mHomeController.releaseSession();
                 if(dataController.getInstance().getTotalTabs()<1){
+                    mHomeController.onNewTab(false);
                     finish();
+                }else {
+                    mHomeController.loadExistingTab();
                 }
                 mHomeController.initTabCount();
             }

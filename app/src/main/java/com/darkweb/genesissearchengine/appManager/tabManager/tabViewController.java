@@ -67,10 +67,11 @@ class tabViewController
     void removeFromList(int index)
     {
         mListView.getAdapter().notifyItemRemoved(index);
-        mListView.getAdapter().notifyItemRangeChanged(index, mListView.getAdapter().getItemCount());
+        mListView.getAdapter().notifyItemRangeChanged(index, mListView.getAdapter().getItemCount()-1);
     }
 
     void clearList(){
+        mListView.getRecycledViewPool().clear();
         mListView.getAdapter().notifyDataSetChanged();
         updateIfListEmpty(mListView.getAdapter().getItemCount(),300);
         mSearchBar.clearFocus();

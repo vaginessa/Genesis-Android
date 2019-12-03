@@ -242,6 +242,13 @@ class homeViewController
     }
 
     void initializeSuggestionView(ArrayList<historyRowModel> suggestions){
+
+        if(mSearchbar.isFocused()){
+            return;
+        }
+
+
+        Log.i("FKOKERROR","FKOKERROR");
         autoCompleteAdapter suggestionAdapter = new autoCompleteAdapter(mContext, R.layout.hint_view, (ArrayList<historyRowModel>) suggestions.clone());
 
         int width = Math.round(helperMethod.screenWidth());
@@ -340,7 +347,6 @@ class homeViewController
 
         if(mSplashScreen.getVisibility()!=View.GONE){
             mContext.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_USER);//Set Portrait
-            splashScreenDisable();
         }
         splashScreenDisable();
     }
@@ -500,8 +506,12 @@ class homeViewController
         if(keyboard){
 
             if(!isKeyboardOpen){
-                InputMethodManager imm = (InputMethodManager)   mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.RESULT_UNCHANGED_SHOWN, 0);
+                final Handler handler = new Handler();
+                handler.postDelayed(() ->
+                {
+                    InputMethodManager imm = (InputMethodManager)   mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInput(InputMethodManager.RESULT_UNCHANGED_SHOWN, 0);
+                }, 250);
             }
 
             mSearchbar.requestFocus();
@@ -523,9 +533,9 @@ class homeViewController
         }
         else if(mSplashScreen.getAlpha()==0) {
             mProgressBar.setVisibility(View.VISIBLE);
-            mProgressBar.animate().setStartDelay(0).alpha(1);
-            setProgressAnimate(mProgressBar,value);
-         }
+            mProgressBar.animate().setStartDelay(50).alpha(1);
+        }
+        setProgressAnimate(mProgressBar,value);
     }
 
     private ObjectAnimator animation = null;

@@ -13,7 +13,7 @@
     <string name="internetErrorMessage" translatable="false">These might be the problems you are facing \n\n• Webpage or Website might be down \n• Your Internet connection might be poor \n• You might be using a proxy \n• Website might be blocked by firewall</string>
     <string name="title_activity_list_manager" translatable="false">list_manager</string>
     <string name="title_activity_setting_controller" translatable="false">Settings</string>
-
+    <string name="file_provider_authority" translatable="false">com.darkweb.genesissearchengine.fileprovider</string>
     <!-- Preference Titles -->
     <string name="messages_header" translatable="false">Messages</string>
     <string name="sync_header" translatable="false">Sync</string>
@@ -39,6 +39,7 @@
     <string name="manual_font" translatable="false">Auto Adjust Font</string>
     <string name="settings_cookies" translatable="false">Cookie Settings</string>
     <string name="cookie" translatable="false">Cookies</string>
+    <string name="settings_notification" translatable="false">Manage Notification</string>
 
     <!-- List View -->
     <string name="listview_clear" translatable="false">Clear</string>
@@ -74,6 +75,12 @@
     <string-array name="boolean_option">
         <item>Enabled</item>
         <item>Disabled</item>
+    </string-array>
+
+    <string-array name="notification">
+        <item>Enable All</item>
+        <item>Disable All</item>
+        <item>No Bandwidth</item>
     </string-array>
 
     <string-array name="cookies">

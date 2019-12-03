@@ -38,7 +38,6 @@ class dataModel
         mPrefs = PreferenceManager.getDefaultSharedPreferences(app_context);
         mEdit = mPrefs.edit();
     }
-
     void clearPrefs(){
         mEdit.clear();
         mEdit.apply();
@@ -53,7 +52,6 @@ class dataModel
     String getString(String valueKey, String valueDefault){
         return mPrefs.getString(valueKey, valueDefault);
     }
-
     void setBool(String valueKey, boolean value){
         mEdit.putBoolean(valueKey, value);
         mEdit.apply();
@@ -61,7 +59,6 @@ class dataModel
     boolean getBool(String valueKey, boolean valueDefault){
         return mPrefs.getBoolean(valueKey, valueDefault);
     }
-
     void setInt(String valueKey, int value){
         mEdit.putInt(valueKey, value);
         mEdit.apply();
@@ -69,13 +66,11 @@ class dataModel
     int getInt(String valueKey, int valueDefault){
         return mPrefs.getInt(valueKey, valueDefault);
     }
-
     void setFloat(String valueKey, int value){
         mEdit.putInt(valueKey, value);
         mEdit.apply();
     }
-    int getFloat(String valueKey, int valueDefault)
-    {
+    int getFloat(String valueKey, int valueDefault){
         return mPrefs.getInt(valueKey, valueDefault);
     }
 
@@ -95,8 +90,10 @@ class dataModel
             mSuggestionCache.put(history.get(count).getmHeader(),tempSuggestion);
         }
     }
-
     void updateSuggestionURL(String url, String newURL){
+        if(url.length()>1500){
+            return;
+        }
         historyRowModel model = mSuggestionCache.get(url);
         if(model!=null){
             mSuggestionCache.remove(url);
@@ -105,10 +102,11 @@ class dataModel
         }
 
     }
-
     void addSuggenstions(String url, String title){
+        if(url.length()>1500){
+            return;
+        }
 
-        Log.i("ERERER1",mSuggestions.size()+"");
         historyRowModel tempModel = mSuggestionCache.get(url);
 
         if(tempModel==null){
@@ -126,12 +124,15 @@ class dataModel
         String[] params = new String[2];
         params[0] = title;
         params[1] = url;
-        databaseController.getInstance().execSQL("UPDATE history SET title = ? , date = DateTime('now') WHERE url = ?",params);
-        Log.i("ERERER2",mSuggestions.size()+"");
+        if(title.length()>0){
+            databaseController.getInstance().execSQL("UPDATE history SET title = ? , date = DateTime('now') WHERE url = ?",params);
+        }
     }
-
     void addHistory(String url) {
 
+        if(url.length()>1500){
+            return;
+        }
         @SuppressLint("SimpleDateFormat") SimpleDateFormat d_form = new SimpleDateFormat("dd MMMM | hh:mm a");
         String date = d_form.format(new Date());
 
@@ -173,7 +174,6 @@ class dataModel
         mHistory.add(0,new historyRowModel(url,date, mMaxHistoryId));
         mHistoryCache.put(url,true);
     }
-
     ArrayList<historyRowModel> getmHistory() {
         return mHistory;
     }
@@ -195,7 +195,6 @@ class dataModel
         mSuggestions.clear();
         Log.i("ERERER6",mSuggestions.size()+"");
         initSuggestions();
-        clearTab();
     }
     void loadMoreHistory(ArrayList<historyRowModel> history){
         this.mHistory.addAll(history);
@@ -210,6 +209,9 @@ class dataModel
         mBookmarks = databaseController.getInstance().selectBookmark();
     }
     void addBookmark(String url, String title){
+        if(url.length()>1500){
+            return;
+        }
         int autoval = 0;
         if(mBookmarks.size()> constants.MAX_LIST_SIZE)
         {
@@ -243,19 +245,25 @@ class dataModel
 
     /*List Tabs*/
 
-    void addTabs(geckoSession mSession){
-        mTabs.add(0,new tabRowModel(mSession,mTabs.size()));
+    void addTabs(geckoSession mSession,boolean isHardCopy){
+        if(!isHardCopy){
+            mTabs.add(0,new tabRowModel(mSession,mTabs.size()));
+        }
+        else {
+            mTabs.add(0,new tabRowModel(mSession,mTabs.size()));
+        }
     }
     ArrayList<tabRowModel> getTab(){
         return mTabs;
     }
     void clearTab() {
         int size = mTabs.size();
-        for(int counter = 1; counter< size; counter++){
+        for(int counter = 0; counter< size; counter++){
             mTabs.get(0).getSession().stop();
             mTabs.remove(0);
         }
         if(mTabs.size()>0){
+            Log.i("FUCKERRROR125:","_FERROR_");
             mTabs.get(0).getSession().closeSession();
         }
     }
@@ -267,6 +275,24 @@ class dataModel
                 mTabs.remove(counter);
                 break;
             }
+            else {
+                mTabs.get(counter).setId(mTabs.get(counter).getmId()+1);
+            }
+        }
+    }
+    void moveTabToTop(geckoSession mSession) {
+
+        for(int counter = 0; counter< mTabs.size(); counter++){
+
+            if(mTabs.get(counter).getSession().getSessionID()==mSession.getSessionID())
+            {
+                /***BIG PROBLEM***/
+                mTabs.remove(counter);
+                mTabs.add(0,new tabRowModel(mSession,0));
+                break;
+            }else {
+                mTabs.get(counter).setId(mTabs.get(counter).getmId()+1);
+            }
         }
     }
     tabRowModel getCurrentTab(){
@@ -277,7 +303,6 @@ class dataModel
             return null;
         }
     }
-
     int getTotalTabs(){
         return mTabs.size();
     }
@@ -287,14 +312,10 @@ class dataModel
     ArrayList<historyRowModel> getmSuggestions(){
         return mSuggestions;
     }
-
     void clearSuggestion(){
-        Log.i("ERERER7",mSuggestions.size()+"");
         mSuggestions.clear();
-        Log.i("ERERER8",mSuggestions.size()+"");
         initSuggestions();
     }
-
     void initSuggestions(){
 
         Log.i("ERERER9",mSuggestions.size()+"");

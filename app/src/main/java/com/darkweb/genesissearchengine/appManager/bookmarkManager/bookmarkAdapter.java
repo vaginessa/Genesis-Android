@@ -23,13 +23,14 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.listVi
 {
     /*Private Variables*/
 
-    private ArrayList<bookmarkRowModel> model_list;
+    private ArrayList<bookmarkRowModel> mModelList;
     private ArrayList<bookmarkRowModel> temp_model_list;
     private eventObserver.eventListener event;
     private String filter = strings.EMPTY_STR;
+    private boolean isClosing = false;
 
     bookmarkAdapter(ArrayList<bookmarkRowModel> model_list, eventObserver.eventListener event) {
-        this.model_list = model_list;
+        this.mModelList = model_list;
         this.event = event;
         temp_model_list = new ArrayList<>();
     }
@@ -69,13 +70,33 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.listVi
     {
         clearButton.setOnClickListener(v ->
         {
-            if(temp_model_list.size()>index){
-                event.invokeObserver(Collections.singletonList(model_list.get(temp_model_list.get(index).getmId()).getmId()),enums.etype.remove_from_database);
+            if(!isClosing){
+                isClosing = true;
+                int size = mModelList.size();
+
+                event.invokeObserver(Collections.singletonList(mModelList.get(temp_model_list.get(index).getmId()).getmId()),enums.etype.remove_from_database);
                 event.invokeObserver(Collections.singletonList(temp_model_list.get(index).getmId()),enums.etype.url_clear);
                 invokeFilter(false);
                 event.invokeObserver(Collections.singletonList(index),enums.etype.is_empty);
+
+                if(size>1){
+                    new Thread(){
+                        public void run(){
+                            try
+                            {
+                                sleep(500);
+                                isClosing = false;
+                            }
+                            catch (InterruptedException e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                    }.start();
+                }
             }
         });
+
     }
 
     /*View Holder Extensions*/
@@ -115,9 +136,9 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.listVi
 
     void invokeFilter(boolean notify){
         temp_model_list.clear();
-        for(int counter=0;counter<model_list.size();counter++){
-            if(model_list.get(counter).getmHeader().contains(filter) || model_list.get(counter).getmDescription().contains(filter)){
-                bookmarkRowModel model = model_list.get(counter);
+        for(int counter = 0; counter< mModelList.size(); counter++){
+            if(mModelList.get(counter).getmHeader().contains(filter) || mModelList.get(counter).getmDescription().contains(filter)){
+                bookmarkRowModel model = mModelList.get(counter);
                 temp_model_list.add(new bookmarkRowModel(model.getmHeader(),model.getmDescription(),counter));
             }
         }

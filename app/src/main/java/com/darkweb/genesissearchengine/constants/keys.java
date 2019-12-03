@@ -36,5 +36,6 @@ public class keys
     public static final String FONT_ADJUSTABLE = "FONT_ADJUSTABLE";
     public static final String COOKIE_ADJUSTABLE = "COOKIE_ADJUSTABLE_NEW";
     public static final String CLEAR_PREFS = "CLEAR_PREFS";
+    public static final String NOTIFICATION_STATUS = "NOTIFICATION_STATUS";
 
 }

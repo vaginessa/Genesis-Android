@@ -140,6 +140,7 @@ public class bookmarkController extends AppCompatActivity
     @Override
     public void onResume()
     {
+        status.sCurrentActivity = this;
         status.sIsAppPaused = false;
         super.onResume();
     }

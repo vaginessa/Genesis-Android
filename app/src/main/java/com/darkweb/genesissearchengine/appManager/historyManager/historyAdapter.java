@@ -22,6 +22,7 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.listView
     private ArrayList<historyRowModel> tempModelList;
     private eventObserver.eventListener mEvent;
     private String filter = strings.EMPTY_STR;
+    private boolean isClosing = false;
 
     historyAdapter(ArrayList<historyRowModel> mModelList, eventObserver.eventListener mEvent) {
         this.mModelList = mModelList;
@@ -64,13 +65,32 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.listView
     {
         clearButton.setOnClickListener(v ->
         {
-            if(tempModelList.size()>index){
+            if(!isClosing){
+                isClosing = true;
+                int size = mModelList.size();
+
                 int index_temp = tempModelList.get(index).getmId();
                 mEvent.invokeObserver(Collections.singletonList(tempModelList.get(index).getmHeader()),enums.etype.url_clear_at);
                 mEvent.invokeObserver(Collections.singletonList(mModelList.get(index_temp).getmId()),enums.etype.remove_from_database);
                 mEvent.invokeObserver(Collections.singletonList(tempModelList.get(index).getmId()),enums.etype.url_clear);
                 invokeFilter(false);
                 mEvent.invokeObserver(Collections.singletonList(index),enums.etype.is_empty);
+
+                if(size>1){
+                    new Thread(){
+                        public void run(){
+                            try
+                            {
+                                sleep(500);
+                                isClosing = false;
+                            }
+                            catch (InterruptedException e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                    }.start();
+                }
             }
         });
     }

@@ -9,6 +9,7 @@ package org.torproject.android.service;
 
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.KeyguardManager;
@@ -18,6 +19,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -43,6 +45,9 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.darkweb.genesissearchengine.appManager.homeManager.homeController;
+import com.darkweb.genesissearchengine.appManager.launcherManager.launcherController;
+import com.darkweb.genesissearchengine.constants.status;
 import com.example.myapplication.R;
 import com.jaredrummler.android.shell.CommandResult;
 import info.pluggabletransports.dispatch.util.TransportListener;
@@ -270,18 +275,30 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
         mNotificationManager.createNotificationChannel(mChannel);
     }
 
+    public Intent newLauncherIntent(final Context context) {
+        Intent intent = new Intent(context, homeController.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        return intent;
+    }
+
     @SuppressLint("NewApi")
     protected void showToolbarNotification (String notifyMsg, int notifyType, int icon)
      {
-         KeyguardManager myKM = (KeyguardManager) getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE);
-         if( myKM.inKeyguardRestrictedInputMode()) {
+         if(status.sNotificationStatus == 1){
              return;
          }
 
-         //Reusable code.
-         PackageManager pm = getPackageManager();
-         Intent intent = pm.getLaunchIntentForPackage(getPackageName());
-         PendingIntent pendIntent = PendingIntent.getActivity(TorService.this, 0, intent, 0);
+             KeyguardManager myKM = (KeyguardManager) getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE);
+        if( myKM.inKeyguardRestrictedInputMode()) {
+            return;
+        }
+
+        //Reusable code.
+        Intent intent = newLauncherIntent(getApplicationContext());
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendIntent = PendingIntent.getActivity(TorService.this, 0, intent, 0);
 
         if (mNotifyBuilder == null)
         {
@@ -299,7 +316,6 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
             }
 
 
-
             mNotifyBuilder.setCategory(Notification.CATEGORY_SERVICE);
 
             mNotifyBuilder.setChannelId(NOTIFICATION_CHANNEL_ID);
@@ -310,9 +326,7 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
             intentRefresh.setAction(CMD_NEWNYM);
             intentRefresh.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             PendingIntent pendingIntentNewNym = PendingIntent.getBroadcast(this, 0, intentRefresh, PendingIntent.FLAG_UPDATE_CURRENT);
-            mNotifyBuilder.addAction(R.drawable.ic_refresh_white_24dp, getString(R.string.menu_new_identity),
-                    pendingIntentNewNym);
-
+            mNotifyBuilder.addAction(R.drawable.ic_refresh_white_24dp, getString(R.string.menu_new_identity),pendingIntentNewNym);
             mNotifyBuilder.setOngoing(Prefs.persistNotifications());
 
         }
@@ -360,6 +374,7 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
      */
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        self = this;
         showToolbarNotification("",NOTIFY_ID,R.drawable.ic_stat_tor);
 
         if (intent != null)
@@ -566,7 +581,10 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
             registerReceiver(mActionBroadcastReceiver, filter);
 
             if (Build.VERSION.SDK_INT >= 26)
-                createNotificationChannel();
+                if(status.sNotificationStatus != 1)
+                {
+                    createNotificationChannel();
+                }
 
             torUpgradeAndConfig();
 
@@ -1318,6 +1336,11 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
             return false;
         }
 
+        private static TorService self = null;
+
+        public static TorService getServiceObject(){
+            return self;
+        }
 
         public void setTorNetworkEnabled (final boolean isEnabled) throws IOException
         {
@@ -1428,16 +1451,33 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
     long current_download=0;
     long current_upload=0;
     protected void sendCallbackBandwidth(long upload, long download, long written, long read)    {
-        Intent intent = new Intent(LOCAL_ACTION_BANDWIDTH);
+        if(status.sNotificationStatus != 1){
+            Intent intent = new Intent(LOCAL_ACTION_BANDWIDTH);
 
-        if(current_download !=download || current_upload!=upload){
-            current_download = download;
-            current_upload = current_upload;
-            showToolbarNotification(download/100+"kbps ⇣ / " +upload/100+"kbps ⇡", HS_NOTIFY_ID, R.drawable.ic_stat_tor);
+            if(status.sNotificationStatus == 0 && (current_download !=download || current_upload!=upload)){
+                current_download = download;
+                current_upload = current_upload;
+                showToolbarNotification(download/100+"kbps ⇣ / " +upload/100+"kbps ⇡", HS_NOTIFY_ID, R.drawable.ic_stat_tor);
+            }
+            intent.putExtra(EXTRA_STATUS, mCurrentStatus);
+
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }
-        intent.putExtra(EXTRA_STATUS, mCurrentStatus);
+    }
 
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
+    public void disableNotification(){
+        if(mNotificationManager!=null){
+            mNotificationManager.cancel(NOTIFY_ID);
+            stopForeground(true);
+        }
+    }
+    public void enableNotification(){
+        showToolbarNotification(0+"kbps ⇣ / " +0+"kbps ⇡", HS_NOTIFY_ID, R.drawable.ic_stat_tor);
+    }
+
+    public void enableTorNotificationNoBandwidth(){
+        showToolbarNotification("Connected to the Tor network", HS_NOTIFY_ID, R.drawable.ic_stat_tor);
     }
 
     private void sendCallbackLogMessage (String logMessage)

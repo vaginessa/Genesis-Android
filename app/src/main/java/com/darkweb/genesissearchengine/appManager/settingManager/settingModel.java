@@ -19,6 +19,7 @@ class settingModel
 
     private String mSearchStatus = strings.EMPTY_STR;
     private int mCookieStatus = ACCEPT_FIRST_PARTY;
+    private int mNotificationStatus = 0;
     private boolean mJavaStatus = false;
     private boolean mHistoryStatus = true;
     private boolean mFontAdjustable = true;
@@ -35,6 +36,7 @@ class settingModel
 
     private void init_status()
     {
+        mNotificationStatus = status.sNotificationStatus;
         mSearchStatus = status.sSearchStatus;
         mHistoryStatus = status.sHistoryStatus;
         mJavaStatus = status.sJavaStatus;
@@ -68,6 +70,10 @@ class settingModel
         this.mJavaStatus = java_status;
     }
 
+    void setmNotificationStatus(int notification_status){
+        this.mNotificationStatus = notification_status;
+    }
+
     void setHistoryStatus(boolean history_status){
         this.mHistoryStatus = history_status;
     }
@@ -81,6 +87,10 @@ class settingModel
         if(status.sJavaStatus != mJavaStatus)
         {
             mEvent.invokeObserver(Collections.singletonList(mJavaStatus), enums.etype.update_javascript);
+        }
+        if(status.sNotificationStatus != mNotificationStatus)
+        {
+            mEvent.invokeObserver(Collections.singletonList(mNotificationStatus), enums.etype.update_notification);
         }
         if(status.sHistoryStatus != mHistoryStatus)
         {

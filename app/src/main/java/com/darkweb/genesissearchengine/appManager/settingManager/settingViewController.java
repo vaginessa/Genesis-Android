@@ -19,6 +19,7 @@ import com.example.myapplication.R;
 
 import static com.darkweb.genesissearchengine.constants.status.sHistoryStatus;
 import static com.darkweb.genesissearchengine.constants.status.sJavaStatus;
+import static com.darkweb.genesissearchengine.constants.status.sNotificationStatus;
 import static org.mozilla.geckoview.ContentBlocking.CookieBehavior.ACCEPT_ALL;
 import static org.mozilla.geckoview.ContentBlocking.CookieBehavior.ACCEPT_FIRST_PARTY;
 import static org.mozilla.geckoview.ContentBlocking.CookieBehavior.ACCEPT_NON_TRACKERS;
@@ -32,6 +33,7 @@ class settingViewController
 
     private Spinner mSearch;
     private Spinner mJavaScript;
+    private Spinner mNotification;
     private Spinner mHistory;
     private Spinner mCookies;
     private Spinner mFontAdjustable;
@@ -40,11 +42,12 @@ class settingViewController
 
     /*Initializations*/
 
-    settingViewController(Spinner mSearch, Spinner mJavaScript, Spinner mHistory, SeekBar mFontSize, Spinner mFontAdjustable, TextView mFontSizePercentage, settingController mContext, eventObserver.eventListener mEvent, AppCompatActivity context, Spinner mCookies)
+    settingViewController(Spinner mSearch, Spinner mJavaScript, Spinner mHistory, SeekBar mFontSize, Spinner mFontAdjustable, TextView mFontSizePercentage, settingController mContext, eventObserver.eventListener mEvent, AppCompatActivity context, Spinner mCookies,Spinner mNotification)
     {
         this.mFontSizePercentage = mFontSizePercentage;
         this.mSearch = mSearch;
         this.mJavaScript = mJavaScript;
+        this.mNotification = mNotification;
         this.mHistory = mHistory;
         this.mFontAdjustable = mFontAdjustable;
         this.mFontSize = mFontSize;
@@ -53,6 +56,7 @@ class settingViewController
         this.mEvent = mEvent;
         this.mContext = mContext;
 
+        initNotification();
         initViews();
         initJavascript();
         initHistory();
@@ -84,6 +88,8 @@ class settingViewController
         mSearch.setDropDownHorizontalOffset(-15);
         mJavaScript.setDropDownVerticalOffset(15);
         mJavaScript.setDropDownHorizontalOffset(-15);
+        mNotification.setDropDownVerticalOffset(15);
+        mNotification.setDropDownHorizontalOffset(-15);
         mHistory.setDropDownVerticalOffset(15);
         mHistory.setDropDownHorizontalOffset(-15);
         mCookies.setDropDownVerticalOffset(15);
@@ -100,6 +106,11 @@ class settingViewController
         {
             mJavaScript.setSelection(1);
         }
+    }
+
+    private void initNotification()
+    {
+        mNotification.setSelection(sNotificationStatus);
     }
 
     private void initHistory()

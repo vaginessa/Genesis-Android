@@ -40,6 +40,16 @@ class orbotManager
         initializeProxy();
     }
 
+    void enableTorNotification(){
+        TorService.getServiceObject().enableNotification();
+    }
+    void disableTorNotification(){
+        TorService.getServiceObject().disableNotification();
+    }
+    void enableTorNotificationNoBandwidth(){
+        TorService.getServiceObject().enableTorNotificationNoBandwidth();
+    }
+
     /*------------------------------------------------------- POST TASK HANDLER -------------------------------------------------------*/
 
     void onClose(){
@@ -88,7 +98,7 @@ class orbotManager
 
         PrefsHelper.setPref("browser.cache.disk.enable",true);
         PrefsHelper.setPref("browser.cache.memory.enable",true);
-        PrefsHelper.setPref("browser.cache.disk.capacity",10000);
+        PrefsHelper.setPref("browser.cache.disk.capacity",1000);
 
         setPrivacyPrefs();
     }
@@ -159,7 +169,7 @@ class orbotManager
             mLogsStarted = true;
         }
         else {
-            logs = logs.replace("(","").replace(":","").replace("NOTICE","").replace(")","");
+            logs = logs.replace("(","").replace(":","_FERROR_").replace("NOTICE","").replace(")","");
         }
 
 

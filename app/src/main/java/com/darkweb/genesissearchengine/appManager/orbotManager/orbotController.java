@@ -25,6 +25,19 @@ public class orbotController extends AppCompatActivity {
     }
 
     @Override
+    public void onResume()
+    {
+        status.sCurrentActivity = this;
+        super.onResume();
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+    }
+
+    @Override
     public void onBackPressed() {
         finish();
     }

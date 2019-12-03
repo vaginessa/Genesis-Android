@@ -28,8 +28,11 @@ public class tabRowModel
         return mSession;
     }
 
-    int getmId() {
+    public int getmId() {
         return mId;
+    }
+    public void setId(int id) {
+        mId = id;
     }
 
 }

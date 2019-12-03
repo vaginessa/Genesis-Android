@@ -1,21 +1,22 @@
 package com.darkweb.genesissearchengine.appManager.homeManager;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.darkweb.genesissearchengine.constants.*;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.darkweb.genesissearchengine.helperManager.helperMethod;
-
-import org.mozilla.geckoview.*;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-
 import static com.darkweb.genesissearchengine.constants.enums.etype.on_handle_external_intent;
 import static org.mozilla.geckoview.StorageController.ClearFlags.ALL;
+import org.mozilla.geckoview.GeckoRuntime;
+import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.GeckoView;
+
 
 class geckoClients
 {
@@ -24,26 +25,34 @@ class geckoClients
     private geckoSession mSession = null;
     private GeckoRuntime mRuntime = null;
     private int mSessionID=0;
+    private int mGlobalSessionCounter=0;
 
     private eventObserver.eventListener event;
     private AppCompatActivity context;
 
     int e=0;
-    void initialize(GeckoView geckoView, AppCompatActivity Context,eventObserver.eventListener event,String searchEngine,AppCompatActivity context)
+    void initialize(GeckoView geckoView, AppCompatActivity Context,eventObserver.eventListener event,String searchEngine,AppCompatActivity context,boolean isForced)
     {
 
         this.context = context;
         this.event = event;
-        mSessionID += 1;
+        mGlobalSessionCounter+=1;
+        mSessionID = mGlobalSessionCounter;
 
-        mSession = new geckoSession(new geckoViewClientCallback(),mSessionID,context);
         runtimeSettings(context);
-        mSession.open(mRuntime);
-        mSession.getSettings().setUseTrackingProtection(true);
-        mSession.getSettings().setAllowJavascript(status.sJavaStatus);
-        mSession.setTitle("New Tab");
-        geckoView.releaseSession();
-        geckoView.setSession(mSession);
+
+        if(!isForced && geckoView.getSession()!=null && geckoView.getSession().isOpen()){
+            mSession = (geckoSession) geckoView.getSession();
+        }
+        else {
+            geckoView.releaseSession();
+            mSession = new geckoSession(new geckoViewClientCallback(),mGlobalSessionCounter,context);
+            mSession.open(mRuntime);
+            mSession.getSettings().setUseTrackingProtection(true);
+            mSession.getSettings().setAllowJavascript(status.sJavaStatus);
+            geckoView.releaseSession();
+            geckoView.setSession(mSession);
+        }
         onUpdateFont();
 
     }
@@ -69,7 +78,7 @@ class geckoClients
         if(mRuntime!=null){
             //mRuntime.shutdown();
         }
-     }
+    }
 
     void initSession(geckoSession mSession){
         this.mSession = mSession;
@@ -83,7 +92,7 @@ class geckoClients
     void updateJavascript(){
         mSession.getSettings().setAllowJavascript(status.sJavaStatus);
         if(status.sJavaStatus){
-           mSession.reload();
+            mSession.reload();
         }
     }
 
@@ -96,6 +105,7 @@ class geckoClients
     }
 
     void loadURL(String url){
+        mSession.initURL(url);
         mSession.loadUri(url);
     }
 
@@ -122,6 +132,10 @@ class geckoClients
 
     boolean isLoading(){
         return mSession.isLoading();
+    }
+
+    Uri getUriPermission(){
+        return mSession.getUriPermission();
     }
 
     boolean getFullScreenStatus(){
@@ -175,6 +189,21 @@ class geckoClients
         mRuntime.getSettings().setAutomaticFontSizeAdjustment(status.sFontAdjustable);
         if(!mRuntime.getSettings().getAutomaticFontSizeAdjustment()){
             mRuntime.getSettings().setFontSizeFactor(font/100);
+        }
+    }
+
+
+    private void downloadFile(GeckoSession.WebResponseInfo response) {
+
+        try
+        {
+            final Uri uri = Uri.parse(response.uri.replaceAll("blob:","_FERROR_"));
+            final String filename = response.filename != null ? response.filename : uri.getLastPathSegment();
+
+            mSession.loadUri(uri+"/"+filename);
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
         }
     }
 

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.darkweb.genesissearchengine.appManager.homeManager.homeController;
 import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.enums;
+import com.darkweb.genesissearchengine.constants.status;
 import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.darkweb.genesissearchengine.helperManager.helperMethod;
@@ -40,6 +41,7 @@ public class launcherController extends AppCompatActivity
     @Override
     public void onResume()
     {
+        status.sCurrentActivity = this;
         if(mIsStarted){
             helperMethod.openActivity(homeController.class, constants.LIST_HISTORY, this,false);
             pluginController.getInstance().logEvent(strings.APP_RESTARTED);

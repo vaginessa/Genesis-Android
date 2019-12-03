@@ -60,13 +60,13 @@ public class autoCompleteAdapter extends ArrayAdapter<historyRowModel> {
         }
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            if(constraint != null) {
+            if(constraint != null && !constraint.equals("about:blank")) {
                 suggestions.clear();
                 for (historyRowModel customer : itemsAll) {
                     if(suggestions.size()>10){
                         break;
                     }
-                    if(customer.getmHeader().toLowerCase().contains(constraint.toString().toLowerCase()) || customer.getmDescription().toLowerCase().contains(constraint.toString().toLowerCase())){
+                    if(customer.getmHeader().length()>2 && customer.getmDescription().toLowerCase().length()>2 && (customer.getmHeader().toLowerCase().contains(constraint.toString().toLowerCase()) || customer.getmDescription().toLowerCase().contains(constraint.toString().toLowerCase()))){
                         suggestions.add(customer);
                     }
                 }
@@ -79,9 +79,11 @@ public class autoCompleteAdapter extends ArrayAdapter<historyRowModel> {
             }
         }
         @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            ArrayList<historyRowModel> filteredList = (ArrayList<historyRowModel>) results.values;
+        protected void publishResults(CharSequence constraint, FilterResults results)
+        {
             if(results != null && results.count > 0) {
+                ArrayList<historyRowModel> filteredList = (ArrayList<historyRowModel>)((ArrayList<historyRowModel>)results.values).clone();
+                
                 clear();
                 for (historyRowModel c : filteredList) {
                     add(c);

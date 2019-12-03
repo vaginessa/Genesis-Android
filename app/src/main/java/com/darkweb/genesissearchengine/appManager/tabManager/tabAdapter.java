@@ -1,6 +1,7 @@
 package com.darkweb.genesissearchengine.appManager.tabManager;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.strings;
+import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.darkweb.genesissearchengine.helperManager.helperMethod;
 import com.example.myapplication.R;
@@ -70,11 +72,12 @@ public class tabAdapter extends RecyclerView.Adapter<tabAdapter.listViewHolder>
             if(!isClosing){
                 isClosing = true;
                 int size = mModelList.size();
-                mEvent.invokeObserver(Collections.singletonList(mTempModelList.get(index).getmId()),enums.etype.url_clear);
-                invokeFilter(false);
-                mEvent.invokeObserver(Collections.singletonList(index),enums.etype.is_empty);
-                model.getSession().closeSession();
 
+                mEvent.invokeObserver(Collections.singletonList(mTempModelList.get(index).getmId()),enums.etype.url_clear);
+                mEvent.invokeObserver(Collections.singletonList(index),enums.etype.is_empty);
+                invokeFilter(false);
+                model.getSession().stop();
+                model.getSession().close();
                 if(size>1){
                     new Thread(){
                         public void run(){
@@ -93,6 +96,9 @@ public class tabAdapter extends RecyclerView.Adapter<tabAdapter.listViewHolder>
             }
         });
     }
+
+
+
 
     private void clearMessageItemContainer(LinearLayout clearButton, int index,tabRowModel model)
     {
@@ -126,8 +132,14 @@ public class tabAdapter extends RecyclerView.Adapter<tabAdapter.listViewHolder>
             descriptionText = itemView.findViewById(R.id.mDescription);
             itemContainer = itemView.findViewById(R.id.item_container);
 
+            if(model.getSession().getTitle().equals("")){
+                heaaderText.setText(helperMethod.getDomainName(model.getSession().getCurrentURL()));
+            }
+            else {
+                heaaderText.setText(model.getSession().getTitle());
+            }
+
             descriptionText.setText(model.getSession().getCurrentURL());
-            heaaderText.setText(model.getSession().getTitle());
             messageButton = itemView.findViewById(R.id.message_button);
             empty_message = itemView.findViewById(R.id.empty_list);
             data_model = model;
@@ -148,6 +160,7 @@ public class tabAdapter extends RecyclerView.Adapter<tabAdapter.listViewHolder>
         }
 
         if(notify){
+            mEvent.invokeObserver(null,enums.etype.clear_recycler);
             notifyDataSetChanged();
         }
     }

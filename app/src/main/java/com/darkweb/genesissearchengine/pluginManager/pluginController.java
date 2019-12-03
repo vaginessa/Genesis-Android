@@ -12,6 +12,8 @@ import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.darkweb.genesissearchengine.helperManager.helperMethod;
 
+import org.torproject.android.service.TorService;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -121,6 +123,15 @@ public class pluginController
     public String orbotLogs(){
         return orbotManager.getInstance().getLogs();
     }
+    public void enableTorNotification(){
+        orbotManager.getInstance().enableTorNotification();
+    }
+    public void disableTorNotification(){
+        orbotManager.getInstance().disableTorNotification();
+    }
+    public void enableTorNotificationNoBandwidth(){
+        orbotManager.getInstance().enableTorNotificationNoBandwidth();
+    }
 
     /*------------------------------------------------ CALLBACK LISTENERS------------------------------------------------------------*/
 
@@ -193,6 +204,8 @@ public class pluginController
                 dataController.getInstance().clearSuggestions();
                 mContextManager.getHistoryController().onclearData();
                 mHomeController.onClearSession();
+                dataController.getInstance().clearTabs();
+                mHomeController.initTab();
             }
             else if(event_type.equals(enums.etype.clear_bookmark)){
                 dataController.getInstance().clearBookmark();

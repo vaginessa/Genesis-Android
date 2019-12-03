@@ -27,6 +27,7 @@ import java.util.List;
 import static com.darkweb.genesissearchengine.constants.status.sCookieStatus;
 import static com.darkweb.genesissearchengine.constants.status.sHistoryStatus;
 import static com.darkweb.genesissearchengine.constants.status.sJavaStatus;
+import static com.darkweb.genesissearchengine.constants.status.sNotificationStatus;
 
 public class settingController extends AppCompatActivity
 {
@@ -43,6 +44,7 @@ public class settingController extends AppCompatActivity
     private Spinner mHistory;
     private Spinner mCookies;
     private Spinner mFontAdjustable;
+    private Spinner mNotification;
     private SeekBar mFontSize;
     private TextView mFontSizePercentage;
 
@@ -82,15 +84,17 @@ public class settingController extends AppCompatActivity
         mFontAdjustable = findViewById(R.id.font_adjustable);
         mFontSizePercentage = findViewById(R.id.font_size_percentage);
         mCookies = findViewById(R.id.cookies_manager);
+        mNotification = findViewById(R.id.notification_manager);
 
         String currentSearchEngine = dataController.getInstance().getString(keys.SEARCH_ENGINE, strings.DARK_WEB);
-        mSettingViewController = new settingViewController(mSearch, mJavascript, mHistory, mFontSize, mFontAdjustable, mFontSizePercentage,this, new settingModelCallback(),this, mCookies);
+        mSettingViewController = new settingViewController(mSearch, mJavascript, mHistory, mFontSize, mFontAdjustable, mFontSizePercentage,this, new settingModelCallback(),this, mCookies,mNotification);
     }
 
     public void listenersInitializations()
     {
         initializeItemSelectedListener(mSearch);
         initializeItemSelectedListener(mJavascript);
+        initializeItemSelectedListener(mNotification);
         initializeItemSelectedListener(mHistory);
         initializeItemSelectedListener(mFontAdjustable);
         initializeItemSelectedListener(mCookies);
@@ -112,6 +116,7 @@ public class settingController extends AppCompatActivity
     @Override
     public void onResume()
     {
+        status.sCurrentActivity = this;
         status.sIsAppPaused = false;
         super.onResume();
     }
@@ -151,6 +156,10 @@ public class settingController extends AppCompatActivity
                 else if(parentView.getId()== R.id.cookies_manager)
                 {
                     mSettingModel.setCookieStatus(position);
+                }
+                else if(parentView.getId()== R.id.notification_manager)
+                {
+                    mSettingModel.setmNotificationStatus(position);
                 }
             }
             @Override
@@ -217,6 +226,19 @@ public class settingController extends AppCompatActivity
             else if(e_type == enums.etype.update_history){
                 sHistoryStatus = (boolean)data.get(0);
                 dataController.getInstance().setBool(keys.HISTORY_CLEAR, sHistoryStatus);
+            }
+            else if(e_type == enums.etype.update_notification){
+                sNotificationStatus = (int)data.get(0);
+                dataController.getInstance().setInt(keys.NOTIFICATION_STATUS, sNotificationStatus);
+
+                if(sNotificationStatus==0){
+                    pluginController.getInstance().enableTorNotification();
+                } else if(sNotificationStatus==1){
+                    pluginController.getInstance().disableTorNotification();
+                }else {
+                    pluginController.getInstance().enableTorNotificationNoBandwidth();
+                }
+
             }
             else if(e_type == enums.etype.update_font_adjustable || e_type == enums.etype.update_font_size){
                 mHomeController.onLoadFont();

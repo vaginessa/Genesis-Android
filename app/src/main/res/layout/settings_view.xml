@@ -204,6 +204,49 @@
                             android:contentDescription="@string/todo"/>
                 </LinearLayout>
 
+                <!-- Title Notification -->
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:background="@color/white"
+                        android:layout_marginTop="20dp"
+                        android:orientation="horizontal"
+                        android:layout_height="wrap_content">
+                    <TextView
+                            android:textSize="16sp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="40"
+                            android:layout_marginStart="20dp"
+                            android:text="@string/settings_notification"
+                            />
+                    <Spinner
+                            android:id="@+id/notification_manager"
+                            android:textSize="12sp"
+                            android:layout_width="150dp"
+                            android:layout_height="40dp"
+                            android:layout_marginTop="1dp"
+                            android:paddingRight="30dp"
+                            android:paddingLeft="20dp"
+                            android:stateListAnimator="@xml/spinner_style_animate"
+                            android:background="@xml/spinner_style_background"
+                            android:drawSelectorOnTop="true"
+                            android:entries="@array/notification"
+                            android:popupTheme="@style/AppTheme.PopupOverlay"
+
+                            style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                            android:dropDownWidth="160dp"
+                            android:popupBackground="@android:color/white"
+                            android:overlapAnchor="false"
+                            android:popupElevation="3dp"
+                            />
+                    <ImageView android:layout_width="15dp" android:layout_height="15dp"
+                            android:layout_marginEnd="35dp"
+                            android:layout_marginStart="-26dp"
+                            android:layout_marginTop="12dp"
+                            android:src="@drawable/dropdown_arrow"
+                            android:contentDescription="@string/todo"/>
+                </LinearLayout>
+
                 <!-- Title Header -->
                 <!-- Title Header -->
                 <LinearLayout

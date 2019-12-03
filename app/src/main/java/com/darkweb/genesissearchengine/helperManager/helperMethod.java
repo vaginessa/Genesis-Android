@@ -36,6 +36,8 @@ import com.example.myapplication.BuildConfig;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -174,6 +176,17 @@ public class helperMethod
         rotate.setDuration(2000);
         rotate.setRepeatCount(Animation.INFINITE);
         return rotate;
+    }
+
+    public static String getDomainName(String url)
+    {
+        try{
+            URI uri = new URI(url);
+            String domain = uri.getHost();
+            return domain.startsWith("www.") ? domain.substring(4) : domain;
+        }catch (Exception ex){
+            return url;
+        }
     }
 
     public static ViewGroup.MarginLayoutParams getCenterScreenPoint(ViewGroup.LayoutParams itemLayoutParams) {

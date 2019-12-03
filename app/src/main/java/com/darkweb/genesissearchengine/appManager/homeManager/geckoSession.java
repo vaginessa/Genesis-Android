@@ -1,48 +1,49 @@
 package com.darkweb.genesissearchengine.appManager.homeManager;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Base64;
 import android.util.Log;
-import android.webkit.URLUtil;
-
+import android.widget.Toast;
 import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
-
+import androidx.core.content.FileProvider;
 import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.strings;
+import com.darkweb.genesissearchengine.helperManager.JavaScriptInterface;
 import com.darkweb.genesissearchengine.helperManager.downloadFileService;
 import com.darkweb.genesissearchengine.helperManager.errorHandler;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
+import com.darkweb.genesissearchengine.helperManager.helperMethod;
 import com.example.myapplication.R;
-
 import org.mozilla.gecko.GeckoSystemStateListener;
 import org.mozilla.gecko.GeckoThread;
-import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.WebRequestError;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
-
-import static org.mozilla.geckoview.GeckoSession.ContentDelegate.ContextElement.TYPE_AUDIO;
+import java.util.List;
 
 public class geckoSession extends GeckoSession implements GeckoSession.PermissionDelegate,GeckoSession.ProgressDelegate, GeckoSession.HistoryDelegate,GeckoSession.NavigationDelegate,GeckoSession.ContentDelegate
 {
@@ -58,6 +59,7 @@ public class geckoSession extends GeckoSession implements GeckoSession.Permissio
     private AppCompatActivity mContext;
     private geckoDownloadManager mDownloadManager;
     private boolean isPageLoading = false;
+    private Uri mUriPermission = null;
 
     /*Temp Variables*/
     private GeckoSession.HistoryDelegate.HistoryList mHistoryList = null;
@@ -70,7 +72,6 @@ public class geckoSession extends GeckoSession implements GeckoSession.Permissio
         setHistoryDelegate(this);
         setNavigationDelegate(this);
         setContentDelegate(this);
-        setPromptDelegate(new geckoPromptView(mContext));
         mDownloadManager = new geckoDownloadManager();
         setPromptDelegate(new geckoPromptView(mContext));
 
@@ -78,16 +79,27 @@ public class geckoSession extends GeckoSession implements GeckoSession.Permissio
     }
 
     void onFileUploadRequest(int resultCode, Intent data){
+
         geckoPromptView mPromptDelegate = (geckoPromptView)getPromptDelegate();
         mPromptDelegate.onFileCallbackResult(resultCode,data);
+    }
+
+    void initURL(String url){
+        isPageLoading = true;
+        mCurrentURL = url;
+        mProgress=5;
+        event.invokeObserver(Arrays.asList(mCurrentURL,mSessionID,mCurrentTitle), enums.etype.on_update_suggestion);
+        event.invokeObserver(Arrays.asList(5,mSessionID), enums.etype.progress_update);
     }
 
     /*Progress Delegate*/
 
     @Override
     public void onPageStart(@NonNull GeckoSession var1, @NonNull String var2) {
+        if(!isPageLoading){
+            mCurrentURL = "about:blank";
+        }
         isPageLoading = true;
-        mCurrentURL = "about:blank";
         if(!var2.equals("about:blank")){
             mProgress = 5;
         }
@@ -186,7 +198,9 @@ public class geckoSession extends GeckoSession implements GeckoSession.Permissio
 
     public GeckoResult<String> onLoadError(@NonNull GeckoSession var1, @Nullable String var2, WebRequestError var3) {
         errorHandler handler = new errorHandler();
+        mProgress = 0;
         event.invokeObserver(Arrays.asList(var2,mSessionID), enums.etype.on_load_error);
+        event.invokeObserver(Arrays.asList(mProgress,mSessionID), enums.etype.progress_update);
         return GeckoResult.fromValue("data:text/html," + handler.createErrorPage(var3.category, var3.code,mContext,var2));
     }
 
@@ -203,7 +217,7 @@ public class geckoSession extends GeckoSession implements GeckoSession.Permissio
 
     @UiThread
     public void onTitleChange(@NonNull GeckoSession var1, @Nullable String var2) {
-        if(var2!=null && !var2.equals(strings.EMPTY_STR)){
+        if(var2!=null && !var2.equals(strings.EMPTY_STR) && var2.length()>2 && !mCurrentURL.equals("about:blank")){
             mCurrentTitle = var2;
             event.invokeObserver(Arrays.asList(mCurrentURL,mSessionID,mCurrentTitle), enums.etype.on_update_suggestion);
         }
@@ -223,7 +237,7 @@ public class geckoSession extends GeckoSession implements GeckoSession.Permissio
         }
         if(var4.type!=0){
             if(var4.linkUri!=null){
-                event.invokeObserver(Arrays.asList(var4.srcUri,mSessionID,var4.baseUri,title), enums.etype.on_long_press_with_link);
+                event.invokeObserver(Arrays.asList(var4.linkUri,mSessionID,var4.srcUri,title), enums.etype.on_long_press_with_link);
             }
             else {
                 event.invokeObserver(Arrays.asList(var4.srcUri,mSessionID,title), enums.etype.on_long_press);
@@ -254,16 +268,17 @@ public class geckoSession extends GeckoSession implements GeckoSession.Permissio
         }
     }
 
-    private boolean createAndSaveFileFromBase64Url(String url) {
-
-        if(!url.startsWith("data") && !url.startsWith("blob")){
-            return false;
-        }
+    public boolean downloadBlobFile(String url){
 
         try{
             File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            String filetype = url.substring(url.indexOf("/") + 1, url.indexOf(";"));
-            String filename = System.currentTimeMillis() + "." + filetype;
+
+            String filetype = "";
+            String filename = "";
+
+            filetype = url.substring(url.indexOf("/") + 1, url.indexOf(";"));
+            filename = System.currentTimeMillis() + "." + filetype;
+
             File file = new File(path, filename);
             try {
                 if(!path.exists())
@@ -305,6 +320,7 @@ public class geckoSession extends GeckoSession implements GeckoSession.Permissio
                 NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
                 notificationManager.notify(notificationId, notification);
             } catch (IOException e) {
+                e.printStackTrace();
             }
 
             return true;
@@ -315,6 +331,137 @@ public class geckoSession extends GeckoSession implements GeckoSession.Permissio
 
         return true;
     }
+
+    private boolean createAndSaveFileFromBase64Url(String url) {
+
+        if(!url.startsWith("data") && !url.startsWith("blob")){
+            return false;
+        }
+        else if(url.startsWith("blob")){
+            Toast toast = Toast.makeText(mContext.getApplicationContext(),
+                    "Unable to download urls that contain prefix blob. Not Supported",
+                    Toast.LENGTH_SHORT);
+
+            toast.show();
+            return true;
+        }
+
+        try{
+            File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+            String filetype = "";
+            String filename = "";
+
+            if(url.startsWith("blob")){
+                loadUri(JavaScriptInterface.getBase64StringFromBlobUrl(url));
+                return true;
+            }
+
+            filetype = url.substring(url.indexOf("/") + 1, url.indexOf(";"));
+            filename = System.currentTimeMillis() + "." + filetype;
+
+            File file = new File(path, filename);
+            try {
+                if(!path.exists())
+                    path.mkdirs();
+                if(!file.exists())
+                    file.createNewFile();
+
+                String base64EncodedString = url.substring(url.indexOf(",") + 1);
+                byte[] decodedBytes = Base64.decode(base64EncodedString, Base64.DEFAULT);
+                OutputStream os = new FileOutputStream(file);
+                os.write(decodedBytes);
+                os.close();
+
+                //Tell the media scanner about the new file so that it is immediately available to the user.
+                MediaScannerConnection.scanFile(mContext,
+                        new String[]{file.toString()}, null,
+                        (path1, uri) ->
+                        {
+                            Log.i("ExternalStorage", "Scanned " + path1 + ":");
+                            Log.i("ExternalStorage", "-> uri=" + uri);
+                        });
+
+                //Set notification after download complete and add "click to view" action to that
+                String mimetype = url.substring(url.indexOf(":") + 1, url.indexOf("/"));
+                Intent intent = new Intent();
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    intent.setAction(android.content.Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.fromFile(file), (mimetype + "/*"));
+                } else {
+                    intent.setAction(android.content.Intent.ACTION_VIEW);
+                    Uri uri_temp = FileProvider.getUriForFile(mContext,mContext.getString(R.string.file_provider_authority), file);
+                    intent.setDataAndType(uri_temp, (mimetype + "/*"));
+
+                    List<ResolveInfo> resInfoList = mContext.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                    for (ResolveInfo resolveInfo : resInfoList) {
+                        String packageName = resolveInfo.activityInfo.packageName;
+                        mUriPermission = uri_temp;
+                        mContext.grantUriPermission(packageName, uri_temp, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    }
+                }
+                PendingIntent pIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
+
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    Notification notification = new NotificationCompat.Builder(mContext)
+                            .setSmallIcon(R.xml.ic_download)
+                            .setContentTitle(filename)
+                            .setContentIntent(pIntent)
+                            .build();
+
+                    notification.flags |= Notification.FLAG_AUTO_CANCEL;
+                    int notificationId = 85851;
+                    NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                    notificationManager.notify(notificationId, notification);
+                } else {
+
+                    String channel_id = createNotificationChannel(mContext);
+                    NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(mContext, channel_id)
+                            .setSmallIcon(R.xml.ic_download)
+                            .setContentTitle(filename)
+                            .setContentIntent(pIntent);
+
+                    notificationBuilder.setAutoCancel(true);
+
+                    int notificationId = 85851;
+                    NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                    notificationManager.notify(notificationId, notificationBuilder.build());
+                }
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return true;
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+        return true;
+    }
+
+    private static String createNotificationChannel(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            String channelId = "Channel_id";
+            CharSequence channelName = "Application_name";
+            String channelDescription = "Application_name Alert";
+            int channelImportance = NotificationManager.IMPORTANCE_DEFAULT;
+            boolean channelEnableVibrate = true;
+            NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, channelImportance);
+            notificationChannel.setDescription(channelDescription);
+            notificationChannel.enableVibration(channelEnableVibrate);
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            assert notificationManager != null;
+            notificationManager.createNotificationChannel(notificationChannel);
+            return channelId;
+        } else {
+            return null;
+        }
+    }
+
     /*Helper Methods*/
 
     public String getCurrentURL(){
@@ -359,30 +506,41 @@ public class geckoSession extends GeckoSession implements GeckoSession.Permissio
 
     void goBackSession(){
 
-        int index = mHistoryList.getCurrentIndex()-1;
+        if(mHistoryList!=null){
+            int index = mHistoryList.getCurrentIndex()-1;
 
-        if(mHistoryList!=null && index>=0 && index<mHistoryList.size()){
-            event.invokeObserver(Arrays.asList(mHistoryList.get(index).getUri(),mSessionID), enums.etype.start_proxy);
+            if(mHistoryList!=null && index>=0 && index<mHistoryList.size()){
+                event.invokeObserver(Arrays.asList(mHistoryList.get(index).getUri(),mSessionID), enums.etype.start_proxy);
 
-            new Handler().postDelayed(() ->
-            {
-                goBack();
-            }, 100);
+                new Handler().postDelayed(() ->
+                {
+                    goBack();
+                }, 100);
+            }
+        }
+        else {
+            goBack();
         }
     }
 
     void goForwardSession(){
 
-        int index = mHistoryList.getCurrentIndex()+1;
+        if(mHistoryList!=null)
+        {
+            int index = mHistoryList.getCurrentIndex() + 1;
 
-        if(mHistoryList!=null && index>=0 && index<mHistoryList.size()){
-
-            event.invokeObserver(Arrays.asList(mHistoryList.get(index),mSessionID), enums.etype.start_proxy);
-
-            new Handler().postDelayed(() ->
+            if (mHistoryList != null && index >= 0 && index < mHistoryList.size())
             {
-                goForward();
-            }, 100);
+
+                event.invokeObserver(Arrays.asList(mHistoryList.get(index), mSessionID), enums.etype.start_proxy);
+
+                new Handler().postDelayed(() ->
+                {
+                    goForward();
+                }, 100);
+            }
+        }else {
+            goForward();
         }
     }
 
@@ -392,6 +550,10 @@ public class geckoSession extends GeckoSession implements GeckoSession.Permissio
 
     void setLoading(boolean status){
         isPageLoading = status;
+    }
+
+    Uri getUriPermission(){
+        return mUriPermission;
     }
 
 }

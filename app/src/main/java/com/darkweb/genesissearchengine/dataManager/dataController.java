@@ -139,14 +139,17 @@ public class dataController
     public ArrayList<tabRowModel> getTab(){
         return mPreferencesModel.getTab();
     }
-    public void addTab(geckoSession mSession){
-        mPreferencesModel.addTabs(mSession);
+    public void addTab(geckoSession mSession,boolean isHardCopy){
+        mPreferencesModel.addTabs(mSession,isHardCopy);
     }
     public void clearTabs(){
         mPreferencesModel.clearTab();
     }
     public void closeTab(geckoSession session){
         mPreferencesModel.closeTab(session);
+    }
+    public void moveTabToTop(geckoSession session){
+        mPreferencesModel.moveTabToTop(session);
     }
     public tabRowModel getCurrentTab(){
         return mPreferencesModel.getCurrentTab();
