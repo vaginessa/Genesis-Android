@@ -7,6 +7,8 @@ import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
 
+import org.torproject.android.service.wrapper.orbotLocalConstants;
+
 import java.util.Collections;
 
 import static org.mozilla.geckoview.ContentBlocking.CookieBehavior.ACCEPT_FIRST_PARTY;
@@ -24,6 +26,8 @@ class settingModel
     private boolean mHistoryStatus = true;
     private boolean mFontAdjustable = true;
     private float mFontSize = 1;
+    private int notificationStatus;
+    private int notificationStatusGlobal;
 
     /*Initializations*/
 
@@ -36,11 +40,15 @@ class settingModel
 
     private void init_status()
     {
-        mNotificationStatus = status.sNotificationStatus;
         mSearchStatus = status.sSearchStatus;
         mHistoryStatus = status.sHistoryStatus;
         mJavaStatus = status.sJavaStatus;
         mCookieStatus = status.sCookieStatus;
+    }
+
+    public void initNotification(int notificationStatus){
+        mNotificationStatus = notificationStatus;
+        notificationStatusGlobal = notificationStatus;
     }
 
     /*Changed Status*/
@@ -88,7 +96,7 @@ class settingModel
         {
             mEvent.invokeObserver(Collections.singletonList(mJavaStatus), enums.etype.update_javascript);
         }
-        if(status.sNotificationStatus != mNotificationStatus)
+        if(notificationStatusGlobal != mNotificationStatus)
         {
             mEvent.invokeObserver(Collections.singletonList(mNotificationStatus), enums.etype.update_notification);
         }

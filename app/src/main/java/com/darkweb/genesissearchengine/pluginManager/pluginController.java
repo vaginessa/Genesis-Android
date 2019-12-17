@@ -12,7 +12,6 @@ import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.darkweb.genesissearchengine.helperManager.helperMethod;
 
-import org.torproject.android.service.TorService;
 
 import java.util.Collections;
 import java.util.List;
@@ -112,7 +111,7 @@ public class pluginController
 
     /*Onion Proxy Manager*/
     public void initializeOrbot(Context context){
-        orbotManager.getInstance().startOrbot(context);
+        orbotManager.getInstance().startOrbot(getAppContext());
     }
     public boolean isOrbotRunning(){
         return orbotManager.getInstance().isOrbotRunning();
@@ -131,6 +130,14 @@ public class pluginController
     }
     public void enableTorNotificationNoBandwidth(){
         orbotManager.getInstance().enableTorNotificationNoBandwidth();
+    }
+
+    public void setNotificationStatus(int status){
+        orbotManager.getInstance().initNotification(status);
+    }
+
+    public int getNotificationStatus(){
+        return orbotManager.getInstance().getNotificationStatus();
     }
 
     /*------------------------------------------------ CALLBACK LISTENERS------------------------------------------------------------*/

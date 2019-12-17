@@ -49,12 +49,7 @@ import com.example.myapplication.R;
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.mozilla.geckoview.GeckoRuntime;
-import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoView;
-import org.torproject.android.service.OrbotConstants;
-import org.torproject.android.service.TorServiceConstants;
-import org.torproject.android.service.orbot_local_constants;
 import org.torproject.android.service.util.Prefs;
 
 import java.util.Arrays;
@@ -103,13 +98,8 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_view);
 
+        /*INCOMPLETE FILL ME*/
         Prefs.setContext(this);
-
-        if(savedInstanceState != null ){
-            //Intent intent = getIntent();
-            //finish();
-            //startActivity(intent);
-        }
 
         if(helperMethod.isBuildValid())
         {
@@ -484,7 +474,7 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     public void onResume()
     {
         status.sCurrentActivity = this;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mGeckoClient.getUriPermission()!=null) {
+        if (mGeckoClient!=null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mGeckoClient.getUriPermission()!=null) {
             this.revokeUriPermission(mGeckoClient.getUriPermission(), Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         }
         super.onResume();

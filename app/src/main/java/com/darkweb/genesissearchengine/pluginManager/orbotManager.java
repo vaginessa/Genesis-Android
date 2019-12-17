@@ -4,11 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import com.darkweb.genesissearchengine.constants.*;
+import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import org.mozilla.gecko.PrefsHelper;
 import org.torproject.android.service.TorService;
-import org.torproject.android.service.orbot_local_constants;
 import org.torproject.android.service.util.Prefs;
+import org.torproject.android.service.wrapper.orbotLocalConstants;
 
 import static org.torproject.android.service.TorServiceConstants.ACTION_START;
 
@@ -29,6 +30,16 @@ class orbotManager
     }
 
     public void initialize(AppCompatActivity app_context, eventObserver.eventListener event){
+        orbotLocalConstants.sGlobalContext = app_context;
+        initNotification(dataController.getInstance().getInt(keys.NOTIFICATION_STATUS,0));
+    }
+
+    void initNotification(int status){
+        orbotLocalConstants.sNotificationStatus = status;
+    }
+
+    int getNotificationStatus(){
+        return orbotLocalConstants.sNotificationStatus;
     }
 
     void startOrbot(Context context){
@@ -162,7 +173,7 @@ class orbotManager
 
     String getLogs()
     {
-        String logs = orbot_local_constants.tor_logs_status;
+        /*String logs = orbotLocalConstants.tor_logs_status;
 
         if(!logs.contains("Bootstrapped") && !mLogsStarted){
             logs = "Initializing Bootstrap";
@@ -182,12 +193,12 @@ class orbotManager
             }
             Logs="Installing | " + Logs.replace("FAILED","Securing");
             return Logs;
-        }
+        }*/
         return "Loading Please Wait";
     }
 
     boolean isOrbotRunning(){
-        return orbot_local_constants.sIsTorInitialized;
+        return false;//orbotLocalConstants.sIsTorInitialized;
     }
 
 }

@@ -1,11 +1,13 @@
 package com.darkweb.genesissearchengine.constants;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.darkweb.genesissearchengine.dataManager.dataController;
+import com.darkweb.genesissearchengine.pluginManager.pluginController;
+
+import org.torproject.android.service.wrapper.orbotLocalConstants;
 
 import static org.mozilla.geckoview.ContentBlocking.CookieBehavior.ACCEPT_FIRST_PARTY;
 
@@ -27,7 +29,6 @@ public class status
     public static boolean sIsAppRated = false;
     public static boolean sFontAdjustable = true;
     public static int sCookieStatus = ACCEPT_FIRST_PARTY;
-    public static int sNotificationStatus = 0;
     public static float sFontSize = 1;
     public static android.app.Activity sCurrentActivity = null;
 
@@ -58,7 +59,6 @@ public class status
         status.sFontSize = dataController.getInstance().getFloat(keys.FONT_SIZE,100);
         status.sFontAdjustable = dataController.getInstance().getBool(keys.FONT_ADJUSTABLE,true);
         status.sCookieStatus = dataController.getInstance().getInt(keys.COOKIE_ADJUSTABLE,ACCEPT_FIRST_PARTY);
-        status.sNotificationStatus = dataController.getInstance().getInt(keys.NOTIFICATION_STATUS,0);
     }
 
 }

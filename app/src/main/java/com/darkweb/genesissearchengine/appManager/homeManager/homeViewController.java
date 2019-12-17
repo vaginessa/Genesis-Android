@@ -47,7 +47,7 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.mozilla.geckoview.GeckoView;
-import org.torproject.android.service.orbot_local_constants;
+//import org.torproject.android.service.wrapper.orbotLocalConstants;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -317,7 +317,8 @@ class homeViewController
                         e.printStackTrace();
                     }*/
                     AppCompatActivity temp_context = mContext;
-                    while (!orbot_local_constants.sIsTorInitialized /*&& (!status.sSearchStatus.equals(constants.BACKEND_GENESIS_URL) || status.sGateway)*/){
+                    /*
+                    while (!orbotLocalConstants.sIsTorInitialized){
                         try
                         {
                             sleep(1000);
@@ -331,7 +332,7 @@ class homeViewController
                         {
                             e.printStackTrace();
                         }
-                    }
+                    }*/
 
                     startPostTask(messages.ON_URL_LOAD);
                 }

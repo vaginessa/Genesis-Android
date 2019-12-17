@@ -18,16 +18,16 @@ import com.darkweb.genesissearchengine.constants.status;
 import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
-import com.darkweb.genesissearchengine.helperManager.helperMethod;
 import com.darkweb.genesissearchengine.pluginManager.pluginController;
 import com.example.myapplication.R;
+
+import org.torproject.android.service.wrapper.orbotLocalConstants;
 
 import java.util.List;
 
 import static com.darkweb.genesissearchengine.constants.status.sCookieStatus;
 import static com.darkweb.genesissearchengine.constants.status.sHistoryStatus;
 import static com.darkweb.genesissearchengine.constants.status.sJavaStatus;
-import static com.darkweb.genesissearchengine.constants.status.sNotificationStatus;
 
 public class settingController extends AppCompatActivity
 {
@@ -53,6 +53,7 @@ public class settingController extends AppCompatActivity
     public settingController(){
         mHomeController = activityContextManager.getInstance().getHomeController();
         mSettingModel = new settingModel(new settingModelCallback());
+        mSettingModel.initNotification(pluginController.getInstance().getNotificationStatus());
     }
 
     @Override
@@ -87,7 +88,7 @@ public class settingController extends AppCompatActivity
         mNotification = findViewById(R.id.notification_manager);
 
         String currentSearchEngine = dataController.getInstance().getString(keys.SEARCH_ENGINE, strings.DARK_WEB);
-        mSettingViewController = new settingViewController(mSearch, mJavascript, mHistory, mFontSize, mFontAdjustable, mFontSizePercentage,this, new settingModelCallback(),this, mCookies,mNotification);
+        mSettingViewController = new settingViewController(mSearch, mJavascript, mHistory, mFontSize, mFontAdjustable, mFontSizePercentage,this, new settingModelCallback(),this, mCookies,mNotification,pluginController.getInstance().getNotificationStatus());
     }
 
     public void listenersInitializations()
@@ -228,12 +229,13 @@ public class settingController extends AppCompatActivity
                 dataController.getInstance().setBool(keys.HISTORY_CLEAR, sHistoryStatus);
             }
             else if(e_type == enums.etype.update_notification){
-                sNotificationStatus = (int)data.get(0);
-                dataController.getInstance().setInt(keys.NOTIFICATION_STATUS, sNotificationStatus);
+                pluginController.getInstance().setNotificationStatus((int)data.get(0));
+                dataController.getInstance().setInt(keys.NOTIFICATION_STATUS, pluginController.getInstance().getNotificationStatus());
 
-                if(sNotificationStatus==0){
+                int notificationStatus = pluginController.getInstance().getNotificationStatus();
+                if(notificationStatus==0){
                     pluginController.getInstance().enableTorNotification();
-                } else if(sNotificationStatus==1){
+                } else if(notificationStatus==1){
                     pluginController.getInstance().disableTorNotification();
                 }else {
                     pluginController.getInstance().enableTorNotificationNoBandwidth();

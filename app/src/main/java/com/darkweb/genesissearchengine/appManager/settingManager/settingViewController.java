@@ -1,7 +1,6 @@
 package com.darkweb.genesissearchengine.appManager.settingManager;
 
 import android.os.Build;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -17,12 +16,10 @@ import com.darkweb.genesissearchengine.constants.status;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.example.myapplication.R;
 
+import org.torproject.android.service.wrapper.orbotLocalConstants;
+
 import static com.darkweb.genesissearchengine.constants.status.sHistoryStatus;
 import static com.darkweb.genesissearchengine.constants.status.sJavaStatus;
-import static com.darkweb.genesissearchengine.constants.status.sNotificationStatus;
-import static org.mozilla.geckoview.ContentBlocking.CookieBehavior.ACCEPT_ALL;
-import static org.mozilla.geckoview.ContentBlocking.CookieBehavior.ACCEPT_FIRST_PARTY;
-import static org.mozilla.geckoview.ContentBlocking.CookieBehavior.ACCEPT_NON_TRACKERS;
 
 class settingViewController
 {
@@ -42,7 +39,7 @@ class settingViewController
 
     /*Initializations*/
 
-    settingViewController(Spinner mSearch, Spinner mJavaScript, Spinner mHistory, SeekBar mFontSize, Spinner mFontAdjustable, TextView mFontSizePercentage, settingController mContext, eventObserver.eventListener mEvent, AppCompatActivity context, Spinner mCookies,Spinner mNotification)
+    settingViewController(Spinner mSearch, Spinner mJavaScript, Spinner mHistory, SeekBar mFontSize, Spinner mFontAdjustable, TextView mFontSizePercentage, settingController mContext, eventObserver.eventListener mEvent, AppCompatActivity context, Spinner mCookies,Spinner mNotification,int notificationStatus)
     {
         this.mFontSizePercentage = mFontSizePercentage;
         this.mSearch = mSearch;
@@ -56,7 +53,7 @@ class settingViewController
         this.mEvent = mEvent;
         this.mContext = mContext;
 
-        initNotification();
+        initNotification(notificationStatus);
         initViews();
         initJavascript();
         initHistory();
@@ -108,9 +105,9 @@ class settingViewController
         }
     }
 
-    private void initNotification()
+    private void initNotification(int status)
     {
-        mNotification.setSelection(sNotificationStatus);
+        mNotification.setSelection(status);
     }
 
     private void initHistory()
