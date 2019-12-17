@@ -5,15 +5,13 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.darkweb.genesissearchengine.constants.strings;
 import com.example.myapplication.R;
+
+import java.util.Objects;
 
 class tabViewController
 {
@@ -21,17 +19,15 @@ class tabViewController
     private AppCompatActivity mContext;
 
     private ImageView mEmptyListNotifier;
-    private EditText mSearchBar;
     private RecyclerView mListView;
     private Button mClearButton;
 
     /*Initializations*/
 
-    tabViewController(ImageView mEmptyListNotifier, EditText mSearchBar, RecyclerView mListView, Button mClearButton, AppCompatActivity mContext)
+    tabViewController(ImageView mEmptyListNotifier, RecyclerView mListView, Button mClearButton, AppCompatActivity mContext)
     {
         this.mContext = mContext;
         this.mEmptyListNotifier = mEmptyListNotifier;
-        this.mSearchBar = mSearchBar;
         this.mListView = mListView;
         this.mClearButton = mClearButton;
 
@@ -66,16 +62,8 @@ class tabViewController
 
     void removeFromList(int index)
     {
-        mListView.getAdapter().notifyItemRemoved(index);
+        Objects.requireNonNull(mListView.getAdapter()).notifyItemRemoved(index);
         mListView.getAdapter().notifyItemRangeChanged(index, mListView.getAdapter().getItemCount()-1);
-    }
-
-    void clearList(){
-        mListView.getRecycledViewPool().clear();
-        mListView.getAdapter().notifyDataSetChanged();
-        updateIfListEmpty(mListView.getAdapter().getItemCount(),300);
-        mSearchBar.clearFocus();
-        mSearchBar.setText(strings.EMPTY_STR);
     }
 
 }

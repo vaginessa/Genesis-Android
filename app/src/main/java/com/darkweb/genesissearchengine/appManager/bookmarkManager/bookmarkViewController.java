@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.darkweb.genesissearchengine.constants.strings;
 import com.example.myapplication.R;
 
+import java.util.Objects;
+
 class bookmarkViewController
 {
     /*Private Variables*/
@@ -66,12 +68,12 @@ class bookmarkViewController
 
     void removeFromList(int index)
     {
-        mListView.getAdapter().notifyItemRemoved(index);
+        Objects.requireNonNull(mListView.getAdapter()).notifyItemRemoved(index);
         mListView.getAdapter().notifyItemRangeChanged(index, mListView.getAdapter().getItemCount());
     }
 
     void clearList(){
-        mListView.getAdapter().notifyDataSetChanged();
+        Objects.requireNonNull(mListView.getAdapter()).notifyDataSetChanged();
         updateIfListEmpty(mListView.getAdapter().getItemCount(),300);
         mSearchBar.clearFocus();
         mSearchBar.setText(strings.EMPTY_STR);

@@ -3,7 +3,6 @@ package com.darkweb.genesissearchengine.appManager.tabManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -68,8 +67,8 @@ public class tabController extends AppCompatActivity
         mSearchBar = findViewById(R.id.search);
         mListView = findViewById(R.id.listview);
         mClearButton = findViewById(R.id.clearButton);
-        mtabViewController = new tabViewController(mEmptyListNotifier, mSearchBar, mListView, mClearButton,this);
-        mClearButton.setText("CLEAR TABS");
+        mtabViewController = new tabViewController(mEmptyListNotifier, mListView, mClearButton,this);
+        mClearButton.setText(strings.CLEAR_TABS);
     }
     public void initializeList(){
         tabAdapter adapter = new tabAdapter(mListModel.getList(),new adapterCallback());
@@ -140,7 +139,7 @@ public class tabController extends AppCompatActivity
     @Override
     public void onResume()
     {
-        status.sCurrentActivity = this;
+        activityContextManager.getInstance().setCurrentActivity(this);
         status.sIsAppPaused = false;
         super.onResume();
     }

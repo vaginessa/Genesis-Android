@@ -28,6 +28,7 @@ import com.example.myapplication.R;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class historyController extends AppCompatActivity
 {
@@ -111,7 +112,7 @@ public class historyController extends AppCompatActivity
             @Override
             public void afterTextChanged(Editable editable)
             {
-                ((historyAdapter) mListView.getAdapter()).setFilter(mSearchBar.getText().toString());
+                ((historyAdapter) Objects.requireNonNull(mListView.getAdapter())).setFilter(mSearchBar.getText().toString());
                 ((historyAdapter) mListView.getAdapter()).invokeFilter(true);
             }
         });
@@ -125,7 +126,7 @@ public class historyController extends AppCompatActivity
     }
     public void onclearData(){
         mListModel.clearList();
-        ((historyAdapter) mListView.getAdapter()).invokeFilter(true );
+        ((historyAdapter) Objects.requireNonNull(mListView.getAdapter())).invokeFilter(true );
         mHistoryViewController.clearList();
         databaseController.getInstance().execSQL("delete from history where 1",null);
         finish();
@@ -154,7 +155,7 @@ public class historyController extends AppCompatActivity
     @Override
     public void onResume()
     {
-        status.sCurrentActivity = this;
+        activityContextManager.getInstance().setCurrentActivity(this);
         status.sIsAppPaused = false;
         super.onResume();
     }

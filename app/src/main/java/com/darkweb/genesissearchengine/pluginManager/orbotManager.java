@@ -10,7 +10,6 @@ import org.mozilla.gecko.PrefsHelper;
 import org.torproject.android.service.TorService;
 import org.torproject.android.service.util.Prefs;
 import org.torproject.android.service.wrapper.orbotLocalConstants;
-
 import static org.torproject.android.service.TorServiceConstants.ACTION_START;
 
 class orbotManager
@@ -23,6 +22,7 @@ class orbotManager
     private Intent mServiceIntent = null;
 
     /*Initialization*/
+
     private static orbotManager sOurInstance = new orbotManager();
     public static orbotManager getInstance()
     {
@@ -34,14 +34,6 @@ class orbotManager
         initNotification(dataController.getInstance().getInt(keys.NOTIFICATION_STATUS,0));
     }
 
-    void initNotification(int status){
-        orbotLocalConstants.sNotificationStatus = status;
-    }
-
-    int getNotificationStatus(){
-        return orbotLocalConstants.sNotificationStatus;
-    }
-
     void startOrbot(Context context){
         this.mAppContext = context;
         Prefs.putBridgesEnabled(status.sGateway);
@@ -51,6 +43,12 @@ class orbotManager
         initializeProxy();
     }
 
+    int getNotificationStatus(){
+        return orbotLocalConstants.sNotificationStatus;
+    }
+    void initNotification(int status){
+        orbotLocalConstants.sNotificationStatus = status;
+    }
     void enableTorNotification(){
         TorService.getServiceObject().enableNotification();
     }
@@ -114,22 +112,6 @@ class orbotManager
         setPrivacyPrefs();
     }
 
-    private void setProxyPrefs ()
-    {
-        PrefsHelper.setPref("network.proxy.type",1); //manual proxy settings
-        PrefsHelper.setPref("network.proxy.socks","localhost"); //manual proxy settings
-        PrefsHelper.setPref("network.proxy.socks_port",9050); //manual proxy settings
-        PrefsHelper.setPref("network.proxy.http","localhost"); //manual proxy settings
-        PrefsHelper.setPref("network.proxy.http_port",8118); //manual proxy settings
-        PrefsHelper.setPref("network.proxy.socks_version",5); //manual proxy settings
-
-    }
-
-    void updateCookiesStatus(){
-        //PrefsHelper.setPref("privacy.clearOnShutdown.cookies",!status.sCookieStatus);
-        //PrefsHelper.setPref("network.cookie.cookieBehavior", status.sCookieStatus ? 1 : 0);
-    }
-
     private void setPrivacyPrefs ()
     {
         PrefsHelper.setPref("browser.cache.disk.enable",false);
@@ -146,8 +128,6 @@ class orbotManager
         PrefsHelper.setPref("privacy.clearOnShutdown.siteSettings",status.sHistoryStatus);
         PrefsHelper.setPref("privacy.donottrackheader.enabled",false);
         PrefsHelper.setPref("privacy.donottrackheader.value",1);
-        //PrefsHelper.setPref("privacy.clearOnShutdown.cookies",!status.sCookieStatus);
-        //PrefsHelper.setPref("network.cookie.cookieBehavior", status.sCookieStatus ? 1 : 0);
         PrefsHelper.setPref("network.http.sendRefererHeader", 0);
         PrefsHelper.setPref("security.OCSP.require", true);
         PrefsHelper.setPref("security.checkloaduri",true);
@@ -155,25 +135,10 @@ class orbotManager
         PrefsHelper.setPref("media.peerconnection.enabled",false); //webrtc disabled
     }
 
-    private void setCipherSuites ()
-    {
-        PrefsHelper.setPref("security.ssl3.ecdh_ecdsa_rc4_128_sha",false);
-        PrefsHelper.setPref("security.ssl3.ecdh_rsa_rc4_128_sha",false);
-        PrefsHelper.setPref("security.ssl3.ecdhe_ecdsa_rc4_128_sha",false);
-        PrefsHelper.setPref("security.ssl3.ecdhe_rsa_rc4_128_sha",false);
-        PrefsHelper.setPref("security.ssl3.rsa_rc4_128_md5",false);
-        PrefsHelper.setPref("security.ssl3.rsa_rc4_128_sha",false);
-    }
-
-
-    private void setJavascriptEnabled ()
-    {
-        PrefsHelper.setPref("javascript.enabled", status.sJavaStatus);
-    }
 
     String getLogs()
     {
-        /*String logs = orbotLocalConstants.tor_logs_status;
+        String logs = orbotLocalConstants.tor_logs_status;
 
         if(!logs.contains("Bootstrapped") && !mLogsStarted){
             logs = "Initializing Bootstrap";
@@ -187,18 +152,14 @@ class orbotManager
         if(!logs.equals(strings.EMPTY_STR))
         {
             String Logs = logs;
-            if(Logs.equals(""))
-            {
-                return "Installing | Setting Configurations";
-            }
             Logs="Installing | " + Logs.replace("FAILED","Securing");
             return Logs;
-        }*/
+        }
         return "Loading Please Wait";
     }
 
     boolean isOrbotRunning(){
-        return false;//orbotLocalConstants.sIsTorInitialized;
+        return orbotLocalConstants.sIsTorInitialized;
     }
 
 }

@@ -1,20 +1,21 @@
 package com.darkweb.genesissearchengine.appManager.launcherManager;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-
+import com.darkweb.genesissearchengine.appManager.activityContextManager;
 import com.darkweb.genesissearchengine.appManager.homeManager.homeController;
 import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.enums;
-import com.darkweb.genesissearchengine.constants.status;
 import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.darkweb.genesissearchengine.helperManager.helperMethod;
 import com.darkweb.genesissearchengine.pluginManager.pluginController;
 import com.example.myapplication.R;
-
 import java.util.List;
+
+/*Not Yet Registered Belongs To Previous Builds
+* Application Error Fallback Restart Instead Of Crash
+**/
 
 public class launcherController extends AppCompatActivity
 {
@@ -41,7 +42,7 @@ public class launcherController extends AppCompatActivity
     @Override
     public void onResume()
     {
-        status.sCurrentActivity = this;
+        activityContextManager.getInstance().setCurrentActivity(this);
         if(mIsStarted){
             helperMethod.openActivity(homeController.class, constants.LIST_HISTORY, this,false);
             pluginController.getInstance().logEvent(strings.APP_RESTARTED);

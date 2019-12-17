@@ -7,20 +7,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.darkweb.genesissearchengine.constants.enums;
+import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import org.mozilla.geckoview.GeckoSession;
 import java.util.Arrays;
-import java.util.LinkedList;
 
 class geckoDownloadManager
 {
     private Uri downloadURL;
-    private String downloadFile = "";
+    private String downloadFile = strings.EMPTY_STR;
 
     geckoDownloadManager(){
 
     }
-    geckoSession session;
 
     void downloadFile(GeckoSession.WebResponseInfo response, geckoSession session, AppCompatActivity context, eventObserver.eventListener event) {
         session

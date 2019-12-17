@@ -1,14 +1,6 @@
 package com.darkweb.genesissearchengine.constants;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-
 import com.darkweb.genesissearchengine.dataManager.dataController;
-import com.darkweb.genesissearchengine.pluginManager.pluginController;
-
-import org.torproject.android.service.wrapper.orbotLocalConstants;
-
 import static org.mozilla.geckoview.ContentBlocking.CookieBehavior.ACCEPT_FIRST_PARTY;
 
 public class status
@@ -30,23 +22,6 @@ public class status
     public static boolean sFontAdjustable = true;
     public static int sCookieStatus = ACCEPT_FIRST_PARTY;
     public static float sFontSize = 1;
-    public static android.app.Activity sCurrentActivity = null;
-
-    /*Initializations*/
-
-    public static void clearFailureHistory(Context context){
-        SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor mEdit = mPrefs.edit();
-
-        int mClearPrefs = mPrefs.getInt(keys.CLEAR_PREFS,0);
-        if(mClearPrefs==0){
-            mEdit.clear();
-            mEdit.commit();
-            mEdit.putInt(keys.CLEAR_PREFS,1);
-            mEdit.commit();
-        }
-
-    }
 
     public static void initStatus()
     {

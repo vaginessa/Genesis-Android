@@ -1,5 +1,6 @@
 package com.darkweb.genesissearchengine.appManager.settingManager;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.view.View;
 import android.view.Window;
@@ -7,17 +8,13 @@ import android.view.WindowManager;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-
 import com.darkweb.genesissearchengine.constants.constants;
 import com.darkweb.genesissearchengine.constants.status;
+import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.example.myapplication.R;
-
-import org.torproject.android.service.wrapper.orbotLocalConstants;
-
 import static com.darkweb.genesissearchengine.constants.status.sHistoryStatus;
 import static com.darkweb.genesissearchengine.constants.status.sJavaStatus;
 
@@ -39,7 +36,7 @@ class settingViewController
 
     /*Initializations*/
 
-    settingViewController(Spinner mSearch, Spinner mJavaScript, Spinner mHistory, SeekBar mFontSize, Spinner mFontAdjustable, TextView mFontSizePercentage, settingController mContext, eventObserver.eventListener mEvent, AppCompatActivity context, Spinner mCookies,Spinner mNotification,int notificationStatus)
+    settingViewController(Spinner mSearch, Spinner mJavaScript, Spinner mHistory, SeekBar mFontSize, Spinner mFontAdjustable, TextView mFontSizePercentage, settingController mContext, eventObserver.eventListener mEvent, Spinner mCookies, Spinner mNotification, int notificationStatus)
     {
         this.mFontSizePercentage = mFontSizePercentage;
         this.mSearch = mSearch;
@@ -163,8 +160,9 @@ class settingViewController
             return 2;
     }
 
+    @SuppressLint("SetTextI18n")
     void updatePercentage(int font_size){
 
-        mFontSizePercentage.setText("Custom Font" + " " + font_size +"%");
+        mFontSizePercentage.setText(strings.CUSTOM_FONTS + strings.EMPTY_STR + font_size +strings.PERCENT_SIGN);
     }
 }

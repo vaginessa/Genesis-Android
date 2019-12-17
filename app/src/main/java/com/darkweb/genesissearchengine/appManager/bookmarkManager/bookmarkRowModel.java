@@ -18,10 +18,10 @@ public class bookmarkRowModel
 
     /*Variable Getters*/
 
-    public String getmHeader() {
+    String getmHeader() {
         return mHeader;
     }
-    public String getmDescription() {
+    String getmDescription() {
         return mDescription;
     }
     public int getmId() {

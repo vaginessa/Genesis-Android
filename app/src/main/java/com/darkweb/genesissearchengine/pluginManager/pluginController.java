@@ -1,6 +1,5 @@
 package com.darkweb.genesissearchengine.pluginManager;
 
-import android.content.Context;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import com.darkweb.genesissearchengine.appManager.activityContextManager;
@@ -11,8 +10,7 @@ import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.darkweb.genesissearchengine.helperManager.helperMethod;
-
-
+import org.torproject.android.service.wrapper.orbotLocalConstants;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,9 +37,6 @@ public class pluginController
     {
         return ourInstance;
     }
-    private pluginController()
-    {
-    }
 
     public void initialize(){
         instanceObjectInitialization();
@@ -63,10 +58,6 @@ public class pluginController
 
     public void initializeAllProxies(AppCompatActivity context){
         orbotManager.getInstance().initialize(context,new orbotCallback());
-    }
-
-    public void updateCookiesStatus(){
-        orbotManager.getInstance().updateCookiesStatus();
     }
 
     /*Helper Methods*/
@@ -104,13 +95,12 @@ public class pluginController
     public void initializeBannerAds(){
         mAdManager.loadAds();
     }
-
     public boolean isAdvertLoaded(){
        return mAdManager.isAdvertLoaded();
     }
 
     /*Onion Proxy Manager*/
-    public void initializeOrbot(Context context){
+    public void initializeOrbot(){
         orbotManager.getInstance().startOrbot(getAppContext());
     }
     public boolean isOrbotRunning(){
@@ -131,13 +121,13 @@ public class pluginController
     public void enableTorNotificationNoBandwidth(){
         orbotManager.getInstance().enableTorNotificationNoBandwidth();
     }
-
     public void setNotificationStatus(int status){
         orbotManager.getInstance().initNotification(status);
     }
-
     public int getNotificationStatus(){
         return orbotManager.getInstance().getNotificationStatus();
+    }
+    public void updateCookiesStatus(){
     }
 
     /*------------------------------------------------ CALLBACK LISTENERS------------------------------------------------------------*/
@@ -237,7 +227,7 @@ public class pluginController
                 mHomeController.onManualDownload(data.get(0).toString());
             }
             else if(event_type.equals(enums.etype.connect_vpn)){
-                boolean status = (boolean)data.get(0);
+                orbotLocalConstants.sIsTorInitialized = (boolean)data.get(0);
             }
             else if(event_type.equals(enums.etype.open_link_new_tab)){
                 mHomeController.onOpenLinkNewTab(data.get(0).toString());

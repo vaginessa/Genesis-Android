@@ -20,6 +20,7 @@ public class activityContextManager
     private bookmarkController bookmark_controller;
     private homeController home_controller;
     private tabController tab_controller;
+    private android.app.Activity sCurrentActivity = null;
 
     /*Initialization*/
 
@@ -54,5 +55,12 @@ public class activityContextManager
     }
     public void setTabController(tabController tab_controller){
         this.tab_controller = tab_controller;
+    }
+
+    public void setCurrentActivity(android.app.Activity sCurrentActivity){
+        this.sCurrentActivity = sCurrentActivity;
+    }
+    public android.app.Activity setCurrentActivity(){
+        return sCurrentActivity;
     }
 }

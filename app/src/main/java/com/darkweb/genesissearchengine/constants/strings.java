@@ -3,6 +3,7 @@ package com.darkweb.genesissearchengine.constants;
 public class strings
 {
     /*Orbot Manager*/
+
     public static final String WELCOME_MESSAGE_TITLE = "Welcome | Hidden  Web Gateway";
     public static final String WELCOME_MESSAGE_DESC = "This application provide you a platform to Search and Open Hidden Web urls.Here are few Suggestions\n";
     public static final String WELCOME_MESSAGE_BT_1 = "Deep Web Online Market";
@@ -86,12 +87,30 @@ public class strings
     public static final String BANNED_TITLE = "Is Tor Bannned In Your Country?";
     public static final String BANNED_DESC = "Enable free GATEWAY to tunnel through banned configuration | Use it only if tor is banned in your country";
 
+    /*Tab Manager*/
+
+    public static final String CLEAR_TABS = "CLEAR TABS";
+
     /*Text Manager*/
 
     public static final String DARK_WEB = "Hidden Web";
     public static final String EMPTY_STR = "";
 
+    /*Settings Manager*/
+
+    public static final String CUSTOM_FONTS = "Custom Font";
+    public static final String PERCENT_SIGN = "%";
+
+    /*Bookmark Manager*/
+
+    public static final String CLEAR_BOOKMARK = "CLEAR BOOKMARK";
+
+    /*Home Manager*/
+
+    public static final String BLANK_PAGE = "about:blank";
+
     /*Events*/
+
     public static final String APP_STARTED = "APP_STARTED";
     public static final String PROXY_CHANGED = "PROXY_CHANGED";
     public static final String APP_RESTARTED = "APP_RESTARTED";

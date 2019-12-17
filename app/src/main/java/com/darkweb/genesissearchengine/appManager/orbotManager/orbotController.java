@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.Switch;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.darkweb.genesissearchengine.appManager.activityContextManager;
 import com.darkweb.genesissearchengine.constants.keys;
 import com.darkweb.genesissearchengine.constants.status;
 import com.darkweb.genesissearchengine.dataManager.dataController;
@@ -18,7 +19,7 @@ public class orbotController extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.orbot_view_settings);
+        setContentView(R.layout.orbot_settings_view);
 
         viewsInitializations();
         listenersInitializations();
@@ -27,7 +28,7 @@ public class orbotController extends AppCompatActivity {
     @Override
     public void onResume()
     {
-        status.sCurrentActivity = this;
+        activityContextManager.getInstance().setCurrentActivity(this);
         super.onResume();
     }
 

@@ -53,12 +53,9 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.listView
 
     /*Listeners*/
 
-    private void setItemViewOnClickListener(View itemView,int id, String url)
+    private void setItemViewOnClickListener(View itemView, String url)
     {
-        itemView.setOnClickListener(v ->
-        {
-            mEvent.invokeObserver(Collections.singletonList(url),enums.etype.url_triggered);
-        });
+        itemView.setOnClickListener(v -> mEvent.invokeObserver(Collections.singletonList(url),enums.etype.url_triggered));
     }
 
     private void clearMessageItem(ImageButton clearButton, int index)
@@ -122,7 +119,7 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.listView
             mMessageButton = itemView.findViewById(R.id.message_button);
             mEmptyMessage = itemView.findViewById(R.id.empty_list);
 
-            setItemViewOnClickListener(mItemContainer,model.getmId(),header);
+            setItemViewOnClickListener(mItemContainer, header);
         }
     }
 

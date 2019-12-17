@@ -141,7 +141,7 @@ class messageManager
         final EditText input = new EditText(app_context);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         input.setText("");
-        input.setBackground(ContextCompat.getDrawable(app_context, R.xml.search_back_default_popup));
+        input.setBackground(ContextCompat.getDrawable(app_context, R.xml.sc_popup_input));
         input.setPadding(40, 15, 40, 15);
         input.setHeight(80);
         input.setTextSize(17);
@@ -232,10 +232,7 @@ class messageManager
                     tempDialog.dismiss();
 
                     final Handler handler = new Handler();
-                    Runnable runnable = () ->
-                    {
-                        createMessage(app_context,Collections.singletonList(strings.EMPTY_STR), enums.etype.reported_success);
-                    };
+                    Runnable runnable = () -> createMessage(app_context,Collections.singletonList(strings.EMPTY_STR), enums.etype.reported_success);
                     handler.postDelayed(runnable, 1000);
 
                 });
@@ -299,7 +296,7 @@ class messageManager
                 .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .setMessage(title + f.getName().substring(0,size)+"...")
-                .setTextGravity(Gravity.LEFT)
+                .setTextGravity(Gravity.START)
                 .addButton(strings.LONG_URL_OPTION_4, -1, Color.rgb(242,242,242 ), CFAlertDialog.CFAlertActionStyle.DEFAULT, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) ->
                 {
                     event.invokeObserver(Collections.singletonList(data.get(0)), enums.etype.download_file_manual);
@@ -362,7 +359,6 @@ class messageManager
 
         String data_local = strings.LONG_URL_MESSAGE;
 
-        File f = new File(file);
         int size = url.length();
         if(size>35){
             size = 35;

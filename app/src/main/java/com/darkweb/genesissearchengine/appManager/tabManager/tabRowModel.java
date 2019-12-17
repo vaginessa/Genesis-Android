@@ -1,13 +1,6 @@
 package com.darkweb.genesissearchengine.appManager.tabManager;
 
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.darkweb.genesissearchengine.appManager.homeManager.geckoSession;
-
-import org.mozilla.geckoview.GeckoSession;
 
 public class tabRowModel
 {

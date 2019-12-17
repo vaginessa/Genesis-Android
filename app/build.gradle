@@ -30,15 +30,6 @@ android {
         targetSdkVersion project.ext.targetSdkVersion
         versionCode project.ext.versionCode
         versionName project.ext.versionName
-
-        buildConfigField "String", "BASE_HOST", "\"https://backend.northghost.com\""
-        buildConfigField "String", "BASE_CARRIER_ID", "\"afdemo\""
-        buildConfigField "String", "BASE_OAUTH_METHOD", "\"anonymous\""
-
-        buildConfigField "String", "SHARED_PREFS", "\"NORTHGHOST_SHAREDPREFS\""
-        buildConfigField "String", "STORED_HOST_URL_KEY", "\"com.northghost.afvclient.STORED_HOST_KEY\""
-        buildConfigField "String", "STORED_CARRIER_ID_KEY", "\"com.northghost.afvclient.CARRIER_ID_KEY\""
-
     }
 
     flavorDimensions "abi"
@@ -72,15 +63,6 @@ android {
             versionName project.ext.x64_vname
             dimension project.ext.dimen
         }
-
-        signingConfigs {
-            release {
-                keyAlias 'demo'
-                keyPassword 'demodemo'
-                storeFile file("${rootProject.projectDir}/demo.keystore")
-                storePassword 'demodemo'
-            }
-        }
     }
 
 
@@ -111,11 +93,11 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta3'
-    implementation 'com.google.android.material:material:1.2.0-alpha01'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
+    implementation 'com.google.android.material:material:1.2.0-alpha02'
     implementation 'androidx.preference:preference:1.1.0'
     implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
 
     /*Firefox ABI Splits*/
     x86Implementation     "org.mozilla.geckoview:geckoview-${geckoviewChannel}:${geckoviewVersion}"
@@ -127,32 +109,18 @@ dependencies {
     implementation 'com.crowdfire.cfalertdialog:cfalertdialog:1.1.0'
 
     /*Ads Manager*/
-    implementation 'com.google.android.gms:play-services-ads-lite:18.0.0'
+    implementation 'com.google.android.gms:play-services-ads-lite:18.3.0'
 
     /*Crashlytics*/
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.google.firebase:firebase-analytics:17.2.1'
 
-    /*Proxy Manager*/
-    implementation 'org.jetbrains:annotations:18.0.0'
-    implementation 'com.google.firebase:firebase-core:17.2.1'
-
-    /*Onion Proxy*/
-    /*implementation project(':orbotservice')
-    implementation 'org.torproject:tor-android-binary:0.4.1.6-dev'
-    implementation 'info.pluggabletransports.aptds:apt-dispatch-library:1.0.7'
-    implementation 'info.pluggabletransports.aptds:apt-meek-obfs4-legacy:1.0.7'
-    implementation 'info.pluggabletransports.aptds:jsocksAndroid:1.0.4'
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation 'com.jaredrummler:android-shell:1.0.0'
-    implementation fileTree(dir: 'libs', include: ['.so'])
-    testImplementation 'junit:junit:4.12'
-    implementation 'com.offbynull.portmapper:portmapper:2.0.5'*/
-
     /*View Animator*/
     implementation 'com.daimajia.easing:library:2.1@aar'
     implementation 'com.daimajia.androidanimations:library:2.3@aar'
-    compile project(path: ':orbotservice')
+
+    /*Orbot Service*/
+    implementation project(path: ':orbotservice')
 
 }
 

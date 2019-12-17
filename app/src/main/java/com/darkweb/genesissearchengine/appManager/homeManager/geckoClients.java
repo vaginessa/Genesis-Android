@@ -2,14 +2,12 @@ package com.darkweb.genesissearchengine.appManager.homeManager;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import com.darkweb.genesissearchengine.constants.*;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.darkweb.genesissearchengine.helperManager.helperMethod;
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 import static com.darkweb.genesissearchengine.constants.enums.etype.on_handle_external_intent;
 import static org.mozilla.geckoview.StorageController.ClearFlags.ALL;
@@ -30,8 +28,9 @@ class geckoClients
     private eventObserver.eventListener event;
     private AppCompatActivity context;
 
-    int e=0;
-    void initialize(GeckoView geckoView, AppCompatActivity Context,eventObserver.eventListener event,String searchEngine,AppCompatActivity context,boolean isForced)
+    /*Initializations*/
+
+    void initialize(GeckoView geckoView, eventObserver.eventListener event, AppCompatActivity context, boolean isForced)
     {
 
         this.context = context;
@@ -75,9 +74,6 @@ class geckoClients
     }
 
     void onClose(){
-        if(mRuntime!=null){
-            //mRuntime.shutdown();
-        }
     }
 
     void initSession(geckoSession mSession){
@@ -95,6 +91,8 @@ class geckoClients
             mSession.reload();
         }
     }
+
+    /*Helper Methods*/
 
     void onUploadRequest(int resultCode,Intent data){
         mSession.onFileUploadRequest(resultCode,data);
@@ -192,20 +190,6 @@ class geckoClients
         }
     }
 
-
-    private void downloadFile(GeckoSession.WebResponseInfo response) {
-
-        try
-        {
-            final Uri uri = Uri.parse(response.uri.replaceAll("blob:","_FERROR_"));
-            final String filename = response.filename != null ? response.filename : uri.getLastPathSegment();
-
-            mSession.loadUri(uri+"/"+filename);
-        }
-        catch (Exception ex){
-            ex.printStackTrace();
-        }
-    }
 
     public class geckoViewClientCallback implements eventObserver.eventListener{
         @Override

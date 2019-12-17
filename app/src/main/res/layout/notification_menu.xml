@@ -12,7 +12,7 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:background="@xml/background_top_shadow"
+            android:background="@xml/sc_notification_shadow"
             app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout

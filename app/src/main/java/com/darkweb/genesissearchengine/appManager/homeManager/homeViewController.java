@@ -2,7 +2,6 @@ package com.darkweb.genesissearchengine.appManager.homeManager;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
@@ -15,7 +14,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -24,7 +22,6 @@ import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.BounceInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -33,7 +30,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
-
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.darkweb.genesissearchengine.appManager.historyManager.historyRowModel;
@@ -45,14 +41,12 @@ import com.darkweb.genesissearchengine.helperManager.helperMethod;
 import com.example.myapplication.R;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.mozilla.geckoview.GeckoView;
-//import org.torproject.android.service.wrapper.orbotLocalConstants;
-
+import org.torproject.android.service.wrapper.orbotLocalConstants;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.concurrent.Callable;
-
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 import static androidx.appcompat.widget.ListPopupWindow.WRAP_CONTENT;
 
@@ -87,7 +81,7 @@ class homeViewController
     private boolean isLandscape = false;
     private boolean disableSplash = false;
 
-    void initialization(eventObserver.eventListener event,AppCompatActivity context,Button mNewTab, FrameLayout webviewContainer, TextView loadingText, com.darkweb.genesissearchengine.widget.AnimatedProgressBar progressBar, AutoCompleteTextView searchbar, ConstraintLayout splashScreen, FloatingActionButton floatingButton, ImageView loading, AdView banner_ads,ArrayList<historyRowModel> suggestions,ImageView engineLogo,ImageButton gateway_splash,LinearLayout top_bar,GeckoView gecko_view,ImageView backsplash,boolean is_triggered,Button connect_button,ImageButton switch_engine_back){
+    void initialization(eventObserver.eventListener event, AppCompatActivity context, Button mNewTab, FrameLayout webviewContainer, TextView loadingText, com.darkweb.genesissearchengine.widget.AnimatedProgressBar progressBar, AutoCompleteTextView searchbar, ConstraintLayout splashScreen, ImageView loading, AdView banner_ads, ArrayList<historyRowModel> suggestions, ImageView engineLogo, ImageButton gateway_splash, LinearLayout top_bar, GeckoView gecko_view, ImageView backsplash, boolean is_triggered, Button connect_button, ImageButton switch_engine_back){
         this.mContext = context;
         this.mProgressBar = progressBar;
         this.mSearchbar = searchbar;
@@ -117,8 +111,6 @@ class homeViewController
     }
 
     private void initTopBar(){
-        ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) mWebviewContainer.getLayoutParams();
-        //localBannerHeight = lp.topMargin;
     }
 
     private void initSearchImage(){
@@ -137,7 +129,7 @@ class homeViewController
     }
 
     void initTab(int count){
-        mNewTab.setText(count+"");
+        mNewTab.setText(count+strings.EMPTY_STR);
 
         YoYo.with(Techniques.FlipInX)
                 .duration(450)
@@ -248,7 +240,6 @@ class homeViewController
         }
 
 
-        Log.i("FKOKERROR","FKOKERROR");
         autoCompleteAdapter suggestionAdapter = new autoCompleteAdapter(mContext, R.layout.hint_view, (ArrayList<historyRowModel>) suggestions.clone());
 
         int width = Math.round(helperMethod.screenWidth());
@@ -261,7 +252,7 @@ class homeViewController
         Drawable drawable;
         Resources res = mContext.getResources();
         try {
-            drawable = Drawable.createFromXml(res, res.getXml(R.xml.rounded_corner_suggestion));
+            drawable = Drawable.createFromXml(res, res.getXml(R.xml.sc_rounded_corner_suggestion));
             mSearchbar.setDropDownBackgroundDrawable(drawable);
             mSearchbar.setOutlineProvider(ViewOutlineProvider.BACKGROUND);
             mSearchbar.setClipToOutline(true);
@@ -309,15 +300,7 @@ class homeViewController
         if(mSplashScreen.getAlpha()==1){
             new Thread(){
                 public void run(){
-                    /*try
-                    {
-                        sleep(1000);
-                    } catch (InterruptedException e)
-                    {
-                        e.printStackTrace();
-                    }*/
                     AppCompatActivity temp_context = mContext;
-                    /*
                     while (!orbotLocalConstants.sIsTorInitialized){
                         try
                         {
@@ -332,8 +315,7 @@ class homeViewController
                         {
                             e.printStackTrace();
                         }
-                    }*/
-
+                    }
                     startPostTask(messages.ON_URL_LOAD);
                 }
             }.start();
@@ -358,7 +340,6 @@ class homeViewController
             disableSplash = true;
             mSplashScreen.animate().setDuration(300).alpha(0).withEndAction((() -> mSplashScreen.setVisibility(View.GONE)));
             mProgressBar.animate().setStartDelay(250).alpha(1);
-            //mEvent.invokeObserver(null, enums.etype.on_init_ads);
             initPostUI(false);
         }
     }
@@ -425,6 +406,7 @@ class homeViewController
         LayoutInflater layoutInflater
                 = (LayoutInflater) mContext
                 .getSystemService(LAYOUT_INFLATER_SERVICE);
+        assert layoutInflater != null;
         final View popupView = layoutInflater.inflate(R.layout.notification_menu, null);
         popupWindow = new PopupWindow(
                 popupView,
@@ -503,7 +485,7 @@ class homeViewController
     }
 
     void onNewTab(boolean keyboard,boolean isKeyboardOpen){
-        mSearchbar.setText("about:blank");
+        mSearchbar.setText(strings.BLANK_PAGE);
         if(keyboard){
 
             if(!isKeyboardOpen){
@@ -511,7 +493,7 @@ class homeViewController
                 handler.postDelayed(() ->
                 {
                     InputMethodManager imm = (InputMethodManager)   mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.toggleSoftInput(InputMethodManager.RESULT_UNCHANGED_SHOWN, 0);
+                    Objects.requireNonNull(imm).toggleSoftInput(InputMethodManager.RESULT_UNCHANGED_SHOWN, 0);
                 }, 250);
             }
 

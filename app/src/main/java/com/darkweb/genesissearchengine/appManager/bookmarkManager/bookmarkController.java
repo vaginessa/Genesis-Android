@@ -8,11 +8,9 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.darkweb.genesissearchengine.appManager.activityContextManager;
 import com.darkweb.genesissearchengine.appManager.databaseManager.databaseController;
 import com.darkweb.genesissearchengine.appManager.homeManager.homeController;
@@ -25,9 +23,9 @@ import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.darkweb.genesissearchengine.helperManager.helperMethod;
 import com.darkweb.genesissearchengine.pluginManager.pluginController;
 import com.example.myapplication.R;
-
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class bookmarkController extends AppCompatActivity
 {
@@ -70,7 +68,7 @@ public class bookmarkController extends AppCompatActivity
         mListView = findViewById(R.id.listview);
         mClearButton = findViewById(R.id.clearButton);
         mBookmarkViewController = new bookmarkViewController(mEmptyListNotifier, mSearchBar, mListView, mClearButton,this);
-        mClearButton.setText("CLEAR BOOKMARK");
+        mClearButton.setText(strings.CLEAR_BOOKMARK);
     }
     public void initializeList(){
         bookmarkAdapter adapter = new bookmarkAdapter(mListModel.getList(),new adapterCallback());
@@ -108,7 +106,7 @@ public class bookmarkController extends AppCompatActivity
             @Override
             public void afterTextChanged(Editable editable)
             {
-                ((bookmarkAdapter) mListView.getAdapter()).setFilter(mSearchBar.getText().toString());
+                ((bookmarkAdapter) Objects.requireNonNull(mListView.getAdapter())).setFilter(mSearchBar.getText().toString());
                 ((bookmarkAdapter) mListView.getAdapter()).invokeFilter(true);
             }
         });
@@ -122,7 +120,7 @@ public class bookmarkController extends AppCompatActivity
     }
     public void onclearData(){
         mListModel.clearList();
-        ((bookmarkAdapter) mListView.getAdapter()).invokeFilter(true );
+        ((bookmarkAdapter) Objects.requireNonNull(mListView.getAdapter())).invokeFilter(true );
         mBookmarkViewController.clearList();
         databaseController.getInstance().execSQL("delete from bookmark where 1",null);
     }
@@ -140,7 +138,7 @@ public class bookmarkController extends AppCompatActivity
     @Override
     public void onResume()
     {
-        status.sCurrentActivity = this;
+        activityContextManager.getInstance().setCurrentActivity(this);
         status.sIsAppPaused = false;
         super.onResume();
     }

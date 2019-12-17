@@ -6,7 +6,7 @@
         <item name="colorPrimary">#3385ff</item>
         <item name="colorPrimaryDark">#3385ff</item>
         <item name="colorAccent">#3385ff</item>
-        <item name="android:windowBackground">@xml/splash_gradient</item>
+        <item name="android:windowBackground">@xml/sc_splash_gradient</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:popupAnimationStyle">@null</item>
     </style>

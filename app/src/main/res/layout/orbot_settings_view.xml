@@ -145,7 +145,7 @@
                     android:paddingTop="12dp"
                     android:layout_marginTop="10dp"
                     android:paddingBottom="12dp"
-                    android:background="@xml/rounded_corner_warning"
+                    android:background="@xml/sc_rounded_corner_warning"
                     android:orientation="vertical"
                     android:layout_height="wrap_content">
                 <TextView

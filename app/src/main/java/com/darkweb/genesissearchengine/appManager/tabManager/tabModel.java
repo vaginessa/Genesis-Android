@@ -26,8 +26,5 @@ class tabModel
     void onManualClear(int index){
          removeFromMainList(index);
     }
-    void clearList(){
-        mModelList.clear();
-    }
 
 }

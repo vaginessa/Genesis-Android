@@ -60,10 +60,7 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.listVi
 
     private void setItemViewOnClickListener(View itemView, String url)
     {
-        itemView.setOnClickListener(v ->
-        {
-            event.invokeObserver(Collections.singletonList(url),enums.etype.url_triggered);
-        });
+        itemView.setOnClickListener(v ->event.invokeObserver(Collections.singletonList(url),enums.etype.url_triggered));
     }
 
     private void clearMessageItem(ImageButton clearButton, int index)

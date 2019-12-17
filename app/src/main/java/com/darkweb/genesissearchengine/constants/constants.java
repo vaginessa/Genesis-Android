@@ -52,5 +52,4 @@ public class constants
     public static final String UNIQUE_KEY_ID = "*PREF_UNIQUE_ID";
     public static final String USER_EMAIL = "user@fabric.io";
 
-
 }

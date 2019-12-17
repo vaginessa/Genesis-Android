@@ -3,15 +3,11 @@ package com.darkweb.genesissearchengine.appManager.databaseManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.darkweb.genesissearchengine.appManager.bookmarkManager.bookmarkRowModel;
 import com.darkweb.genesissearchengine.appManager.historyManager.historyRowModel;
 import com.darkweb.genesissearchengine.constants.constants;
-
 import java.util.ArrayList;
-
 import static android.content.Context.MODE_PRIVATE;
 
 public class databaseController
@@ -86,24 +82,6 @@ public class databaseController
     public int getLargestHistoryID(){
         int id = 0;
         Cursor c = mDatabaseInstance.rawQuery("SELECT max(id) FROM history", null);
-
-        if (c.moveToFirst()){
-            do {
-                if(c.getString(0)==null){
-                    break;
-                }
-                id = Integer.parseInt(c.getString(0));
-                break;
-            } while(c.moveToNext());
-        }
-        c.close();
-
-        return  id;
-    }
-
-    public int getHistorySize(){
-        int id = 0;
-        Cursor c = mDatabaseInstance.rawQuery("SELECT count(*) FROM history", null);
 
         if (c.moveToFirst()){
             do {

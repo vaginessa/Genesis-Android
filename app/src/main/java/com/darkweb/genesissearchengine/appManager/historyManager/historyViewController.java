@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.darkweb.genesissearchengine.constants.strings;
 import com.example.myapplication.R;
 
+import java.util.Objects;
+
 class historyViewController
 {
     /*Private Variables*/
@@ -70,23 +72,19 @@ class historyViewController
     }
 
     void updateList(){
-        int index = mListView.getAdapter().getItemCount()-1;
+        int index = Objects.requireNonNull(mListView.getAdapter()).getItemCount()-1;
         mListView.getAdapter().notifyDataSetChanged();
         mListView.scrollToPosition(index);
     }
 
     void removeFromList(int index)
     {
-        mListView.getAdapter().notifyItemRemoved(index);
+        Objects.requireNonNull(mListView.getAdapter()).notifyItemRemoved(index);
         mListView.getAdapter().notifyItemRangeChanged(index, mListView.getAdapter().getItemCount());
     }
 
-    void scrollToBottom(){
-        mListView.scrollToPosition(mListView.getAdapter().getItemCount()-1);
-    }
-
     void clearList(){
-        mListView.getAdapter().notifyDataSetChanged();
+        Objects.requireNonNull(mListView.getAdapter()).notifyDataSetChanged();
         updateIfListEmpty(mListView.getAdapter().getItemCount(),300);
         mSearchBar.clearFocus();
         mSearchBar.setText(strings.EMPTY_STR);

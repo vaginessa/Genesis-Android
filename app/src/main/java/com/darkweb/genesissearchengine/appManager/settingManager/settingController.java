@@ -6,9 +6,7 @@ import android.widget.AdapterView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.darkweb.genesissearchengine.appManager.activityContextManager;
 import com.darkweb.genesissearchengine.appManager.homeManager.homeController;
 import com.darkweb.genesissearchengine.constants.constants;
@@ -20,11 +18,7 @@ import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.darkweb.genesissearchengine.pluginManager.pluginController;
 import com.example.myapplication.R;
-
-import org.torproject.android.service.wrapper.orbotLocalConstants;
-
 import java.util.List;
-
 import static com.darkweb.genesissearchengine.constants.status.sCookieStatus;
 import static com.darkweb.genesissearchengine.constants.status.sHistoryStatus;
 import static com.darkweb.genesissearchengine.constants.status.sJavaStatus;
@@ -87,8 +81,7 @@ public class settingController extends AppCompatActivity
         mCookies = findViewById(R.id.cookies_manager);
         mNotification = findViewById(R.id.notification_manager);
 
-        String currentSearchEngine = dataController.getInstance().getString(keys.SEARCH_ENGINE, strings.DARK_WEB);
-        mSettingViewController = new settingViewController(mSearch, mJavascript, mHistory, mFontSize, mFontAdjustable, mFontSizePercentage,this, new settingModelCallback(),this, mCookies,mNotification,pluginController.getInstance().getNotificationStatus());
+        mSettingViewController = new settingViewController(mSearch, mJavascript, mHistory, mFontSize, mFontAdjustable, mFontSizePercentage,this, new settingModelCallback(), mCookies,mNotification,pluginController.getInstance().getNotificationStatus());
     }
 
     public void listenersInitializations()
@@ -117,7 +110,7 @@ public class settingController extends AppCompatActivity
     @Override
     public void onResume()
     {
-        status.sCurrentActivity = this;
+        activityContextManager.getInstance().setCurrentActivity(this);
         status.sIsAppPaused = false;
         super.onResume();
     }
@@ -175,8 +168,7 @@ public class settingController extends AppCompatActivity
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 float cur_progress = seekBar.getProgress();
-                float progress = (cur_progress);
-                mSettingModel.setFontSize(progress);
+                mSettingModel.setFontSize((cur_progress));
                 mSettingViewController.updatePercentage(mFontSize.getProgress());
                 if(cur_progress<1){
                     mFontSize.setProgress(1);

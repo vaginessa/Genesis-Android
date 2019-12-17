@@ -5,7 +5,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="15dp"
         android:paddingBottom="16dp"
-        android:background="@xml/border_set"
+        android:background="@xml/sc_border"
 >
 
     <LinearLayout
