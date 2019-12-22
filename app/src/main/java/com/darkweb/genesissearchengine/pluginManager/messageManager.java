@@ -17,6 +17,7 @@ import com.darkweb.genesissearchengine.constants.enums;
 import com.darkweb.genesissearchengine.constants.status;
 import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
+import com.darkweb.genesissearchengine.helperManager.helperMethod;
 import com.example.myapplication.R;
 import java.io.File;
 import java.util.Collections;
@@ -119,8 +120,11 @@ class messageManager
                 .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .setMessage(strings.RATE_SUCCESS_DESC)
-                .addButton(strings.RATE_SUCCESS_BT_1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.END, (tempDialog, which) ->
-                        tempDialog.dismiss());
+                .addButton(strings.RATE_SUCCESS_BT_1, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.END, (tempDialog, which) ->
+                {
+                    helperMethod.sendRateEmail(app_context);
+                    tempDialog.dismiss();
+                });
     }
 
     private void reportedSuccessfully()
@@ -237,13 +241,14 @@ class messageManager
 
                 });
 
+
     }
 
     private void rateApp()
     {
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.ALERT)
                 .setTitle(strings.RATE_TITLE)
-                .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
+                .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha_v1))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
                 .onDismissListener(dialog -> is_popup_open = false)
                 .setMessage(strings.RATE_MESSAGE)

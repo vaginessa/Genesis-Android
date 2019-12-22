@@ -41,8 +41,8 @@ public class strings
     public static final String RATE_NEGATIVE = "Don't Like This App";
 
     public static final String RATE_SUCCESS_TITLE = "Sorry To Hear That!";
-    public static final String RATE_SUCCESS_DESC = "If you are having any trouble and want to contact us please email us at gamesolstudios@gmail.com \n\nWe will try to solve your problem as soon as possible";
-    public static final String RATE_SUCCESS_BT_1 = "Dismiss";
+    public static final String RATE_SUCCESS_DESC = "If you are having any trouble and want to contact us please email us at gamesolstudios@gmail.com We will try to solve your problem as soon as possible";
+    public static final String RATE_SUCCESS_BT_1 = "Send Mail";
 
     public static final String BOOKMARK_URL_BT_1 = "Bookmark";
     public static final String BOOKMARK_URL_BT_2 = "Dismiss";
@@ -95,6 +95,7 @@ public class strings
 
     public static final String DARK_WEB = "Hidden Web";
     public static final String EMPTY_STR = "";
+    public static final String EMPTY_SPACE = " ";
 
     /*Settings Manager*/
 

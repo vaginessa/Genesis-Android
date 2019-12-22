@@ -44,7 +44,7 @@ class orbotManager
     }
 
     int getNotificationStatus(){
-        return orbotLocalConstants.sNotificationStatus;
+        return 0;//orbotLocalConstants.sNotificationStatus;
     }
     void initNotification(int status){
         orbotLocalConstants.sNotificationStatus = status;

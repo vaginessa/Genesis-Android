@@ -70,7 +70,7 @@
                             android:layout_weight="40"
                             android:layout_marginTop="10dp"
                             android:layout_marginStart="20dp"
-                            android:text="@string/basic_settings"
+                            android:text="@string/settings_basic_settings"
                             />
                 </LinearLayout>
 
@@ -195,7 +195,7 @@
                             android:popupBackground="@android:color/white"
                             android:overlapAnchor="false"
                             android:popupElevation="3dp"
-                            />
+                            tools:ignore="RtlHardcoded" />
                     <ImageView android:layout_width="15dp" android:layout_height="15dp"
                             android:layout_marginEnd="35dp"
                             android:layout_marginStart="-26dp"
@@ -238,7 +238,7 @@
                             android:popupBackground="@android:color/white"
                             android:overlapAnchor="false"
                             android:popupElevation="3dp"
-                            />
+                            tools:ignore="RtlHardcoded" />
                     <ImageView android:layout_width="15dp" android:layout_height="15dp"
                             android:layout_marginEnd="35dp"
                             android:layout_marginStart="-26dp"
@@ -283,7 +283,7 @@
                             android:layout_weight="40"
                             android:layout_marginTop="10dp"
                             android:layout_marginStart="20dp"
-                            android:text="@string/adjust_font"
+                            android:text="@string/settings_adjust_font"
                             />
                     <SeekBar
                             android:id="@+id/font_size"
@@ -296,7 +296,7 @@
                             android:layout_marginEnd="18dp"
                             android:layout_weight="1"
                             android:paddingRight="30dp"
-                            />
+                            tools:ignore="RtlHardcoded,RtlSymmetry" />
 
                 </LinearLayout>
 
@@ -313,7 +313,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="40"
                             android:layout_marginStart="20dp"
-                            android:text="@string/manual_font"
+                            android:text="@string/settings_manual_font"
                             />
                     <Spinner
                             android:id="@+id/font_adjustable"
@@ -334,7 +334,7 @@
                             android:popupBackground="@android:color/white"
                             android:overlapAnchor="false"
                             android:popupElevation="3dp"
-                            />
+                            tools:ignore="RtlHardcoded" />
                     <ImageView android:layout_width="15dp" android:layout_height="15dp"
                             android:layout_marginEnd="35dp"
                             android:layout_marginStart="-26dp"
@@ -376,7 +376,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="40"
                             android:layout_marginStart="20dp"
-                            android:text="@string/cookie"
+                            android:text="@string/settings_cookie"
                             />
                     <Spinner
                             android:id="@+id/cookies_manager"
@@ -397,7 +397,7 @@
                             android:popupBackground="@android:color/white"
                             android:overlapAnchor="false"
                             android:popupElevation="3dp"
-                            />
+                            tools:ignore="RtlHardcoded" />
                     <ImageView android:layout_width="15dp" android:layout_height="15dp"
                             android:layout_marginEnd="35dp"
                             android:layout_marginStart="-26dp"

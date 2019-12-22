@@ -81,7 +81,7 @@
                         android:layout_height="35dp"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="7.5dp"
-                        android:text="1"
+                        android:text="@string/home_tab_text"
                         android:layout_marginBottom="0dp"
                         android:background="@xml/sc_generic_input"
                         android:contentDescription="@string/todo"
@@ -202,7 +202,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="@string/todo" />
 
             <Button
                     android:id="@+id/Connect"
@@ -211,7 +212,7 @@
                     android:layout_marginStart="53dp"
                     android:background="@xml/sc_rounded_corner"
                     android:onClick="onStartApplication"
-                    android:text="Connect"
+                    android:text="@string/home_connect"
                     app:layout_constraintBottom_toBottomOf="@+id/imageView_loading_back"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -229,7 +230,8 @@
                     android:tint="@color/black"
 
                     app:layout_constraintBottom_toTopOf="@+id/loadingText"
-                    app:layout_constraintEnd_toStartOf="@+id/Connect" />
+                    app:layout_constraintEnd_toStartOf="@+id/Connect"
+                    android:contentDescription="@string/todo" />
 
             <TextView
                     android:id="@+id/loadingText"
@@ -241,7 +243,7 @@
                     android:ellipsize="end"
                     android:gravity="center"
                     android:singleLine="true"
-                    android:text="Loading Please Wait"
+                    android:text="@string/home_loading"
                     android:textAlignment="center"
                     android:textColor="@color/white"
                     android:textFontWeight="5"
@@ -249,7 +251,8 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:ignore="UnusedAttribute" />
 
             <ImageView
                     android:id="@+id/imageView_loading_back"
@@ -260,21 +263,8 @@
                     app:layout_constraintBottom_toTopOf="@+id/loadingText"
                     app:layout_constraintEnd_toStartOf="@+id/backsplash"
                     app:layout_constraintStart_toEndOf="@+id/backsplash"
-                    app:srcCompat="@drawable/icon_loading" />
-
-            <!--<ImageButton
-                    android:id="@+id/gateway_splash_"
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:layout_marginTop="14dp"
-                    android:layout_marginEnd="14dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/todo"
-                    android:padding="5dp"
-                    android:scaleType="fitCenter"
-                    android:src="@xml/ic_gateway_splash"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />-->
+                    app:srcCompat="@drawable/icon_loading"
+                    android:contentDescription="@string/todo" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
@@ -292,6 +282,7 @@
             android:clickable="true" app:srcCompat="?attr/actionModeSelectAllDrawable"
             android:id="@+id/floatingActionButton3" app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginBottom="24dp"
-            android:layout_marginEnd="24dp"/>
+            android:layout_marginEnd="24dp"
+            android:focusable="true" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

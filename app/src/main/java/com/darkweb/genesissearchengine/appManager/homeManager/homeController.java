@@ -42,8 +42,14 @@ import com.darkweb.genesissearchengine.helperManager.helperMethod;
 import com.darkweb.genesissearchengine.pluginManager.pluginController;
 import com.example.myapplication.R;
 import com.google.android.gms.ads.AdView;
+
+import org.mozilla.geckoview.ContentBlocking;
+import org.mozilla.geckoview.GeckoRuntime;
+import org.mozilla.geckoview.GeckoRuntimeSettings;
+import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoView;
 import org.torproject.android.service.util.Prefs;
+//import org.torproject.android.service.util.Prefs;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -83,16 +89,17 @@ public class homeController extends AppCompatActivity implements ComponentCallba
 
     /*-------------------------------------------------------INITIALIZATION-------------------------------------------------------*/
 
+    GeckoRuntime geckoRuntime2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_view);
 
-        /*INCOMPLETE FILL ME*/
         Prefs.setContext(this);
 
-        if(helperMethod.isBuildValid())
+        if(1==1 || helperMethod.isBuildValid())
         {
             setContentView(R.layout.home_view);
 
@@ -113,7 +120,8 @@ public class homeController extends AppCompatActivity implements ComponentCallba
         }
         else
         {
-            initializeAppModel();
+            GeckoSession session = new GeckoSession();
+            GeckoRuntime runtime = GeckoRuntime.create(this);
             setContentView(R.layout.invalid_setup_view);
         }
     }
@@ -608,7 +616,9 @@ public class homeController extends AppCompatActivity implements ComponentCallba
             }
             else if (menuId == R.id.menu2)
             {
-                helperMethod.rateApp(homeController.this);
+                dataController.getInstance().setBool(keys.IS_APP_RATED,true);
+                status.sIsAppRated = true;
+                pluginController.getInstance().MessageManagerHandler(activityContextManager.getInstance().getHomeController(), Collections.singletonList(strings.EMPTY_STR), enums.etype.rate_app);
             }
             else if (menuId == R.id.menu1)
             {
@@ -705,8 +715,11 @@ public class homeController extends AppCompatActivity implements ComponentCallba
                 }
             }
             else if(e_type.equals(enums.etype.rate_application)){
-                dataController.getInstance().setBool(keys.IS_APP_RATED,true);
-                pluginController.getInstance().MessageManagerHandler(activityContextManager.getInstance().getHomeController(), Collections.singletonList(strings.EMPTY_STR), enums.etype.rate_app);
+                if(!status.sIsAppRated){
+                    dataController.getInstance().setBool(keys.IS_APP_RATED,true);
+                    status.sIsAppRated = true;
+                    pluginController.getInstance().MessageManagerHandler(activityContextManager.getInstance().getHomeController(), Collections.singletonList(strings.EMPTY_STR), enums.etype.rate_app);
+                }
             }
             else if(e_type.equals(enums.etype.on_load_error)){
                 mHomeViewController.onPageFinished();

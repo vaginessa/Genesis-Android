@@ -19,7 +19,7 @@
 
         <TextView
                 android:id="@+id/hintCompletionTitle"
-                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp"
                 android:clickable="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -29,11 +29,11 @@
                 android:singleLine="true"
                 android:textSize="14sp"
                 android:ellipsize="end"
-                android:text="BBC | Israel Strikes Again" />
+                android:text="@string/hint_default_suggession" />
 
         <TextView
                 android:id="@+id/hintCompletionUrl"
-                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp"
                 android:clickable="false"
                 android:layout_width="wrap_content"
                 android:singleLine="true"
@@ -43,21 +43,7 @@
                 android:paddingRight="10dp"
                 android:textColor="@color/holo_dark_gray"
                 android:textSize="12.5sp"
-                android:text="BBC | Israel Strikes Again" />
-
-        <!--<Button
-                    android:id="@+id/hintCompletionHeader"
-                    android:background="@color/clear_alpha"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:singleLine="true"
-                    android:textAllCaps="false"
-                    android:textAlignment="viewStart"
-                    android:textStyle="normal"
-                    android:textColor="@color/text_color_v1"
-                    android:textSize="15.5sp"/>-->
+                android:text="@string/hint_default_suggession" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -10,7 +10,7 @@ import com.darkweb.genesissearchengine.constants.strings;
 import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.darkweb.genesissearchengine.helperManager.helperMethod;
-import org.torproject.android.service.wrapper.orbotLocalConstants;
+//import org.torproject.android.service.wrapper.orbotLocalConstants;
 import java.util.Collections;
 import java.util.List;
 
@@ -70,10 +70,12 @@ public class pluginController
         return mIsInitialized;
     }
     void proxyManagerExitInvoke(){
-        mHomeController.onClose();
-        orbotManager.getInstance().onClose();
-        onResetMessage();
-        System.exit(1);
+        if(mHomeController!=null){
+            mHomeController.onClose();
+            orbotManager.getInstance().onClose();
+            onResetMessage();
+            System.exit(1);
+        }
     }
 
     /*---------------------------------------------- EXTERNAL REQUEST LISTENER-------------------------------------------------------*/
@@ -83,7 +85,9 @@ public class pluginController
         mMessageManager.createMessage(app_context,data,type);
     }
     public void onResetMessage(){
-        mMessageManager.onReset();
+        if(mMessageManager!=null){
+            mMessageManager.onReset();
+        }
     }
 
     /*Firebase Manager*/
@@ -227,7 +231,7 @@ public class pluginController
                 mHomeController.onManualDownload(data.get(0).toString());
             }
             else if(event_type.equals(enums.etype.connect_vpn)){
-                orbotLocalConstants.sIsTorInitialized = (boolean)data.get(0);
+                //orbotLocalConstants.sIsTorInitialized = (boolean)data.get(0);
             }
             else if(event_type.equals(enums.etype.open_link_new_tab)){
                 mHomeController.onOpenLinkNewTab(data.get(0).toString());

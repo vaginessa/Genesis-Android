@@ -1,5 +1,6 @@
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,7 +17,8 @@
             android:paddingEnd="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_weight="4"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            tools:ignore="RtlSymmetry">
 
         <TextView
                 android:id="@+id/mHeader"
@@ -46,7 +48,7 @@
             android:layout_height="35dp"
             android:paddingTop="3dp"
             android:paddingBottom="3dp"
-            android:paddingRight="3dp"
+            android:paddingEnd="3dp"
             android:layout_marginEnd="10dp"
             android:layout_marginTop="5dp"
             android:id="@+id/message_button"
@@ -55,7 +57,8 @@
             android:tint="@color/black"
             android:src="@drawable/cancel"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/todo"/>
+            android:contentDescription="@string/todo"
+            tools:ignore="RtlSymmetry" />
 
 
 

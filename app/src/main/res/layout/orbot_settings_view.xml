@@ -1,5 +1,4 @@
-<androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,7 +12,7 @@
                 android:background="@color/white"
                 android:orientation="vertical"
                 android:paddingBottom="50dp"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
             <!-- Title Header -->
             <LinearLayout
@@ -70,7 +69,7 @@
                         android:layout_weight="40"
                         android:layout_marginTop="10dp"
                         android:layout_marginStart="20dp"
-                        android:text="@string/basic_settings"
+                        android:text="@string/settings_basic_settings"
                         />
             </LinearLayout>
 
@@ -114,13 +113,14 @@
                     android:layout_width="match_parent"
                     android:background="@color/clear_alpha"
                     android:layout_marginEnd = "10dp"
-                    android:paddingRight="10dp"
+                    android:paddingEnd="10dp"
                     android:layout_marginBottom="0dp"
                     android:layout_marginTop="-12dp"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
                     android:orientation="horizontal"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    tools:ignore="RtlSymmetry">
                 <TextView
                         android:textSize="16sp"
                         android:layout_width="0dp"
@@ -135,7 +135,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="40"
-                        android:text="Enable Bridges" />
+                        android:text="@string/orbot_settings_bridges" />
             </LinearLayout>
 
             <LinearLayout
@@ -151,12 +151,12 @@
                 <TextView
                         android:textSize="18sp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="0dp"
                         android:layout_weight="40"
                         android:layout_marginStart="8dp"
                         android:textColor="#595959"
                         android:textStyle="bold"
-                        android:text="⚠️ Warning"
+                        android:text="@string/orbot_settings_warning"
                         />
                 <TextView
                         android:textSize="16sp"
@@ -165,9 +165,9 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:textColor="@color/holo_dark_gray"
-                        android:paddingRight="8dp"
-                        android:text="@string/warning_slow_speed"
-                        />
+                        android:paddingEnd="8dp"
+                        android:text="@string/orbot_option_warning_slow_speed"
+                        tools:ignore="RtlSymmetry" />
             </LinearLayout>
 
 

@@ -22,70 +22,88 @@ repositories {
 
 
 android {
-    compileSdkVersion project.ext.compileSdkVersion
-
-   defaultConfig {
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
+    defaultConfig {
         applicationId project.ext.applicationId
-        minSdkVersion project.ext.minSdkVersion
-        targetSdkVersion project.ext.targetSdkVersion
-        versionCode project.ext.versionCode
-        versionName project.ext.versionName
-    }
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 11 // This versionCode is "frozen" for local builds. For "release" builds we
+        // override this with a generated versionCode at build time.
+        versionName "8.0.24"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-    flavorDimensions "abi"
+        multiDexEnabled true
+    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-
-    flavorDimensions project.ext.dimen
-
-    productFlavors {
-        arm {
-            versionCode project.ext.arm_vcode
-            versionName project.ext.arm_vname
-            dimension project.ext.dimen
-        }
-        aarch64 {
-            versionCode project.ext.aarch_vcode
-            versionName project.ext.aarch_vname
-            dimension project.ext.dimen
-        }
-        x86 {
-            versionCode project.ext.x86_vcode
-            versionName project.ext.x86_vname
-            dimension project.ext.dimen
-        }
-        x86_64 {
-            versionCode project.ext.x64_vcode
-            versionName project.ext.x64_vname
-            dimension project.ext.dimen
-        }
+    dexOptions {
+        preDexLibraries true
     }
 
+    lintOptions {
+        lintConfig file("lint.xml")
+    }
+
+    // We have a three dimensional build configuration:
+    // BUILD TYPE (debug, release) X PRODUCT FLAVOR (focus, klar) X ARCHITECTURE (x86, arm, aarch64)
 
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        splits {
-            abi {
-                enable true
-                reset()
-                include 'arm64-v8a'
-                include 'x86'
-                include 'armeabi-v7a'
-                include 'x86_64'
+        nightly {
+            initWith release
+        }
+    }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 
-                universalApk false
+    flavorDimensions "abi"
+
+    productFlavors {
+        arm {
+            dimension "abi"
+            ndk {
+                abiFilters "armeabi", "armeabi-v7a", "x86"
+            }
+        }
+        aarch64 {
+            dimension "abi"
+            ndk {
+                abiFilters "armeabi", "armeabi-v7a", "x86"
+            }
+        }
+        x86 {
+            dimension "abi"
+            ndk {
+                abiFilters "armeabi", "armeabi-v7a", "x86"
             }
         }
     }
+
+    sourceSets {
+        test {
+            resources {
+                // Make the default asset folder available as test resource folder. Robolectric seems
+                // to fail to read assets for our setup. With this we can just read the files directly
+                // and do not need to rely on Robolectric.
+                srcDir "${projectDir}/src/main/assets/"
+            }
+        }
+
+    }
 }
+
 
 dependencies {
 
@@ -100,10 +118,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
 
     /*Firefox ABI Splits*/
-    x86Implementation     "org.mozilla.geckoview:geckoview-${geckoviewChannel}:${geckoviewVersion}"
-    x86_64Implementation  "org.mozilla.geckoview:geckoview-${geckoviewChannel}:${geckoviewVersion}"
-    armImplementation     "org.mozilla.geckoview:geckoview-${geckoviewChannel}:${geckoviewVersion}"
-    aarch64Implementation "org.mozilla.geckoview:geckoview-${geckoviewChannel}:${geckoviewVersion}"
+    implementation "org.mozilla.components:browser-engine-gecko-nightly:$mozilla_components_version"
+    implementation "org.mozilla.geckoview:geckoview-nightly:$gecko_nightly_version"
 
     /*Alert Dialog*/
     implementation 'com.crowdfire.cfalertdialog:cfalertdialog:1.1.0'

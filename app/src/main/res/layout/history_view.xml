@@ -18,7 +18,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="RtlHardcoded,UselessParent">
+            tools:ignore="RtlHardcoded,RtlSymmetry,UselessParent">
 
         <ImageButton
                 android:id="@+id/home"
@@ -103,7 +103,7 @@
                 android:layout_marginEnd="2dp"
                 android:stateListAnimator="@null"
 
-                android:text="Clear History"
+                android:text="@string/bookmark_clear_history"
                 android:textAlignment="center"
                 android:textColor="@color/white"
 
@@ -112,6 +112,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
+
         <ImageButton
                 android:id="@+id/load_more"
                 android:layout_width="wrap_content"
@@ -132,7 +133,8 @@
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                android:contentDescription="@string/todo" />
 
 
     </LinearLayout>

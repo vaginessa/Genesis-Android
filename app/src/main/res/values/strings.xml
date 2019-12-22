@@ -14,41 +14,65 @@
     <string name="title_activity_list_manager" translatable="false">list_manager</string>
     <string name="title_activity_setting_controller" translatable="false">Settings</string>
     <string name="file_provider_authority" translatable="false">com.darkweb.genesissearchengine.fileprovider</string>
+
     <!-- Preference Titles -->
-    <string name="messages_header" translatable="false">Messages</string>
-    <string name="sync_header" translatable="false">Sync</string>
+    <string name="preferences_messages_header" translatable="false">Messages</string>
+    <string name="preferences_sync_header" translatable="false">Sync</string>
 
     <!-- Messages Preferences -->
-    <string name="signature_title" translatable="false">Your signature</string>
-    <string name="reply_title" translatable="false">Default reply action</string>
+    <string name="messages_signature_title" translatable="false">Your signature</string>
+    <string name="messages_reply_title" translatable="false">Default reply action</string>
 
     <!-- Settings -->
-    <string name="basic_settings" translatable="false">Basic Settings</string>
+    <string name="settings_basic_settings" translatable="false">Basic Settings</string>
     <string name="settings_header" translatable="false">Settings</string>
     <string name="settings_search_engine" translatable="false">Search Engine</string>
     <string name="settings_javascript" translatable="false">Javascript</string>
     <string name="settings_clear_history" translatable="false">Auto Clear History</string>
     <string name="settings_font_title" translatable="false">Font Settings</string>
-    <string name="adjust_font" translatable="false">Customized Font</string>
-    <string name="manual_font" translatable="false">Auto Adjust Font</string>
+    <string name="settings_adjust_font" translatable="false">Customized Font</string>
+    <string name="settings_manual_font" translatable="false">Auto Adjust Font</string>
     <string name="settings_cookies" translatable="false">Cookie Settings</string>
-    <string name="cookie" translatable="false">Cookies</string>
+    <string name="settings_cookie" translatable="false">Cookies</string>
     <string name="settings_notification" translatable="false">Manage Notification</string>
 
     <!-- List View -->
     <string name="listview_clear" translatable="false">Clear</string>
+
+    <!-- Orbot Settings -->
+    <string name="orbot_settings_warning" translatable="false">⚠️ Warning</string>
+    <string name="orbot_settings_bridges" translatable="false">Enable Bridges</string>
 
     <!-- Orbot View -->
     <string name="orbot_header" translatable="false">Proxy Settings</string>
     <string name="orbot_desc" translatable="false">Genesis Browser connects you to the Tor Network run by thousands of volunteers around the world! Can these options help you</string>
     <string name="orbot_option_title" translatable="false">Internet is censored here</string>
     <string name="orbot_option_desc" translatable="false">Bypass Firewall</string>
-    <string name="warning_slow_speed" translatable="false">Bridges causes internet to run very slow. Use them only if internet is censored in your country or Tor network is blocked</string>
+    <string name="orbot_option_warning_slow_speed" translatable="false">Bridges causes internet to run very slow. Use them only if internet is censored in your country or Tor network is blocked</string>
 
     <!-- Splash -->
     <string name="gateway_info" translatable="false">Enable Gateway</string>
     <string name="gateway_button" translatable="false">Enable Gateway</string>
-    <string name="loading_please_wait" translatable="false">Loading Please Wait</string>
+    <string name="gateway_loading_please_wait" translatable="false">Loading Please Wait</string>
+
+    <!-- Bookmark -->
+    <string name="bookmark_clear_history" translatable="false">Clear History</string>
+
+    <!-- Hint View -->
+    <string name="hint_default_suggession" translatable="false">BBC | Israel Strikes Again</string>
+
+    <!-- Notification Menu -->
+    <string name="notification_default_label" translatable="false">default.jpg</string>
+    <string name="notification_open_text" translatable="false">Open</string>
+
+    <!-- Tab View -->
+    <string name="tab_view_increment" translatable="false">+1</string>
+    <string name="tab_view_search_tab" translatable="false">Search Tabs</string>
+
+    <!-- Home View -->
+    <string name="home_tab_text" translatable="false">1</string>
+    <string name="home_connect" translatable="false">Connect</string>
+    <string name="home_loading" translatable="false">Loading Please Wait</string>
 
     <string-array name="fonts">
         <item>55 Percent</item>

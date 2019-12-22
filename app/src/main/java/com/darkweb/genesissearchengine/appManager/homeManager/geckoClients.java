@@ -40,6 +40,7 @@ class geckoClients
 
         runtimeSettings(context);
 
+        mRuntime = GeckoRuntime.create(context.getApplicationContext());
         if(!isForced && geckoView.getSession()!=null && geckoView.getSession().isOpen()){
             mSession = (geckoSession) geckoView.getSession();
         }
@@ -58,7 +59,7 @@ class geckoClients
 
     private void runtimeSettings(AppCompatActivity context){
         if(mRuntime==null){
-            mRuntime = GeckoRuntime.getDefault(context);
+            mRuntime = GeckoRuntime.create(context);
             mRuntime.getSettings().getContentBlocking().setCookieBehavior(getCookiesBehaviour());
             mRuntime.getSettings().setAutomaticFontSizeAdjustment(status.sFontAdjustable);
         }
@@ -133,6 +134,9 @@ class geckoClients
     }
 
     Uri getUriPermission(){
+        if(mSession==null){
+            return null;
+        }
         return mSession.getUriPermission();
     }
 
@@ -183,11 +187,11 @@ class geckoClients
     }
 
     void onUpdateFont(){
-        float font = (status.sFontSize -100)/4+100;
-        mRuntime.getSettings().setAutomaticFontSizeAdjustment(status.sFontAdjustable);
-        if(!mRuntime.getSettings().getAutomaticFontSizeAdjustment()){
-            mRuntime.getSettings().setFontSizeFactor(font/100);
-        }
+        //float font = (status.sFontSize -100)/4+100;
+        //mRuntime.getSettings().setAutomaticFontSizeAdjustment(status.sFontAdjustable);
+        //if(!mRuntime.getSettings().getAutomaticFontSizeAdjustment()){
+        //    mRuntime.getSettings().setFontSizeFactor(font/100);
+        //}
     }
 
 

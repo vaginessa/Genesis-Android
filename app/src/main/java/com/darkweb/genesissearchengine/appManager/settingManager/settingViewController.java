@@ -88,6 +88,8 @@ class settingViewController
         mHistory.setDropDownHorizontalOffset(-15);
         mCookies.setDropDownVerticalOffset(15);
         mCookies.setDropDownHorizontalOffset(-15);
+        mFontAdjustable.setDropDownHorizontalOffset(-15);
+        mFontAdjustable.setDropDownVerticalOffset(15);
     }
 
     private void initJavascript()
@@ -163,6 +165,6 @@ class settingViewController
     @SuppressLint("SetTextI18n")
     void updatePercentage(int font_size){
 
-        mFontSizePercentage.setText(strings.CUSTOM_FONTS + strings.EMPTY_STR + font_size +strings.PERCENT_SIGN);
+        mFontSizePercentage.setText(strings.CUSTOM_FONTS + strings.EMPTY_SPACE + font_size +strings.PERCENT_SIGN);
     }
 }

@@ -53,16 +53,17 @@ public class geckoSession extends GeckoSession implements GeckoSession.Permissio
     private boolean mCanGoBack = false;
     private boolean mCanGoForward = false;
     private boolean mFullScreen = false;
+    private boolean isPageLoading = false;
     private int mProgress = 0;
     private String mCurrentTitle = strings.EMPTY_STR;
     private String mCurrentURL = "about:blank";
+    private Uri mUriPermission = null;
     private AppCompatActivity mContext;
     private geckoDownloadManager mDownloadManager;
-    private boolean isPageLoading = false;
-    private Uri mUriPermission = null;
 
     /*Temp Variables*/
     private GeckoSession.HistoryDelegate.HistoryList mHistoryList = null;
+    private int rateCount=0;
 
     geckoSession(eventObserver.eventListener event,int mSessionID,AppCompatActivity mContext){
 
@@ -180,6 +181,7 @@ public class geckoSession extends GeckoSession implements GeckoSession.Permissio
         }
         else {
             event.invokeObserver(Arrays.asList(var1.uri,mSessionID), enums.etype.start_proxy);
+            checkApplicationRate();
             return GeckoResult.fromValue(AllowOrDeny.ALLOW);
         }
     }
@@ -497,7 +499,7 @@ public class geckoSession extends GeckoSession implements GeckoSession.Permissio
     }
 
     boolean getFullScreenStatus(){
-        return mFullScreen;
+        return !mFullScreen;
     }
 
     public void closeSession(){
@@ -555,5 +557,12 @@ public class geckoSession extends GeckoSession implements GeckoSession.Permissio
     Uri getUriPermission(){
         return mUriPermission;
     }
+
+    private void checkApplicationRate(){
+        if(rateCount==7){
+            event.invokeObserver(Arrays.asList(mCurrentURL,mSessionID,mCurrentTitle), enums.etype.rate_application);
+        }
+        rateCount+=1;
+   }
 
 }

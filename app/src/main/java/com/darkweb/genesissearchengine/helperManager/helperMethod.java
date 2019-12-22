@@ -105,6 +105,18 @@ public class helperMethod
         }
     }
 
+    public static void sendRateEmail(Context context){
+        Intent i = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "gamesolstudios@gmail.com", null));
+        i.putExtra(Intent.EXTRA_SUBJECT, "Issue Report");
+        i.putExtra(Intent.EXTRA_TEXT   , "");
+        try {
+            if (i.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(i);
+            }
+        } catch (android.content.ActivityNotFoundException ignored) {
+        }
+    }
+
     public static void hideKeyboard(AppCompatActivity context) {
         View view = context.findViewById(android.R.id.content);
         if (view != null)
