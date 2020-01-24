@@ -16,6 +16,7 @@ public class strings
     public static final String ABI_ERROR_DESC = "Looks like you messed up the installation. Either Install it from playstore or follow the link";
     public static final String ABI_ERROR_BT_1 = "Local Upgrade";
     public static final String ABI_ERROR_BT_2 = "Playstore Upgrade";
+    public static final String ABI_ERROR_BT_3 = "Continue Anyway";
 
     public static final String REPORT_URL_TITLE = "Report This Website";
     public static final String REPORT_URL_DESC = "If you think url is illegal or disturbing report us so that we can update our database\n";
@@ -120,6 +121,8 @@ public class strings
     public static final String SETTINGS_OPENED = "SETTINGS_OPENED";
     public static final String URL_BOOKMARKED = "URL_BOOKMARKED";
     public static final String BOOKMARK_OPENED = "BOOKMARK_OPENED";
+    public static final String TAB_OPENED = "TAB_OPENED";
+    public static final String GATEWAY_OPENED = "GATEWAY_OPENED";
     public static final String HISTORY_OPENED = "HISTORY_OPENED";
     public static final String HISTORY_TRIGGERED = "HISTORY_TRIGGERED";
     public static final String BOOKMARK_TRIGGERED = "BOOKMARK_TRIGGERED";

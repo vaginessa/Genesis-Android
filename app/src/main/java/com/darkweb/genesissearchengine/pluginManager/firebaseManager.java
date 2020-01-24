@@ -5,14 +5,13 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
-import com.google.firebase.analytics.FirebaseAnalytics;
+import com.flurry.android.FlurryAgent;
 
 class firebaseManager
 {
     /*Private Variables*/
 
     private AppCompatActivity mAppContext;
-    private FirebaseAnalytics mFirebaseAnalytics;
 
     /*Initializations*/
 
@@ -24,17 +23,18 @@ class firebaseManager
 
     public void initialize()
     {
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(mAppContext.getApplicationContext());
+        new FlurryAgent.Builder()
+                .withLogEnabled(true)
+                .build(mAppContext, "BKFSCH4CRS6RB9HSCM9H");
     }
 
     /*Helper Methods*/
 
     void logEvent(String value)
     {
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, value);
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Custom");
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        if(FlurryAgent.isSessionActive()){
+            FlurryAgent.logEvent(value);
+        }
     }
 
 }

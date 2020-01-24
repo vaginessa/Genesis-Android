@@ -7,27 +7,12 @@
         android:background="@color/white"
         tools:context="com.darkweb.genesissearchengine.appManager.homeManager.homeController">
 
-    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/adView"
-            android:layout_width="395dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="56dp"
-            android:alpha="0"
-            android:background="@color/float_white"
-            ads:adSize="SMART_BANNER"
-            ads:adUnitId="ca-app-pub-5074525529134731/7816565677"
-            ads:layout_constraintEnd_toEndOf="parent"
-            ads:layout_constraintHorizontal_bias="0.5"
-            ads:layout_constraintStart_toStartOf="parent"
-            app:elevation="10dp"
-            ads:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
             android:id="@+id/webviewContainer"
             android:layout_width="match_parent"
             android:layout_marginTop="55dp"
+            android:background="@color/white"
             android:layout_height="match_parent">
 
         <org.mozilla.geckoview.GeckoView
@@ -35,6 +20,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="0dp"
+                android:background="@color/clear_alpha_white"
                 android:alpha="1"
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="8dp" >
@@ -75,19 +61,19 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:ignore="RtlHardcoded,UselessParent">
 
-                <Button
-                        android:id="@+id/newButtonInvoke"
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="7.5dp"
-                        android:text="@string/home_tab_text"
+                <ImageButton
+                        android:id="@+id/switchEngine"
+                        android:layout_width="39dp"
+                        android:layout_height="39dp"
+                        android:layout_marginStart="9dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="5dp"
                         android:layout_marginBottom="0dp"
-                        android:background="@xml/sc_generic_input"
+                        android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@string/todo"
+                        android:onClick="onSwitchSearch"
                         android:scaleType="fitCenter"
-                        android:onClick="onOpenTabView"
-                        android:tint="@color/black" />
+                        android:src="@drawable/google_logo" />
 
                 <AutoCompleteTextView
                         android:id="@+id/search"
@@ -116,35 +102,20 @@
                         android:textSize="16sp"
                         tools:targetApi="o" />
 
-                <ImageButton
-                        android:id="@+id/switchEngineBack"
-                        android:layout_width="37dp"
-                        android:layout_height="36.3dp"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="-34.5dp"
-                        android:clickable="false"
+                <Button
+                        android:id="@+id/newButtonInvoke"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/home_tab_text"
+                        android:textSize="12.5sp"
                         android:layout_marginBottom="0dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:background="@xml/sc_generic_tab_button"
                         android:contentDescription="@string/todo"
-                        android:onClick="onSwitchSearch"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/circle_back" />
-
-                <ImageButton
-                        android:id="@+id/switchEngine"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginStart="0dp"
-                        android:layout_marginTop="12dp"
-                        android:layout_marginEnd="6.5dp"
-                        android:layout_marginBottom="0dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="@string/todo"
-                        android:onClick="onSwitchSearch"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/google_logo" />
-
+                        android:onClick="onOpenTabView"
+                        android:tint="@color/black" />
 
                 <ImageButton
                         android:id="@+id/menu"
@@ -284,5 +255,22 @@
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginBottom="24dp"
             android:layout_marginEnd="24dp"
             android:focusable="true" />
+
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/adView"
+            android:layout_width="395dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="56dp"
+            android:alpha="0"
+            ads:adSize="SMART_BANNER"
+            ads:adUnitId="ca-app-pub-5074525529134731/7816565677"
+            ads:layout_constraintEnd_toEndOf="parent"
+            ads:layout_constraintHorizontal_bias="0.5"
+            ads:layout_constraintStart_toStartOf="parent"
+            app:elevation="10dp"
+            ads:layout_constraintTop_toTopOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

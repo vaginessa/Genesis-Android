@@ -778,7 +778,7 @@ final class geckoPromptView implements GeckoSession.PromptDelegate {
         final FilePrompt prompt = mFilePrompt;
         mFilePrompt = null;
 
-        if (resultCode != Activity.RESULT_OK || data == null) {
+        if (resultCode != Activity.RESULT_OK || data == null || data.getData()==null) {
             res.complete(prompt.dismiss());
             return;
         }
@@ -787,14 +787,11 @@ final class geckoPromptView implements GeckoSession.PromptDelegate {
 
         String filePath = null;
 
-        try
-        {
-            filePath = PathUtil.getPath(mActivity.getApplicationContext(),uri);
-        }
-        catch (URISyntaxException e)
-        {
-            filePath = "";
-            e.printStackTrace();
+        filePath = PathUtil.getPath(mActivity.getApplicationContext(),uri);
+
+        if (filePath==null) {
+            res.complete(prompt.dismiss());
+            return;
         }
 
         uri = Uri.parse("file://"+filePath);

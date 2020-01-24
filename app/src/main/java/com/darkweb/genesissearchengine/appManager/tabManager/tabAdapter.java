@@ -131,7 +131,13 @@ public class tabAdapter extends RecyclerView.Adapter<tabAdapter.listViewHolder>
                 heaaderText.setText(model.getSession().getTitle());
             }
 
-            descriptionText.setText(model.getSession().getCurrentURL());
+            /*Large file or content based url handling*/
+            String url = model.getSession().getCurrentURL();
+            if(url.length()>200){
+                url = url.substring(0,200);
+            }
+
+            descriptionText.setText(url);
             messageButton = itemView.findViewById(R.id.message_button);
             empty_message = itemView.findViewById(R.id.empty_list);
             data_model = model;

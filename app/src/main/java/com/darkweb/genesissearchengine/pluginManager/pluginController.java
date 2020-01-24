@@ -1,5 +1,6 @@
 package com.darkweb.genesissearchengine.pluginManager;
 
+import android.content.Context;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import com.darkweb.genesissearchengine.appManager.activityContextManager;
@@ -11,6 +12,8 @@ import com.darkweb.genesissearchengine.dataManager.dataController;
 import com.darkweb.genesissearchengine.helperManager.eventObserver;
 import com.darkweb.genesissearchengine.helperManager.helperMethod;
 //import org.torproject.android.service.wrapper.orbotLocalConstants;
+import org.torproject.android.service.wrapper.orbotLocalConstants;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -25,6 +28,7 @@ public class pluginController
     private messageManager mMessageManager;
     private activityContextManager mContextManager;
     private boolean mIsInitialized = false;
+    private boolean mIsServiceInitialized = false;
 
     /*Private Variables*/
 
@@ -43,6 +47,15 @@ public class pluginController
         mIsInitialized = true;
     }
 
+    public void initializeWithAbiError(){
+        mMessageManager = new messageManager(new messageCallback());
+        mIsInitialized = true;
+    }
+
+    public void preInitialize(homeController context){
+        mFabricManager = new fabricManager(context,new fabricCallback());
+    }
+
     private void instanceObjectInitialization()
     {
         mHomeController = activityContextManager.getInstance().getHomeController();
@@ -50,13 +63,12 @@ public class pluginController
 
         mAdManager = new adManager(getAppContext(),new admobCallback(), mHomeController.getBannerAd());
         mAnalyticManager = new analyticManager(getAppContext(),new analyticCallback());
-        getAppContext().startService(new Intent(getAppContext(), exitManager.class));
-        mFabricManager = new fabricManager(getAppContext(),new fabricCallback());
         mFirebaseManager = new firebaseManager(getAppContext(),new firebaseCallback());
         mMessageManager = new messageManager(new messageCallback());
+
     }
 
-    public void initializeAllProxies(AppCompatActivity context){
+    public void initializeAllServices(AppCompatActivity context){
         orbotManager.getInstance().initialize(context,new orbotCallback());
     }
 
@@ -66,16 +78,12 @@ public class pluginController
     {
         return mHomeController;
     }
+
     public boolean isInitialized(){
         return mIsInitialized;
     }
     void proxyManagerExitInvoke(){
-        if(mHomeController!=null){
-            mHomeController.onClose();
-            orbotManager.getInstance().onClose();
-            onResetMessage();
-            System.exit(1);
-        }
+
     }
 
     /*---------------------------------------------- EXTERNAL REQUEST LISTENER-------------------------------------------------------*/
@@ -92,7 +100,9 @@ public class pluginController
 
     /*Firebase Manager*/
     public void logEvent(String value){
-        mFirebaseManager.logEvent(value);
+        if(mFirebaseManager!=null){
+            mFirebaseManager.logEvent(value);
+        }
     }
 
     /*Ad Manager*/
@@ -190,6 +200,9 @@ public class pluginController
             }
             else if(event_type.equals(enums.etype.cancel_welcome)){
                 dataController.getInstance().setBool(keys.IS_WELCOME_ENABLED,false);
+            }
+            else if(event_type.equals(enums.etype.ignore_abi)){
+                mHomeController.ignoreAbiError();
             }
             else if(event_type.equals(enums.etype.reload)){
                 if(orbotManager.getInstance().isOrbotRunning())

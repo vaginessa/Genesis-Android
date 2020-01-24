@@ -88,9 +88,14 @@ public class geckoSession extends GeckoSession implements GeckoSession.Permissio
     void initURL(String url){
         isPageLoading = true;
         mCurrentURL = url;
-        mProgress=5;
+        mCurrentTitle = mCurrentURL;
+
         event.invokeObserver(Arrays.asList(mCurrentURL,mSessionID,mCurrentTitle), enums.etype.on_update_suggestion);
-        event.invokeObserver(Arrays.asList(5,mSessionID), enums.etype.progress_update);
+        if(!url.equals("about:blank"))
+        {
+            mProgress = 5;
+            event.invokeObserver(Arrays.asList(5, mSessionID), enums.etype.progress_update);
+        }
     }
 
     /*Progress Delegate*/
@@ -160,6 +165,7 @@ public class geckoSession extends GeckoSession implements GeckoSession.Permissio
             event.invokeObserver(Arrays.asList(mCurrentURL,mSessionID), enums.etype.start_proxy);
             event.invokeObserver(Arrays.asList(mCurrentURL,mSessionID), enums.etype.search_update);
             event.invokeObserver(Arrays.asList(null,mSessionID), enums.etype.on_page_loaded);
+            checkApplicationRate();
         }
     }
 
@@ -173,7 +179,7 @@ public class geckoSession extends GeckoSession implements GeckoSession.Permissio
             return GeckoResult.fromValue(AllowOrDeny.DENY);
         }
         else if(var1.uri.equals("about:blank")){
-            return GeckoResult.fromValue(AllowOrDeny.DENY);
+            return GeckoResult.fromValue(AllowOrDeny.ALLOW);
         }
         else if(var1.target==2){
             event.invokeObserver(Arrays.asList(var1.uri,mSessionID), enums.etype.open_new_tab);
@@ -181,7 +187,6 @@ public class geckoSession extends GeckoSession implements GeckoSession.Permissio
         }
         else {
             event.invokeObserver(Arrays.asList(var1.uri,mSessionID), enums.etype.start_proxy);
-            checkApplicationRate();
             return GeckoResult.fromValue(AllowOrDeny.ALLOW);
         }
     }

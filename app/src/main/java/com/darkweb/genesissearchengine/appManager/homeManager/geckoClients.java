@@ -1,7 +1,9 @@
 package com.darkweb.genesissearchengine.appManager.homeManager;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import com.darkweb.genesissearchengine.constants.*;
@@ -28,11 +30,8 @@ class geckoClients
     private eventObserver.eventListener event;
     private AppCompatActivity context;
 
-    /*Initializations*/
-
     void initialize(GeckoView geckoView, eventObserver.eventListener event, AppCompatActivity context, boolean isForced)
     {
-
         this.context = context;
         this.event = event;
         mGlobalSessionCounter+=1;
@@ -40,7 +39,6 @@ class geckoClients
 
         runtimeSettings(context);
 
-        mRuntime = GeckoRuntime.create(context.getApplicationContext());
         if(!isForced && geckoView.getSession()!=null && geckoView.getSession().isOpen()){
             mSession = (geckoSession) geckoView.getSession();
         }
@@ -52,6 +50,7 @@ class geckoClients
             mSession.getSettings().setAllowJavascript(status.sJavaStatus);
             geckoView.releaseSession();
             geckoView.setSession(mSession);
+
         }
         onUpdateFont();
 
@@ -59,7 +58,7 @@ class geckoClients
 
     private void runtimeSettings(AppCompatActivity context){
         if(mRuntime==null){
-            mRuntime = GeckoRuntime.create(context);
+            mRuntime = GeckoRuntime.getDefault(context);
             mRuntime.getSettings().getContentBlocking().setCookieBehavior(getCookiesBehaviour());
             mRuntime.getSettings().setAutomaticFontSizeAdjustment(status.sFontAdjustable);
         }
@@ -92,8 +91,6 @@ class geckoClients
             mSession.reload();
         }
     }
-
-    /*Helper Methods*/
 
     void onUploadRequest(int resultCode,Intent data){
         mSession.onFileUploadRequest(resultCode,data);
@@ -134,9 +131,6 @@ class geckoClients
     }
 
     Uri getUriPermission(){
-        if(mSession==null){
-            return null;
-        }
         return mSession.getUriPermission();
     }
 
@@ -187,11 +181,11 @@ class geckoClients
     }
 
     void onUpdateFont(){
-        //float font = (status.sFontSize -100)/4+100;
-        //mRuntime.getSettings().setAutomaticFontSizeAdjustment(status.sFontAdjustable);
-        //if(!mRuntime.getSettings().getAutomaticFontSizeAdjustment()){
-        //    mRuntime.getSettings().setFontSizeFactor(font/100);
-        //}
+        float font = (status.sFontSize -100)/4+100;
+        mRuntime.getSettings().setAutomaticFontSizeAdjustment(status.sFontAdjustable);
+        if(!mRuntime.getSettings().getAutomaticFontSizeAdjustment()){
+            mRuntime.getSettings().setFontSizeFactor(font/100);
+        }
     }
 
 

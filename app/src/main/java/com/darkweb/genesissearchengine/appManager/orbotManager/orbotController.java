@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Switch;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.darkweb.genesissearchengine.appManager.activityContextManager;
 import com.darkweb.genesissearchengine.constants.keys;
 import com.darkweb.genesissearchengine.constants.status;
@@ -48,12 +47,13 @@ public class orbotController extends AppCompatActivity {
     }
 
     public void viewsInitializations() {
-        mBridgeSwitch = findViewById(R.id.bridge_switch);
+        mBridgeSwitch = findViewById(R.id.bridgeSwitch);
 
         mOrbotViewController = new orbotViewController(mBridgeSwitch,this);
     }
 
     public void listenersInitializations() {
+
         mBridgeSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
         {
             status.sGateway = isChecked;

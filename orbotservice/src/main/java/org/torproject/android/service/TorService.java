@@ -6,12 +6,9 @@
  */
 
 package org.torproject.android.service;
-
-
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.Application;
-import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -24,6 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -40,10 +38,8 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import com.jaredrummler.android.shell.CommandResult;
-
 import net.freehaven.tor.control.ConfigEntry;
 import net.freehaven.tor.control.TorControlConnection;
-
 import org.torproject.android.service.util.CustomShell;
 import org.torproject.android.service.util.CustomTorResourceInstaller;
 import org.torproject.android.service.util.Prefs;
@@ -52,10 +48,8 @@ import org.torproject.android.service.util.Utils;
 import org.torproject.android.service.vpn.OrbotVpnManager;
 import org.torproject.android.service.vpn.VpnPrefs;
 import org.torproject.android.service.wrapper.orbotLocalConstants;
-
 import info.pluggabletransports.dispatch.util.TransportListener;
 import info.pluggabletransports.dispatch.util.TransportManager;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -82,6 +76,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
+import static androidx.core.app.NotificationCompat.PRIORITY_MIN;
 import static org.torproject.android.service.vpn.VpnUtils.getSharedPrefs;
 import static org.torproject.android.service.vpn.VpnUtils.killProcess;
 import static org.torproject.android.service.wrapper.orbotLocalConstants.sNotificationStatus;
@@ -102,7 +97,7 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
     public static int mPortDns = TOR_DNS_PORT_DEFAULT;
     public static int mPortTrans = TOR_TRANSPROXY_PORT_DEFAULT;
 
-    private static final int NOTIFY_ID = 1;
+    private static final int NOTIFY_ID = 4096;
     private static final int ERROR_NOTIFY_ID = 3;
     private static final int HS_NOTIFY_ID = 4;
 
@@ -215,7 +210,6 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
                 sendCallbackLogMessage(getString(R.string.found_existing_tor_process));
                 sendCallbackStatus(STATUS_ON);
                 showToolbarNotification(getString(R.string.status_activated),NOTIFY_ID,R.drawable.ic_stat_tor);
-
                 return true;
             }
         } catch (Exception e) {
@@ -269,30 +263,18 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
         mNotificationManager.createNotificationChannel(mChannel);
     }
 
-    public Intent newLauncherIntent(final Context context) {
-        Intent intent = new Intent(context, orbotLocalConstants.sGlobalContext.getClass());
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setAction(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-        return intent;
-    }
-
-    @SuppressLint("NewApi")
     protected void showToolbarNotification (String notifyMsg, int notifyType, int icon)
     {
-        if(sNotificationStatus == 1){
-            return;
-        }
-
-        KeyguardManager myKM = (KeyguardManager) getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE);
-        if( myKM.inKeyguardRestrictedInputMode()) {
+        if(orbotLocalConstants.sHomeContext==null){
             return;
         }
 
         //Reusable code.
-        Intent intent = newLauncherIntent(getApplicationContext());
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendIntent = PendingIntent.getActivity(TorService.this, 0, intent, 0);
+        PackageManager pm = getPackageManager();
+        Intent intent = new Intent(this,orbotLocalConstants.sHomeContext.getClass()) ;
+        intent.setFlags(Intent. FLAG_ACTIVITY_CLEAR_TOP | Intent. FLAG_ACTIVITY_SINGLE_TOP );
+
+        PendingIntent pendIntent = PendingIntent.getActivity(orbotLocalConstants.sHomeContext.get(), 0, intent, 0);
 
         if (mNotifyBuilder == null)
         {
@@ -301,7 +283,7 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
 
             if (mNotifyBuilder == null)
             {
-                mNotifyBuilder = new NotificationCompat.Builder(this)
+                mNotifyBuilder = new NotificationCompat.Builder(this,NOTIFICATION_CHANNEL_ID)
                         .setContentTitle(getString(R.string.app_name))
                         .setSmallIcon(R.drawable.ic_stat_tor);
 
@@ -310,27 +292,32 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
             }
 
 
+
             mNotifyBuilder.setCategory(Notification.CATEGORY_SERVICE);
 
             mNotifyBuilder.setChannelId(NOTIFICATION_CHANNEL_ID);
-            mNotifyBuilder.setVisibility(NotificationCompat.VISIBILITY_SECRET );
 
 
-            Intent intentRefresh = new Intent();
+            Intent intentRefresh = new Intent() ;
             intentRefresh.setAction(CMD_NEWNYM);
-            intentRefresh.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.setFlags(Intent. FLAG_ACTIVITY_CLEAR_TOP | Intent. FLAG_ACTIVITY_SINGLE_TOP );
+
+
             PendingIntent pendingIntentNewNym = PendingIntent.getBroadcast(this, 0, intentRefresh, PendingIntent.FLAG_UPDATE_CURRENT);
-            mNotifyBuilder.addAction(R.drawable.ic_refresh_white_24dp, getString(R.string.menu_new_identity),pendingIntentNewNym);
+
+            if(pendingIntentNewNym==null){
+                return;
+            }
+
+            mNotifyBuilder.addAction(R.drawable.ic_refresh_white_24dp, getString(R.string.menu_new_identity),
+                    pendingIntentNewNym);
+
             mNotifyBuilder.setOngoing(Prefs.persistNotifications());
 
         }
 
         mNotifyBuilder.setContentText(notifyMsg);
         mNotifyBuilder.setSmallIcon(icon);
-        mNotifyBuilder.setVisibility(NotificationCompat.VISIBILITY_SECRET );
-
-        //mChannel.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
-
 
         if (notifyType != NOTIFY_ID)
         {
@@ -344,7 +331,11 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
         if (!Prefs.persistNotifications())
             mNotifyBuilder.setPriority(Notification.PRIORITY_LOW);
 
-        mNotification = mNotifyBuilder.build();
+        try{
+            mNotification = mNotifyBuilder.build();
+        }catch (Exception ex){
+            return;
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForeground(NOTIFY_ID, mNotification);
@@ -359,31 +350,41 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
             mNotificationManager.notify(NOTIFY_ID, mNotification);
         }
 
+        if(sNotificationStatus==1){
+            disableNotification();
+        }
+
         mNotificationShowing = true;
     }
-
 
     /* (non-Javadoc)
      * @see android.app.Service#onStart(android.content.Intent, int)
      */
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        Log.i("FUCK YOU ALL1","FUCK YOU ALL");
         self = this;
-        showToolbarNotification("",NOTIFY_ID,R.drawable.ic_stat_tor);
 
-        if (intent != null)
-            exec (new IncomingIntentRouter(intent));
-        else
-            Log.d(OrbotConstants.TAG, "Got null onStartCommand() intent");
+        try{
+            if (intent != null)
+                exec (new IncomingIntentRouter(intent));
+            else
+                Log.d(OrbotConstants.TAG, "Got null onStartCommand() intent");
+            showToolbarNotification("",NOTIFY_ID,R.drawable.ic_stat_tor);
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
 
-        return Service.START_STICKY;
+        return Service.START_REDELIVER_INTENT;
     }
 
     private class IncomingIntentRouter implements Runnable
     {
         Intent mIntent;
 
-        public IncomingIntentRouter (Intent intent)
+        public
+        IncomingIntentRouter (Intent intent)
         {
             mIntent = intent;
         }
@@ -391,7 +392,6 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
         public void run() {
 
             String action = mIntent.getAction();
-
             if (action != null) {
                 if (action.equals(ACTION_START)) {
                     startTor();
@@ -419,7 +419,9 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
 
     @Override
     public void onTaskRemoved(Intent rootIntent){
-        Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
+        Log.i("FUCK YOU ALL2","FUCK YOU ALL");
+
+        /*Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
         restartServiceIntent.setPackage(getPackageName());
 
         PendingIntent restartServicePendingIntent = PendingIntent.getService(getApplicationContext(), 1, restartServiceIntent, PendingIntent.FLAG_ONE_SHOT);
@@ -429,7 +431,7 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
                 SystemClock.elapsedRealtime() + 1000,
                 restartServicePendingIntent);
 
-        super.onTaskRemoved(rootIntent);
+        super.onTaskRemoved(rootIntent);*/
     }
 
     @Override
@@ -452,13 +454,7 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
 
     private void stopTor ()
     {
-        new Thread(new Runnable ()
-        {
-            public void run ()
-            {
-                stopTorAsync();
-            }
-        }).start();
+        new Thread(() -> stopTorAsync()).start();
 
     }
 
@@ -532,6 +528,25 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
         }
     }
 
+    private void startServiceOreoCondition(){
+        if (Build.VERSION.SDK_INT >= 26) {
+
+
+            String CHANNEL_ID = "TOR_SERVICE";
+            String CHANNEL_NAME = "BACKGROUND_SERVICE";
+
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
+                    CHANNEL_NAME,NotificationManager.IMPORTANCE_NONE);
+            ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
+
+            Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setContentTitle("Genesis Status")
+                    .setContentText("Connected to the Tor network")
+                    .setCategory(Notification.CATEGORY_SERVICE).setSmallIcon(R.drawable.ic_stat_tor).setPriority(PRIORITY_MIN).build();
+
+            startForeground(4095, notification);
+        }
+    }
     @Override
     public void onCreate() {
         super.onCreate();
@@ -539,6 +554,7 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
         try
         {
             mHandler = new Handler ();
+            startServiceOreoCondition();
 
             appBinHome = getFilesDir();//getDir(TorServiceConstants.DIRECTORY_TOR_BINARY, Application.MODE_PRIVATE);
             if (!appBinHome.exists())
@@ -575,11 +591,7 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
             registerReceiver(mActionBroadcastReceiver, filter);
 
             if (Build.VERSION.SDK_INT >= 26)
-                if(sNotificationStatus != 1)
-                {
-                    createNotificationChannel();
-                }
-
+                createNotificationChannel();
             torUpgradeAndConfig();
 
             pluggableTransportInstall();
@@ -900,14 +912,12 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
                 updateOnionNames ();
             }
 
-            orbotLocalConstants.sIsTorInitialized = true;
+            if(mConnectivity){
+            }
 
         } catch (Exception e) {
             logException("Unable to start Tor: " + e.toString(), e);
             stopTor();
-            showToolbarNotification(
-                    getString(R.string.unable_to_start_tor) + ": " + e.getMessage(),
-                    ERROR_NOTIFY_ID, R.drawable.ic_stat_notifyerr);
 
         }
     }
@@ -1448,7 +1458,7 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
         if(sNotificationStatus != 1){
             Intent intent = new Intent(LOCAL_ACTION_BANDWIDTH);
 
-            if(sNotificationStatus == 0 && (current_download !=download || current_upload!=upload)){
+            if(sNotificationStatus == 0 && (current_download !=download || current_upload!=upload) && mConnectivity){
                 current_download = download;
                 current_upload = current_upload;
                 showToolbarNotification(download/100+"kbps ⇣ / " +upload/100+"kbps ⇡", HS_NOTIFY_ID, R.drawable.ic_stat_tor);
@@ -1477,12 +1487,17 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
     private void sendCallbackLogMessage (String logMessage)
     {
 
+        Log.i("FUCK","FUCK:"+logMessage);
         Intent intent = new Intent(LOCAL_ACTION_LOG);
         // You can also include some extra data.
         intent.putExtra(LOCAL_EXTRA_LOG, logMessage);
         intent.putExtra(EXTRA_STATUS, mCurrentStatus);
 
-        orbotLocalConstants.tor_logs_status = logMessage;
+        if(!mConnectivity){
+            orbotLocalConstants.tor_logs_status = "No internet connection";
+        }else {
+            orbotLocalConstants.tor_logs_status = logMessage;
+        }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
     }
@@ -1502,6 +1517,12 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
     }
 
     protected void sendCallbackStatus(String currentStatus) {
+
+        Log.i("MFUCKER","MFUCKER : " + currentStatus);
+        if(currentStatus.equals("ON")){
+            orbotLocalConstants.sIsTorInitialized = true;
+        }
+        Log.i("FUCKSS","FUCKSS:"+currentStatus);
         mCurrentStatus = currentStatus;
         Intent intent = getActionStatusIntent(currentStatus);
         // send for Orbot internals, using secure local broadcast
@@ -1573,8 +1594,11 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
                     setTorNetworkEnabled (mConnectivity);
                     if (!mConnectivity)
                     {
-                        logNotice(context.getString(R.string.no_network_connectivity_putting_tor_to_sleep_));
-                        showToolbarNotification(getString(R.string.no_internet_connection_tor),NOTIFY_ID,R.drawable.ic_stat_tor_off);
+                        int iconId = R.drawable.ic_stat_tor_off;
+                        showToolbarNotification(getString(R.string.newnym), getNotifyId(), iconId);
+
+                        orbotLocalConstants.tor_logs_status = "No internet connection";
+                        showToolbarNotification(context.getString(R.string.no_network_connectivity_putting_tor_to_sleep_),NOTIFY_ID,R.drawable.ic_stat_tor_off);
                     }
                     else
                     {
@@ -1592,6 +1616,7 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
 
     private StringBuffer processSettingsImpl (StringBuffer extraLines) throws IOException
     {
+
         logNotice(getString(R.string.updating_settings_in_tor_service));
 
         SharedPreferences prefs = Prefs.getSharedPrefs(getApplicationContext());
@@ -1693,14 +1718,14 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
                     extraLines.append("Bridge ");
                     extraLines.append(bridgeLine);
                     extraLines.append("\n");
-                    /**
-                     for (String bridgeConfigLine : bridgeListLines) {
+
+
+                    /**for (String bridgeConfigLine : bridgeListLines) {
                      if (!TextUtils.isEmpty(bridgeConfigLine)) {
                      extraLines.append("Bridge ");
                      extraLines.append(bridgeConfigLine.trim());
                      extraLines.append("\n");
                      }
-
                      }**/
 
                 } else {

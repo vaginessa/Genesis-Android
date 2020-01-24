@@ -2,6 +2,8 @@ package com.darkweb.genesissearchengine.pluginManager;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.darkweb.genesissearchengine.constants.*;
 import com.darkweb.genesissearchengine.dataManager.dataController;
@@ -19,7 +21,6 @@ class orbotManager
 
     private Context mAppContext;
     private boolean mLogsStarted = false;
-    private Intent mServiceIntent = null;
 
     /*Initialization*/
 
@@ -30,21 +31,26 @@ class orbotManager
     }
 
     public void initialize(AppCompatActivity app_context, eventObserver.eventListener event){
-        orbotLocalConstants.sGlobalContext = app_context;
-        initNotification(dataController.getInstance().getInt(keys.NOTIFICATION_STATUS,0));
+        initNotification(dataController.getInstance().getInt(keys.NOTIFICATION_STATUS,1));
     }
 
     void startOrbot(Context context){
         this.mAppContext = context;
         Prefs.putBridgesEnabled(status.sGateway);
-        mServiceIntent = new Intent(mAppContext, TorService.class);
+        Intent mServiceIntent = new Intent(context, TorService.class);
         mServiceIntent.setAction(ACTION_START);
-        mAppContext.startService(mServiceIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(mServiceIntent);
+        }
+        else
+        {
+            context.startService(mServiceIntent);
+        }
         initializeProxy();
     }
 
     int getNotificationStatus(){
-        return 0;//orbotLocalConstants.sNotificationStatus;
+        return orbotLocalConstants.sNotificationStatus;
     }
     void initNotification(int status){
         orbotLocalConstants.sNotificationStatus = status;
@@ -55,6 +61,7 @@ class orbotManager
     void disableTorNotification(){
         TorService.getServiceObject().disableNotification();
     }
+
     void enableTorNotificationNoBandwidth(){
         TorService.getServiceObject().enableTorNotificationNoBandwidth();
     }
@@ -62,9 +69,10 @@ class orbotManager
     /*------------------------------------------------------- POST TASK HANDLER -------------------------------------------------------*/
 
     void onClose(){
-        if(mServiceIntent!=null){
-            mAppContext.stopService(mServiceIntent);
-            mServiceIntent = null;
+        if(mAppContext!=null){
+            disableTorNotification();
+            //Intent intent = new Intent(orbotLocalConstants.sHomeContext, TorService.class);
+            //mAppContext.getApplicationContext().stopService(intent);
         }
     }
 

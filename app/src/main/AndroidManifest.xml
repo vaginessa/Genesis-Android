@@ -17,6 +17,7 @@
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:launchMode="singleTask"
         android:fullBackupContent="false"
         android:networkSecurityConfig="@xml/ex_network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -26,7 +27,9 @@
 
         <!-- Activities-->
 
-        <activity android:name="com.darkweb.genesissearchengine.appManager.orbotManager.orbotController"/>
+        <activity android:name="com.darkweb.genesissearchengine.appManager.orbotManager.orbotController"
+                  android:launchMode= "singleTop"
+                />
 
         <activity
             android:name="com.darkweb.genesissearchengine.appManager.settingManager.settingController"
@@ -47,7 +50,6 @@
         <activity
                 android:name="com.darkweb.genesissearchengine.appManager.tabManager.tabController"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-                android:launchMode = "singleTop"
                 android:windowSoftInputMode="adjustNothing" />
 
         <activity
@@ -60,6 +62,25 @@
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="bridge" />
+            </intent-filter>
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="org.torproject.android.REQUEST_HS_PORT" />
+            </intent-filter>
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="org.torproject.android.START_TOR" />
+            </intent-filter>
         </activity>
 
         <!-- Services & Settings-->
@@ -67,16 +88,6 @@
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
-
-        <provider
-                android:name="androidx.core.content.FileProvider"
-                android:authorities="@string/file_provider_authority"
-                android:exported="false"
-                android:grantUriPermissions="true">
-            <meta-data
-                    android:name="android.support.FILE_PROVIDER_PATHS"
-                    android:resource="@xml/sc_file_provider_path" />
-        </provider>
 
         <meta-data
             android:name="io.fabric.ApiKey"
@@ -93,12 +104,27 @@
         <service
             android:name="com.darkweb.genesissearchengine.helperManager.downloadFileService"
             android:enabled="true"
+            android:stopWithTask="true"
             android:exported="false" />
 
         <service
                 android:name="org.torproject.android.service.TorService"
                 android:enabled="true"
+                android:stopWithTask="true"
                 android:exported="false"/>
+
+
+
+        <receiver
+                android:name="org.torproject.android.service.StartTorReceiver"
+                android:exported="true"
+                android:stopWithTask="true"
+                android:permission="TODO">
+            <intent-filter>
+                <action android:name="org.torproject.android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+
 
     </application>
 

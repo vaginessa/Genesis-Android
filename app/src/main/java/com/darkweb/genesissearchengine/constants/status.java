@@ -8,6 +8,7 @@ public class status
     /*App Status*/
 
     public static String current_ABI = "7.0";
+    public static boolean paid_status = false;
 
     /*Settings Status*/
 

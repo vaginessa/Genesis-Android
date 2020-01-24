@@ -37,14 +37,14 @@ public class downloadFileService extends IntentService
     private void startDownload(String downloadPath) {
         String []fn = downloadPath.split("__");
 
-        File file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        Uri mDestinationUri = Uri.withAppendedPath(Uri.fromFile(file), fn[1]);
-
-        File myFile = new File(mDestinationUri.getPath());
-        if(myFile.exists())
-            myFile.delete();
-
         try {
+            File file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            Uri mDestinationUri = Uri.withAppendedPath(Uri.fromFile(file), fn[1]);
+
+            File myFile = new File(mDestinationUri.getPath());
+            if(myFile.exists())
+                myFile.delete();
+
             Uri uri = Uri.parse(fn[0]); // Path where you want to download file.
             DownloadManager manager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
             DownloadManager.Request req = new DownloadManager.Request(uri);
@@ -57,5 +57,4 @@ public class downloadFileService extends IntentService
             startActivity(intent);
         }
     }
-
 }

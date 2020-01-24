@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.TextView;
 import com.darkweb.genesissearchengine.appManager.historyManager.historyRowModel;
+import com.darkweb.genesissearchengine.constants.strings;
 import com.example.myapplication.R;
 
 public class autoCompleteAdapter extends ArrayAdapter<historyRowModel> {
@@ -39,8 +40,11 @@ public class autoCompleteAdapter extends ArrayAdapter<historyRowModel> {
             TextView myTv = v.findViewById( R.id.hintCompletionUrl);
 
             if (customerNameLabel != null) {
-//              Log.i(MY_DEBUG_TAG, "getView Customer Name:"+customer.getName());
-                customerNameLabel.setText(customer.getmHeader());
+                if(customer.getTitle().equals(strings.EMPTY_STR)){
+                    customerNameLabel.setText(customer.getmHeader() );
+                }else {
+                    customerNameLabel.setText(customer.getTitle());
+                }
                 myTv.setText(customer.getmDescription());
             }
         }
@@ -81,14 +85,18 @@ public class autoCompleteAdapter extends ArrayAdapter<historyRowModel> {
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results)
         {
-            if(results != null && results.count > 0) {
-                ArrayList<historyRowModel> filteredList = (ArrayList<historyRowModel>)((ArrayList<historyRowModel>)results.values).clone();
-                
-                clear();
-                for (historyRowModel c : filteredList) {
-                    add(c);
+            try{
+                if(results != null && results.count > 0) {
+                    ArrayList<historyRowModel> filteredList = (ArrayList<historyRowModel>)((ArrayList<historyRowModel>)results.values).clone();
+
+                    clear();
+                    for (historyRowModel c : filteredList) {
+                        add(c);
+                    }
+                    notifyDataSetChanged();
                 }
-                notifyDataSetChanged();
+            }catch (Exception ignored){
+
             }
         }
     };

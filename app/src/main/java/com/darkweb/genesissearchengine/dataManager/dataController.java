@@ -56,7 +56,9 @@ public class dataController
         mPreferencesModel.setString(valueKey, value);
     }
     public void setBool(String valueKey, boolean value){
-        mPreferencesModel.setBool(valueKey, value);
+        if(mPreferencesModel!=null){
+            mPreferencesModel.setBool(valueKey, value);
+        }
     }
     public void setInt(String valueKey, int value)
     {

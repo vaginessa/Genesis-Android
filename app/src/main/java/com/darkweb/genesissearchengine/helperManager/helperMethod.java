@@ -143,7 +143,13 @@ public class helperMethod
 
     public static void openDownloadFolder(AppCompatActivity context)
     {
-        context.startActivity(new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS));
+        Intent intent = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
+        if(intent.resolveActivity(context.getPackageManager()) != null)
+        {
+            context.startActivity(intent);
+        }else {
+            helperMethod.showToastMessage("Download Folder Not Found",context);
+        }
     }
 
 
@@ -218,7 +224,14 @@ public class helperMethod
     {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse("market://details?id="+packageName));
-        context.startActivity(intent);
+
+        if(intent.resolveActivity(context.getPackageManager()) != null)
+        {
+            context.startActivity(intent);
+        }else {
+            helperMethod.showToastMessage("Playstore Not Found",context);
+        }
+
     }
 
     public static int dpFromPx(final Context context, final float px) {
@@ -251,7 +264,12 @@ public class helperMethod
         ClipData clip = ClipData.newPlainText("link", url);
         clipboard.setPrimaryClip(clip);
 
-        Toast toast=Toast.makeText(context.getApplicationContext(),"Copied to Clipboard",Toast.LENGTH_SHORT);
+        showToastMessage("Copied to Clipboard",context);
+
+    }
+
+    public static void showToastMessage(String message,Context context){
+        Toast toast=Toast.makeText(context.getApplicationContext(),message,Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.BOTTOM, 0, 0);
         toast.show();
     }

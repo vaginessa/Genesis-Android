@@ -21,13 +21,17 @@ public class PathUtil {
      * Gets the file path of the given Uri.
      */
     @SuppressLint("NewApi")
-    public static String getPath(Context context, Uri uri) throws URISyntaxException {
+    public static String getPath(Context context, Uri uri)
+    {
         final boolean needToCheckUri = Build.VERSION.SDK_INT >= 19;
         String selection = null;
         String[] selectionArgs = null;
-        // Uri is different in versions after KITKAT (Android 4.4), we need to
-        // deal with different Uris.
-        if (needToCheckUri && DocumentsContract.isDocumentUri(context.getApplicationContext(), uri)) {
+
+        if(uri==null){
+            return null;
+        }
+
+        if (uri.getPathSegments()!=null && needToCheckUri && DocumentsContract.isDocumentUri(context.getApplicationContext(), uri)) {
             if (isExternalStorageDocument(uri)) {
                 final String docId = DocumentsContract.getDocumentId(uri);
                 final String[] split = docId.split(":");
@@ -51,19 +55,22 @@ public class PathUtil {
                 selectionArgs = new String[]{ split[1] };
             }
         }
-        if ("content".equalsIgnoreCase(uri.getScheme())) {
-            String[] projection = { MediaStore.Images.Media.DATA };
-            Cursor cursor = null;
-            try {
-                cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
-                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                if (cursor.moveToFirst()) {
-                    return cursor.getString(column_index);
+
+        if(uri.getScheme()!=null){
+            if ("content".equalsIgnoreCase(uri.getScheme())) {
+                String[] projection = { MediaStore.Images.Media.DATA };
+                Cursor cursor = null;
+                try {
+                    cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
+                    int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                    if (cursor.moveToFirst()) {
+                        return cursor.getString(column_index);
+                    }
+                } catch (Exception e) {
                 }
-            } catch (Exception e) {
+            } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+                return uri.getPath();
             }
-        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getPath();
         }
         return null;
     }

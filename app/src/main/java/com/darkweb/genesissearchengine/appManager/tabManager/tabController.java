@@ -60,7 +60,7 @@ public class tabController extends AppCompatActivity
         mContextManager = activityContextManager.getInstance();
         mHomeController = activityContextManager.getInstance().getHomeController();
         mContextManager.setTabController(this);
-        pluginController.getInstance().logEvent(strings.BOOKMARK_OPENED);
+        pluginController.getInstance().logEvent(strings.TAB_OPENED);
     }
     public void initializeViews(){
         mEmptyListNotifier = findViewById(R.id.empty_list);
@@ -106,14 +106,30 @@ public class tabController extends AppCompatActivity
             @Override
             public void afterTextChanged(Editable editable)
             {
-                ((tabAdapter) Objects.requireNonNull(mListView.getAdapter())).setFilter(mSearchBar.getText().toString());
-                ((tabAdapter) mListView.getAdapter()).invokeFilter(true);
+                if(mListView!=null){
+                    ((tabAdapter) Objects.requireNonNull(mListView.getAdapter())).setFilter(mSearchBar.getText().toString());
+                    ((tabAdapter) mListView.getAdapter()).invokeFilter(true);
+                }
             }
         });
     }
 
+    public void reset(){
+        if(mListView!=null){
+            mListView.setAdapter(null);
+        }
+        mListView = null;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        reset();
+    }
+
     public void onBackPressed(View view){
         this.finish();
+        reset();
     }
 
     public void onclearDataTrigger(View view){
@@ -142,6 +158,11 @@ public class tabController extends AppCompatActivity
         activityContextManager.getInstance().setCurrentActivity(this);
         status.sIsAppPaused = false;
         super.onResume();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
     }
 
     @Override

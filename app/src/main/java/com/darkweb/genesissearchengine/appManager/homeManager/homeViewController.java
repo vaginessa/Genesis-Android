@@ -14,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -98,7 +99,7 @@ class homeViewController
         this.mGeckoView = gecko_view;
         this.mBackSplash = backsplash;
         this.mConnectButton = connect_button;
-        this.mSwitchEngineBack = switch_engine_back;
+        //this.mSwitchEngineBack = switch_engine_back;
         this.mNewTab = mNewTab;
         this.popupWindow = null;
 
@@ -140,22 +141,22 @@ class homeViewController
 
     private void initSearchButtonAnimation(boolean is_triggered){
         if(!is_triggered){
-            mEngineAnimator = ValueAnimator.ofFloat(0.3f, 1);
-            mEngineAnimator.addUpdateListener(animation -> mSwitchEngineBack.setAlpha((Float) animation.getAnimatedValue()));
-            mEngineAnimator.setDuration(1000);
-            mEngineAnimator.setRepeatCount(ValueAnimator.INFINITE);
-            mEngineAnimator.setRepeatMode(ValueAnimator.REVERSE);
-            mEngineAnimator.start();
+            //mEngineAnimator = ValueAnimator.ofFloat(0.3f, 1);
+            //mEngineAnimator.addUpdateListener(animation -> mSwitchEngineBack.setAlpha((Float) animation.getAnimatedValue()));
+            //mEngineAnimator.setDuration(1000);
+            //mEngineAnimator.setRepeatCount(ValueAnimator.INFINITE);
+            //mEngineAnimator.setRepeatMode(ValueAnimator.REVERSE);
+            //mEngineAnimator.start();
         }
     }
 
     void stopSearchButtonAnimation(){
         if(mEngineAnimator !=null){
-            mEngineAnimator.end();
-            TypedValue outValue = new TypedValue();
-            mContext.getTheme().resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true);
-            mEngineLogo.setBackgroundResource(outValue.resourceId);
-            mEngineAnimator = null;
+            //mEngineAnimator.end();
+            //TypedValue outValue = new TypedValue();
+            //mContext.getTheme().resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true);
+            //mEngineLogo.setBackgroundResource(outValue.resourceId);
+            //mEngineAnimator = null;
         }
     }
 
@@ -336,7 +337,7 @@ class homeViewController
     }
     private void splashScreenDisable(){
         mTopBar.setAlpha(1);
-        if(!disableSplash)
+        if(mSplashScreen.getAlpha()>=1)
         {
             disableSplash = true;
             mSplashScreen.animate().setDuration(300).alpha(0).withEndAction((() -> mSplashScreen.setVisibility(View.GONE)));
@@ -463,7 +464,7 @@ class homeViewController
 
     void onUpdateSearchBar(String url){
 
-        if (mSearchbar == null || mSearchbar.isFocused())
+        if (mSearchbar == null || mSearchbar.isFocused() || url==null)
         {
             return;
         }
@@ -475,14 +476,16 @@ class homeViewController
             isTextSelected = true;
         }
 
-        mSearchbar.setText(helperMethod.urlDesigner(url));
-        mSearchbar.selectAll();
-
-        if(isTextSelected){
+        if(url.length()<=300){
+            mSearchbar.setText(helperMethod.urlDesigner(url));
             mSearchbar.selectAll();
-        }
 
-        mSearchbar.setSelection(0);
+            if(isTextSelected){
+                mSearchbar.selectAll();
+            }
+
+            mSearchbar.setSelection(0);
+        }
     }
 
     void onNewTab(boolean keyboard,boolean isKeyboardOpen){
@@ -512,6 +515,7 @@ class homeViewController
 
     void onProgressBarUpdate(int value){
         if(value==100){
+            mProgressBar.setAlpha(1f);
             mProgressBar.animate().setStartDelay(200).alpha(0);
             setProgressAnimate(mProgressBar,value);
         }

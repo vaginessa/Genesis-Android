@@ -1,6 +1,7 @@
 package com.darkweb.genesissearchengine.pluginManager;
 
 import android.annotation.SuppressLint;
+import android.app.DownloadManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -90,26 +91,55 @@ class messageManager
                 });
     }
 
+    private void abiErrorRestart()
+    {
+        is_popup_open = false;
+        final Handler handler = new Handler();
+        Runnable runnable = () ->
+        {
+            is_popup_open = false;
+            createMessage(app_context,Collections.singletonList(strings.EMPTY_STR), enums.etype.abi_error);
+        };
+        handler.postDelayed(runnable, 1500);
+
+    }
 
     private void abiError()
     {
-        is_popup_open = false;
         popup_instance.setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(strings.ABI_ERROR_TITLE)
                 .setBackgroundColor(app_context.getResources().getColor(R.color.holo_dark_gray_alpha))
                 .setTextColor(app_context.getResources().getColor(R.color.black))
-                .onDismissListener(dialog -> abiError())
+                .onDismissListener(dialog -> abiErrorRestart())
                 .setMessage(strings.ABI_ERROR_DESC)
                 .addButton(strings.ABI_ERROR_BT_1, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
                 {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(constants.GENESIS_UPDATE_URL + status.current_ABI));
-                    app_context.startActivity(browserIntent);
+                    if(browserIntent.resolveActivity(app_context.getPackageManager()) != null)
+                    {
+                        app_context.startActivity(browserIntent);
+                    }else {
+                        helperMethod.showToastMessage("Not Supported",app_context);
+                    }
                 })
                 .addButton(strings.ABI_ERROR_BT_2, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
                 {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(constants.PLAYSTORE_URL));
-                    app_context.startActivity(browserIntent);
-                });
+                    if(browserIntent.resolveActivity(app_context.getPackageManager()) != null)
+                    {
+                        app_context.startActivity(browserIntent);
+                    }else {
+                        helperMethod.showToastMessage("Playstore Not Found",app_context);
+                    }
+                })
+                /*
+                .addButton(strings.ABI_ERROR_BT_3, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
+                {
+                    event.invokeObserver(null, enums.etype.ignore_abi);
+                    tempDialog.dismiss();
+                })*/;
+
+
     }
 
     private void ratedSuccessfully()
@@ -255,7 +285,13 @@ class messageManager
                 .addButton(strings.RATE_POSITIVE, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
                 {
                     event.invokeObserver(null, enums.etype.app_rated);
-                    app_context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.darkweb.genesissearchengine")));
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.darkweb.genesissearchengine"));
+                    if(intent.resolveActivity(app_context.getPackageManager()) != null)
+                    {
+                        app_context.startActivity(intent);
+                    }else {
+                        helperMethod.showToastMessage("Playstore Not Found",app_context);
+                    }
                     tempDialog.dismiss();
                 })
                 .addButton(strings.RATE_NEGATIVE, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (tempDialog, which) ->
@@ -498,7 +534,7 @@ class messageManager
     }
 
     void onReset(){
-        if(dialog_main!=null){
+        if(dialog_main!=null && dialog_main.isShowing() && !app_context.isFinishing()){
             dialog_main.dismiss();
             dialog_main = null;
         }

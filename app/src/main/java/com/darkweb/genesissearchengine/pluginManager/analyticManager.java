@@ -32,10 +32,20 @@ class analyticManager
                     PREF_UNIQUE_ID, Context.MODE_PRIVATE);
             mUniqueID = sharedPrefs.getString(PREF_UNIQUE_ID, null);
             if (mUniqueID == null) {
-                mUniqueID = UUID.randomUUID().toString();
-                SharedPreferences.Editor editor = sharedPrefs.edit();
-                editor.putString(PREF_UNIQUE_ID, mUniqueID);
-                editor.apply();
+
+                new Thread(){
+                    public void run(){
+                        try{
+                            mUniqueID = UUID.randomUUID().toString();
+                        }catch (Exception ex){
+                            mUniqueID = UUID.randomUUID().toString();
+                        }
+
+                        SharedPreferences.Editor editor = sharedPrefs.edit();
+                        editor.putString(PREF_UNIQUE_ID, mUniqueID);
+                        editor.apply();
+                    }
+                }.start();
             }
         }
     }

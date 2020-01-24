@@ -4,6 +4,8 @@ import android.webkit.URLUtil;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.darkweb.genesissearchengine.constants.strings;
+
 import org.mozilla.geckoview.WebRequestError;
 
 import java.io.BufferedReader;
@@ -136,6 +138,10 @@ public class errorHandler
         }
     }
     private String createErrorPage(final String error) {
+        if(error==null){
+            return strings.EMPTY_STR;
+        }
+
         if (mErrorTemplate == null) {
             InputStream stream = null;
             BufferedReader reader = null;
