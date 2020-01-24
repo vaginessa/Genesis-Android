@@ -47,14 +47,17 @@ public class errorHandler
                 if (reader != null) {
                     try {
                         reader.close();
-                    } catch (IOException e) {
+                    } catch (IOException ignored) {
                     }
                 }
             }
         }
-
+        if(url==null){
+            url = "Hidden Error";
+        }
+        String replaceUrl = errorToString(error).replace("$URL",url);
         String title = helperMethod.getHost(url);
-        return createErrorPage("CODE : " + categoryToString(category) + " <br>TYPE : " + errorToString(error)).replace("$URL",url).replace("$TITLE",title);
+        return createErrorPage("CODE : " + categoryToString(category) + " <br>TYPE : " + replaceUrl.replace("$TITLE",title));
     }
 
     private String errorToString(final int error) {
