@@ -59,7 +59,11 @@ public class autoCompleteAdapter extends ArrayAdapter<historyRowModel> {
     Filter nameFilter = new Filter() {
         @Override
         public String convertResultToString(Object resultValue) {
-            String str = ((historyRowModel)(resultValue)).getmHeader();
+            if(resultValue==null){
+                return strings.EMPTY_STR;
+            }
+            historyRowModel model = (historyRowModel)(resultValue);
+            String str = model.getmHeader();
             return str;
         }
         @Override

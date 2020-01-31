@@ -303,7 +303,7 @@ public class TorService extends Service implements   TorServiceConstants, OrbotC
             intent.setFlags(Intent. FLAG_ACTIVITY_CLEAR_TOP | Intent. FLAG_ACTIVITY_SINGLE_TOP );
 
 
-            PendingIntent pendingIntentNewNym = PendingIntent.getBroadcast(this, 0, intentRefresh, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pendingIntentNewNym = PendingIntent.getBroadcast(orbotLocalConstants.sHomeContext.get(), 0, intentRefresh, PendingIntent.FLAG_UPDATE_CURRENT);
 
             if(pendingIntentNewNym==null){
                 return;

@@ -1,18 +1,18 @@
 /*arm versions*/
-    project.ext.arm_vname = '520'
-    project.ext.arm_vcode = 520
+    project.ext.arm_vname = '525'
+    project.ext.arm_vcode = 525
 
 /*aarch versions*/
-    project.ext.aarch_vname = '521'
-    project.ext.aarch_vcode = 521
+    project.ext.aarch_vname = '526'
+    project.ext.aarch_vcode = 526
 
 /*x86 versions*/
-    project.ext.x86_vname = '522'
-    project.ext.x86_vcode = 522
+    project.ext.x86_vname = '527'
+    project.ext.x86_vcode = 527
 
 /*x64 versions*/
-    project.ext.x64_vname = '523'
-    project.ext.x64_vcode = 523
+    project.ext.x64_vname = '528'
+    project.ext.x64_vcode = 528
 
 /*dimension*/
     project.ext.dimen = 'abi'
