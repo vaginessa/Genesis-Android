@@ -1652,7 +1652,9 @@ public class homeController extends AppCompatActivity implements ComponentCallba
     }
 
     public void onNewTab(boolean isKeyboardOpenedTemp, boolean isKeyboardOpened) {
-        mGeckoClient.getSession().getMediaSessionDelegate().onTrigger(enums.MediaController.DESTROY);
+        if(mGeckoClient.getSession()!=null && mGeckoClient.getSession().getMediaSessionDelegate()!=null){
+            mGeckoClient.getSession().getMediaSessionDelegate().onTrigger(enums.MediaController.DESTROY);
+        }
         try {
             if(status.sLowMemory == enums.MemoryStatus.STABLE){
                 mRenderedBitmap = mGeckoView.capturePixels();
