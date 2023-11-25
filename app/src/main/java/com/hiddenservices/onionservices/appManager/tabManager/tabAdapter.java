@@ -489,9 +489,7 @@ public class tabAdapter extends RecyclerView.Adapter<tabAdapter.listViewHolder> 
                                 v.setEnabled(false);
                                 v.setClickable(false);
                                 v.setFocusable(false);
-                                try {
-                                    scaleView(itemView, mModelList.get(this.getLayoutPosition()));
-                                }catch (Exception ex){}
+                                scaleView(itemView, mModelList.get(this.getLayoutPosition()));
                             } else {
                                 onTriggerURL(mModelList.get(this.getLayoutPosition()));
                             }
